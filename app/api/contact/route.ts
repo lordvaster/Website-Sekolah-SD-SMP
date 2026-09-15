@@ -2,28 +2,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { contactSchema } from "@/lib/validation";
 import { sendMail } from "@/lib/email";
-import { getClientIp, isRateLimited } from "@/lib/rate-limit";
+import { rateLimitGuard } from "@/lib/rate-limit";
 import { siteConfig } from "@/lib/site-config";
 import { escapeHtml } from "@/lib/utils";
+import { emailNotConfiguredResponse, validationErrorResponse } from "@/lib/api-helpers";
 
 export async function POST(request: NextRequest) {
-  const ip = getClientIp(request);
-  if (isRateLimited(`contact:${ip}`)) {
-    return NextResponse.json(
-      { error: "Terlalu banyak permintaan, coba lagi dalam beberapa menit." },
-      { status: 429 }
-    );
-  }
+  const limited = rateLimitGuard(request, "contact");
+  if (limited) return limited;
 
   const body = await request.json().catch(() => null);
   const parsed = contactSchema.safeParse(body);
-
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Data tidak valid.", issues: parsed.error.flatten().fieldErrors },
-      { status: 400 }
-    );
-  }
+  if (!parsed.success) return validationErrorResponse(parsed.error);
 
   const { name, email, phone, message } = parsed.data;
 
@@ -43,13 +33,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!result.sent && process.env.NODE_ENV === "production") {
-      return NextResponse.json(
-        {
-          error:
-            "Pesan tidak dapat dikirim karena server email belum dikonfigurasi. Silakan hubungi kami via telepon/WhatsApp.",
-        },
-        { status: 503 }
-      );
+      return emailNotConfiguredResponse();
     }
 
     return NextResponse.json({ ok: true });

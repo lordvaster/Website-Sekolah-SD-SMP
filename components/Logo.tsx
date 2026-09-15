@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
 
-export default function Logo() {
+export default function Logo({ tagline }: { tagline?: string }) {
   return (
     <Link
       href="/"
@@ -31,7 +31,7 @@ export default function Logo() {
       <span className="font-heading text-lg font-bold leading-tight text-primary dark:text-primary-light">
         {siteConfig.shortName}
         <span className="block text-[11px] font-medium text-ink/60 dark:text-ink-dark/60">
-          {siteConfig.tagline}
+          {tagline ?? siteConfig.tagline}
         </span>
       </span>
     </Link>

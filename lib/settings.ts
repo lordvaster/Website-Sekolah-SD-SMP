@@ -4,6 +4,7 @@ import path from "node:path";
 import { defaultIcon, IconPresetKey, iconPresets } from "./icon-presets";
 
 const settingsPath = path.join(process.cwd(), "data", "settings.json");
+const DEFAULT_TAGLINE = "Belajar Seru, Tumbuh Percaya Diri";
 
 export type SiteSettings = {
   activeIcon: IconPresetKey;
@@ -11,13 +12,29 @@ export type SiteSettings = {
   updatedAt: string;
 };
 
+function defaultSettings(): SiteSettings {
+  return {
+    activeIcon: defaultIcon,
+    siteTagline: DEFAULT_TAGLINE,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 export async function readSettings(): Promise<SiteSettings> {
   try {
     const raw = await fs.readFile(settingsPath, "utf-8");
     const parsed = JSON.parse(raw);
+
     if (!iconPresets[parsed.activeIcon as IconPresetKey]) {
       parsed.activeIcon = defaultIcon;
     }
+    if (typeof parsed.siteTagline !== "string" || parsed.siteTagline.trim().length === 0) {
+      parsed.siteTagline = DEFAULT_TAGLINE;
+    }
+    if (typeof parsed.updatedAt !== "string") {
+      parsed.updatedAt = new Date().toISOString();
+    }
+
     return parsed;
   } catch (error) {
     // ENOENT saat pertama kali dijalankan (file belum ada) itu wajar dan
@@ -26,23 +43,34 @@ export async function readSettings(): Promise<SiteSettings> {
     if ((error as NodeJS.ErrnoException)?.code !== "ENOENT") {
       console.error("[settings] Gagal membaca data/settings.json, memakai default:", error);
     }
-    return {
-      activeIcon: defaultIcon,
-      siteTagline: "Belajar Seru, Tumbuh Percaya Diri",
-      updatedAt: new Date().toISOString(),
-    };
+    return defaultSettings();
   }
 }
 
-export async function writeSettings(
+// Antrean sederhana in-process: setiap panggilan writeSettings dirangkai
+// setelah panggilan sebelumnya selesai, supaya dua permintaan simpan yang
+// datang hampir bersamaan (mis. dua tab admin) tidak saling menimpa lewat
+// race read-modify-write. Tidak melindungi dari banyak instance server
+// berjalan sekaligus - untuk itu perlu penyimpanan terpusat (bukan file).
+let writeQueue: Promise<unknown> = Promise.resolve();
+
+export function writeSettings(
   next: Partial<Pick<SiteSettings, "activeIcon" | "siteTagline">>
 ): Promise<SiteSettings> {
-  const current = await readSettings();
-  const merged: SiteSettings = {
-    ...current,
-    ...next,
-    updatedAt: new Date().toISOString(),
+  const run = async () => {
+    const current = await readSettings();
+    const merged: SiteSettings = {
+      ...current,
+      ...next,
+      updatedAt: new Date().toISOString(),
+    };
+    await fs.writeFile(settingsPath, JSON.stringify(merged, null, 2), "utf-8");
+    return merged;
   };
-  await fs.writeFile(settingsPath, JSON.stringify(merged, null, 2), "utf-8");
-  return merged;
+
+  const result = writeQueue.then(run, run);
+  // Rantai antrean harus tetap berjalan walau permintaan ini gagal, supaya
+  // permintaan berikutnya tidak ikut macet menunggu promise yang reject.
+  writeQueue = result.catch(() => {});
+  return result;
 }

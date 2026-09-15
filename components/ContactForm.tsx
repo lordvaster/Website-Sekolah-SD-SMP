@@ -8,7 +8,7 @@ import { contactSchema, type ContactInput } from "@/lib/validation";
 import { useFormSubmit } from "@/lib/hooks/useFormSubmit";
 
 export default function ContactForm() {
-  const { status, submit } = useFormSubmit<ContactInput>("/api/contact");
+  const { status, errorMessage, submit } = useFormSubmit<ContactInput>("/api/contact");
 
   const {
     register,
@@ -118,7 +118,7 @@ export default function ContactForm() {
       )}
       {status === "error" && (
         <p role="alert" className="flex items-center gap-2 text-sm font-semibold text-cta">
-          <AlertCircle className="h-5 w-5" /> Terjadi kesalahan, silakan coba lagi.
+          <AlertCircle className="h-5 w-5" /> {errorMessage}
         </p>
       )}
     </form>

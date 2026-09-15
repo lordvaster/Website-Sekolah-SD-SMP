@@ -9,7 +9,7 @@ import { programs } from "@/lib/data";
 import { useFormSubmit } from "@/lib/hooks/useFormSubmit";
 
 export default function RegistrationForm() {
-  const { status, submit } = useFormSubmit<RegistrationInput>("/api/pendaftaran");
+  const { status, errorMessage, submit } = useFormSubmit<RegistrationInput>("/api/pendaftaran");
 
   const {
     register,
@@ -150,7 +150,7 @@ export default function RegistrationForm() {
       )}
       {status === "error" && (
         <p role="alert" className="flex items-center gap-2 text-sm font-semibold text-cta">
-          <AlertCircle className="h-5 w-5" /> Terjadi kesalahan, silakan coba lagi.
+          <AlertCircle className="h-5 w-5" /> {errorMessage}
         </p>
       )}
     </form>

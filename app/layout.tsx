@@ -9,6 +9,7 @@ import SkipToContent from "@/components/SkipToContent";
 import Analytics from "@/components/Analytics";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { siteConfig } from "@/lib/site-config";
+import { readSettings } from "@/lib/settings";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -24,41 +25,52 @@ const nunito = Nunito({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
-  title: {
-    default: `${siteConfig.name} — ${siteConfig.tagline}`,
-    template: `%s — ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  keywords: [
-    "SD Inovasi Ceria",
-    "sekolah dasar Palangkaraya",
-    "sekolah anak ceria",
-    "pendaftaran siswa baru",
-    "sekolah ramah anak",
-  ],
-  authors: [{ name: siteConfig.developer.name, url: siteConfig.developer.url }],
-  creator: siteConfig.developer.name,
-  manifest: "/manifest.webmanifest",
-  openGraph: {
-    type: "website",
-    locale: "id_ID",
-    url: siteConfig.url,
-    siteName: siteConfig.name,
-    title: `${siteConfig.name} — ${siteConfig.tagline}`,
+// Halaman lain tetap dirender statis untuk performa, tapi disegarkan ulang
+// otomatis di background setiap 60 detik (ISR) - tanpa ini, tagline yang
+// diubah admin di /admin/pengaturan tidak akan pernah muncul di <title>/OG
+// dan navbar/footer sampai proyek di-build ulang, karena root layout ikut
+// dirender sekali saja saat build.
+export const revalidate = 60;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { siteTagline } = await readSettings();
+
+  return {
+    metadataBase: new URL(siteConfig.url),
+    title: {
+      default: `${siteConfig.name} — ${siteTagline}`,
+      template: `%s — ${siteConfig.name}`,
+    },
     description: siteConfig.description,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${siteConfig.name} — ${siteConfig.tagline}`,
-    description: siteConfig.description,
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+    keywords: [
+      "SD Inovasi Ceria",
+      "sekolah dasar Palangkaraya",
+      "sekolah anak ceria",
+      "pendaftaran siswa baru",
+      "sekolah ramah anak",
+    ],
+    authors: [{ name: siteConfig.developer.name, url: siteConfig.developer.url }],
+    creator: siteConfig.developer.name,
+    manifest: "/manifest.webmanifest",
+    openGraph: {
+      type: "website",
+      locale: "id_ID",
+      url: siteConfig.url,
+      siteName: siteConfig.name,
+      title: `${siteConfig.name} — ${siteTagline}`,
+      description: siteConfig.description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${siteConfig.name} — ${siteTagline}`,
+      description: siteConfig.description,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -69,11 +81,13 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { siteTagline } = await readSettings();
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "School",
@@ -99,9 +113,9 @@ export default function RootLayout({
         />
         <ThemeProvider>
           <SkipToContent />
-          <Navbar />
+          <Navbar tagline={siteTagline} />
           <main id="konten-utama">{children}</main>
-          <Footer />
+          <Footer tagline={siteTagline} />
         </ThemeProvider>
         <Analytics />
         <ServiceWorkerRegister />

@@ -6,7 +6,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import PlaceholderPhoto from "@/components/PlaceholderPhoto";
 import NewsCard from "@/components/NewsCard";
 import SectionHeading from "@/components/SectionHeading";
-import { newsArticles } from "@/lib/data";
+import { getArticleBySlug, newsArticles } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -19,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = newsArticles.find((a) => a.slug === slug);
+  const article = getArticleBySlug(slug);
   if (!article) return {};
   return {
     title: article.title,
@@ -39,7 +39,7 @@ export default async function BeritaDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = newsArticles.find((a) => a.slug === slug);
+  const article = getArticleBySlug(slug);
   if (!article) notFound();
 
   const related = newsArticles

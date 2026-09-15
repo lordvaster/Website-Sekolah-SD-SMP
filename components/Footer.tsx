@@ -4,12 +4,12 @@ import { Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react"
 import Logo from "./Logo";
 import { navLinks, siteConfig } from "@/lib/site-config";
 
-export default function Footer() {
+export default function Footer({ tagline }: { tagline?: string }) {
   return (
     <footer className="mt-20 border-t border-black/5 bg-white dark:border-white/10 dark:bg-surface-dark">
       <div className="container-page grid gap-10 py-12 md:grid-cols-4">
         <div className="md:col-span-2">
-          <Logo />
+          <Logo tagline={tagline} />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink/70 dark:text-ink-dark/70">
             {siteConfig.description}
           </p>

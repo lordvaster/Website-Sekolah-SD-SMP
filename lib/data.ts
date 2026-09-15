@@ -105,6 +105,10 @@ export const newsArticles: NewsArticle[] = [
   },
 ];
 
+export function getArticleBySlug(slug: string) {
+  return newsArticles.find((article) => article.slug === slug);
+}
+
 export type GalleryCategory = "Kelas" | "Acara" | "Aktivitas";
 
 export type GalleryItem = {

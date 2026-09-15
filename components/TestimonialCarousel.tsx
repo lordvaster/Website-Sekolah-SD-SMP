@@ -57,7 +57,7 @@ export default function TestimonialCarousel() {
             <div className="flex gap-2">
               {testimonials.map((item, i) => (
                 <button
-                  key={item.name}
+                  key={i}
                   aria-label={`Tampilkan testimoni ${i + 1}`}
                   onClick={() => setIndex(i)}
                   className={`h-2.5 w-2.5 rounded-full ${

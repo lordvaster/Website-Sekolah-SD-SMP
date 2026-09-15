@@ -96,6 +96,9 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
           onChange={(e) => setSiteTagline(e.target.value)}
           className="mt-1 w-full max-w-md rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
         />
+        <p className="mt-1 text-xs text-ink/50 dark:text-ink-dark/50">
+          Muncul di judul tab browser, hasil pencarian Google, dan logo navbar/footer. Perubahan tampil dalam waktu maksimal 1 menit (bukan instan seperti favicon).
+        </p>
       </div>
 
       {error && (

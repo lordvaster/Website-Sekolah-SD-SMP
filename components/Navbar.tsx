@@ -10,7 +10,7 @@ import ThemeToggle from "./ThemeToggle";
 import { navLinks } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
-export default function Navbar() {
+export default function Navbar({ tagline }: { tagline?: string }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -20,7 +20,7 @@ export default function Navbar() {
         aria-label="Navigasi utama"
         className="container-page flex h-20 items-center justify-between"
       >
-        <Logo />
+        <Logo tagline={tagline} />
 
         <ul className="hidden items-center gap-1 lg:flex">
           {navLinks.map((link) => {

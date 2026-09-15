@@ -6,13 +6,11 @@ import {
   createSessionToken,
   isValidPassword,
 } from "@/lib/admin-auth";
-import { getClientIp, isRateLimited } from "@/lib/rate-limit";
+import { rateLimitGuard } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
-  const ip = getClientIp(request);
-  if (isRateLimited(`admin-login:${ip}`)) {
-    return NextResponse.json({ error: "Terlalu banyak percobaan." }, { status: 429 });
-  }
+  const limited = rateLimitGuard(request, "admin-login");
+  if (limited) return limited;
 
   const body = await request.json().catch(() => null);
   const password = typeof body?.password === "string" ? body.password : "";
@@ -22,8 +20,15 @@ export async function POST(request: NextRequest) {
   }
 
   const token = await createSessionToken();
+  if (!token) {
+    // Tidak seharusnya terjadi karena isValidPassword sudah mensyaratkan
+    // ADMIN_PASSWORD terisi, tapi dijaga eksplisit agar tidak pernah diam-diam
+    // mengeset cookie sesi dengan nilai yang tidak valid.
+    return NextResponse.json({ error: "Konfigurasi admin tidak lengkap." }, { status: 500 });
+  }
+
   const response = NextResponse.json({ ok: true });
-  response.cookies.set(ADMIN_COOKIE, token as string, {
+  response.cookies.set(ADMIN_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
