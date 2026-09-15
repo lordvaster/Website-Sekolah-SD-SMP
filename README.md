@@ -90,14 +90,63 @@ npm run build
 npm run start
 ```
 
-Cara paling sederhana: jalankan di **server Node.js sendiri (VPS)**, idealnya di belakang reverse proxy (Nginx) dengan HTTPS — `data/cms.sqlite` dan `public/uploads/` akan tetap ada antar-restart selama disk VPS-nya persisten. Contoh alur:
-
-1. Push repository ke GitHub.
-2. Di server: `git pull`, `npm ci`, `npm run build`, lalu jalankan `npm run start` (idealnya lewat process manager seperti `pm2` agar otomatis restart).
-3. Arahkan domain `sd.join.co.id` ke server tersebut, dan pasang HTTPS (mis. Certbot) di reverse proxy.
-4. **Backup rutin** folder `data/` dan `public/uploads/` — ini satu-satunya sumber data CMS.
+Cara paling sederhana: jalankan di **server Node.js sendiri (VPS)**, idealnya di belakang reverse proxy (Nginx) dengan HTTPS — `data/cms.sqlite` dan `public/uploads/` akan tetap ada antar-restart selama disk VPS-nya persisten.
 
 Untuk deploy ke **Vercel**, baca dulu bagian "Database & Penyimpanan File" di atas — perlu mengganti database dan penyimpanan file ke layanan eksternal terlebih dahulu, karena filesystem Vercel bersifat sementara.
+
+### Setup Awal di Server Produksi (VPS)
+
+Prasyarat di server: Node.js ≥20.9, `git`, `nginx`, dan [`pm2`](https://pm2.keymetrics.io/) (`npm install -g pm2`).
+
+```bash
+# 1. Clone & konfigurasi
+git clone git@github.com:lordvaster/Website-Sekolah-SD-SMP.git /var/www/sd-inovasi-ceria
+cd /var/www/sd-inovasi-ceria
+cp .env.example .env && nano .env    # isi ADMIN_PASSWORD, SMTP, dst
+
+# 2. Install, build, lalu jalankan lewat PM2
+npm ci
+npm run build
+mkdir -p logs
+pm2 start ecosystem.config.cjs --env production
+pm2 save                # simpan daftar proses agar ikut jalan lagi setelah reboot
+pm2 startup             # ikuti instruksi yang ditampilkan (sekali saja per server)
+```
+
+Situs kini berjalan di `http://127.0.0.1:3000` pada server. Untuk mengekspos ke domain publik dengan HTTPS:
+
+```bash
+# 3. Reverse proxy Nginx
+sudo cp deploy/nginx.conf.example /etc/nginx/sites-available/sd.join.co.id
+sudo ln -s /etc/nginx/sites-available/sd.join.co.id /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+
+# 4. HTTPS otomatis (menambahkan blok server 443 & redirect HTTP->HTTPS)
+sudo certbot --nginx -d sd.join.co.id
+```
+
+**Deploy pembaruan berikutnya** (setelah setup awal di atas selesai sekali):
+
+```bash
+cd /var/www/sd-inovasi-ceria
+bash deploy/deploy.sh
+```
+
+Script ini menjalankan `git pull` → `npm ci` → `npm run build` → reload PM2, tanpa menyentuh `data/` atau `public/uploads/`.
+
+### Auto-Deploy dari GitHub (Opsional)
+
+`.github/workflows/deploy.yml` sudah disiapkan untuk otomatis menjalankan `deploy/deploy.sh` di server lewat SSH setiap kali push ke `main` lolos CI. **Tidak aktif secara default** — untuk mengaktifkan, tambahkan secrets berikut di GitHub repo (Settings → Secrets and variables → Actions):
+
+| Secret | Isi |
+| --- | --- |
+| `DEPLOY_HOST` | IP/hostname server |
+| `DEPLOY_USER` | User SSH (disarankan bukan `root`, punya akses tulis ke folder proyek & izin restart PM2) |
+| `DEPLOY_SSH_KEY` | Private key SSH (isi lengkap file, generate key khusus deploy — jangan pakai key pribadi) |
+| `DEPLOY_PATH` | Path folder proyek di server, mis. `/var/www/sd-inovasi-ceria` |
+| `DEPLOY_PORT` | Opsional, port SSH (default 22) |
+
+Selama secrets belum diisi, workflow ini otomatis dilewati (tidak membuat job gagal). Setelah diisi, **setiap push ke `main` akan langsung ter-deploy ke server produksi** — pertimbangkan matang-matang sebelum mengaktifkan, atau gunakan branch protection/review sebelum merge ke `main` sebagai pengaman.
 
 ### Catatan Keamanan Sebelum Go-Live
 
@@ -134,5 +183,9 @@ lib/
 data/             cms.sqlite (database CMS) & settings.json (favicon/tagline) - tidak ikut di-commit
 public/uploads/   Foto yang diunggah admin - tidak ikut di-commit
 tests/e2e/        Test end-to-end Playwright
-.github/workflows/ci.yml   Pipeline CI: lint, build, test E2E
+deploy/           nginx.conf.example & deploy.sh untuk setup/update di server produksi
+ecosystem.config.cjs   Konfigurasi PM2 untuk menjalankan situs di server produksi
+.github/workflows/
+  ci.yml            Pipeline CI: lint, build, test E2E di tiap push/PR
+  deploy.yml        Auto-deploy ke server via SSH setelah CI sukses (opsional, lihat README di atas)
 ```

@@ -56,3 +56,6 @@ public/uploads/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# log PM2 di server produksi (lihat ecosystem.config.cjs)
+/logs/

@@ -1,0 +1,52 @@
+# Author: Zeday | https://join.co.id
+#
+# Contoh konfigurasi Nginx sebagai reverse proxy untuk sd.join.co.id.
+# Salin ke /etc/nginx/sites-available/sd.join.co.id lalu:
+#   sudo ln -s /etc/nginx/sites-available/sd.join.co.id /etc/nginx/sites-enabled/
+#   sudo nginx -t && sudo systemctl reload nginx
+#
+# Setelah itu jalankan Certbot untuk HTTPS otomatis (akan menambahkan
+# blok server 443 dan redirect HTTP->HTTPS sendiri):
+#   sudo certbot --nginx -d sd.join.co.id
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name sd.join.co.id;
+
+    # File statis Next.js (_next/static) di-cache lama karena nama filenya
+    # sudah mengandung hash - aman di-cache selamanya.
+    location /_next/static/ {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_cache_valid 200 365d;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # Foto yang diunggah admin (public/uploads/) - konten bisa berubah
+    # (foto dihapus/diganti), jadi cache lebih pendek daripada _next/static.
+    location /uploads/ {
+        proxy_pass http://127.0.0.1:3000;
+        add_header Cache-Control "public, max-age=3600";
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+
+        # PENTING: X-Real-IP di sini harus diisi $remote_addr (alamat asli
+        # koneksi TCP ke Nginx), BUKAN diteruskan dari klien - inilah yang
+        # membuat lib/rate-limit.ts bisa mempercayai header ini alih-alih
+        # X-Forwarded-For yang lebih mudah dipalsukan lewat proxy berlapis.
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $host;
+
+        # Diperlukan agar WebSocket (HMR saat dev, dan fitur Next.js
+        # lain yang memakainya) berfungsi normal di balik reverse proxy.
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    client_max_body_size 8M; # sedikit di atas batas unggah gambar 5MB di app/api/admin/upload
+}

@@ -1,0 +1,49 @@
+# Author: Zeday | https://join.co.id
+#
+# Auto-deploy ke server produksi via SSH setelah workflow CI sukses di
+# branch main. TIDAK AKTIF sampai secrets di bawah ini diisi di
+# Settings > Secrets and variables > Actions pada repo GitHub:
+#   DEPLOY_HOST      - alamat IP/hostname server (mis. 123.45.67.89)
+#   DEPLOY_USER      - user SSH di server (mis. deploy)
+#   DEPLOY_SSH_KEY   - private key SSH (isi lengkap file, bukan path)
+#   DEPLOY_PATH      - path folder proyek di server (mis. /var/www/sd-inovasi-ceria)
+#   DEPLOY_PORT      - opsional, port SSH (default 22)
+#
+# Selama secrets belum diisi, job ini otomatis dilewati (tidak gagal).
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cek apakah secrets deploy sudah dikonfigurasi
+        id: check
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          if [ -z "$DEPLOY_HOST" ]; then
+            echo "Secrets deploy belum diisi - lewati deploy otomatis." >> "$GITHUB_STEP_SUMMARY"
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy via SSH
+        if: steps.check.outputs.configured == 'true'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          script: |
+            set -e
+            cd "${{ secrets.DEPLOY_PATH }}"
+            bash deploy/deploy.sh
