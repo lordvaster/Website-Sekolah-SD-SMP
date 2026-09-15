@@ -89,11 +89,11 @@ export default function TwoFactorSettings() {
   return (
     <div>
       <h2 className="font-heading text-lg font-bold text-ink dark:text-ink-dark">
-        Verifikasi Dua Langkah (2FA)
+        Verifikasi Dua Langkah (2FA) - Akun Saya
       </h2>
       <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
-        Tambahan keamanan di luar password - login butuh kode 6 digit dari aplikasi
-        authenticator (Google Authenticator, Authy, 1Password, dll).
+        Tambahan keamanan khusus akun anda sendiri, di luar password - login butuh
+        kode 6 digit dari aplikasi authenticator (Google Authenticator, Authy, 1Password, dll).
       </p>
 
       {status === "loading" && (

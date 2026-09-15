@@ -50,8 +50,6 @@ data/cms.sqlite-shm
 data/cms.e2e-test.sqlite*
 data/settings.json
 data/settings.e2e-test.json
-data/2fa.json
-data/2fa.e2e-test.json
 public/uploads/
 
 # Playwright

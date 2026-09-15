@@ -7,6 +7,7 @@ import { createNews } from "./repositories/news";
 import { createGalleryItem } from "./repositories/gallery";
 import { createTeacher } from "./repositories/teachers";
 import { createProgram } from "./repositories/programs";
+import { countAdminUsers, createAdminUser } from "./repositories/admin-users";
 
 function count(table: string) {
   const row = db.prepare(`SELECT COUNT(*) as c FROM ${table}`).get() as { c: number };
@@ -160,13 +161,40 @@ function seedPrograms() {
   programs.forEach((p) => createProgram(p));
 }
 
+// Akun admin pertama ("owner") dibuat sekali dari ADMIN_PASSWORD di .env,
+// supaya deployment yang sudah ada (dari sebelum fitur multi-akun ini)
+// tidak langsung terkunci begitu update di-deploy. Setelah ini, kelola
+// akun (tambah staf, ganti password/role) lewat /admin/pengguna - env var
+// ADMIN_PASSWORD tidak dibaca lagi untuk login setelah baris ini jalan
+// sekali, hanya masih dipakai sebagai kunci penandatanganan token sesi
+// (lihat lib/admin-auth.ts).
+async function seedOwnerAccount() {
+  if (countAdminUsers() > 0) return;
+
+  const password = process.env.ADMIN_PASSWORD;
+  if (!password) {
+    console.error(
+      "[seed] ADMIN_PASSWORD kosong - tidak bisa membuat akun admin pertama. " +
+        "Isi ADMIN_PASSWORD di .env lalu restart server."
+    );
+    return;
+  }
+
+  await createAdminUser({ username: "admin", name: "Admin", password, role: "owner" });
+}
+
 let seeded = false;
 
-export function ensureSeeded() {
+export async function ensureSeeded() {
   if (seeded) return;
+  seeded = true;
   seedNews();
   seedGallery();
   seedTeachers();
   seedPrograms();
-  seeded = true;
+  // Di-await (bukan fire-and-forget) - lihat instrumentation.ts: register()
+  // harus benar-benar selesai, termasuk bagian async ini, sebelum server
+  // mulai menerima request, supaya tidak ada window tanpa akun admin sama
+  // sekali saat request login pertama masuk.
+  await seedOwnerAccount();
 }

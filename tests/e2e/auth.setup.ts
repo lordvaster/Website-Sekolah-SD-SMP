@@ -10,6 +10,7 @@ const authFile = "playwright/.auth/admin.json";
 
 setup("login sebagai admin", async ({ page }) => {
   await page.goto("/admin");
+  await page.fill("#username", "admin");
   await page.fill("#password", E2E_ADMIN_PASSWORD);
   await page.getByRole("button", { name: "Masuk" }).click();
   await page.waitForURL(/\/admin\/pengaturan$/);

@@ -7,9 +7,10 @@ import {
   SESSION_MAX_AGE_SECONDS,
   createPendingTwoFactorToken,
   createSessionToken,
-  isValidPassword,
 } from "@/lib/admin-auth";
-import { isTwoFactorEnabled } from "@/lib/two-factor";
+import { getAdminUserByUsername } from "@/lib/repositories/admin-users";
+import { logActivity } from "@/lib/repositories/activity-log";
+import { verifyPassword } from "@/lib/password";
 import { rateLimitGuard } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
@@ -17,16 +18,26 @@ export async function POST(request: NextRequest) {
   if (limited) return limited;
 
   const body = await request.json().catch(() => null);
+  const username = typeof body?.username === "string" ? body.username.trim() : "";
   const password = typeof body?.password === "string" ? body.password : "";
 
-  if (!isValidPassword(password)) {
-    return NextResponse.json({ error: "Password salah." }, { status: 401 });
+  const user = username ? getAdminUserByUsername(username) : undefined;
+  // Tetap jalankan verifyPassword dengan hash dummy walau user tidak
+  // ditemukan, supaya waktu respons username salah vs password salah tidak
+  // gampang dibedakan (mencegah username enumeration lewat timing).
+  const passwordOk = await verifyPassword(
+    password,
+    user?.passwordHash ?? "0".repeat(32) + ":" + "0".repeat(128)
+  );
+
+  if (!user || !user.active || !passwordOk) {
+    return NextResponse.json({ error: "Username atau password salah." }, { status: 401 });
   }
 
-  if (await isTwoFactorEnabled()) {
-    const pendingToken = await createPendingTwoFactorToken();
+  if (user.twoFactorEnabled) {
+    const pendingToken = await createPendingTwoFactorToken(user.id);
     if (!pendingToken) {
-      return NextResponse.json({ error: "Konfigurasi admin tidak lengkap." }, { status: 500 });
+      return NextResponse.json({ error: "Konfigurasi server tidak lengkap." }, { status: 500 });
     }
     const response = NextResponse.json({ ok: true, twoFactorRequired: true });
     response.cookies.set(ADMIN_2FA_PENDING_COOKIE, pendingToken, {
@@ -39,13 +50,12 @@ export async function POST(request: NextRequest) {
     return response;
   }
 
-  const token = await createSessionToken();
+  const token = await createSessionToken(user.id);
   if (!token) {
-    // Tidak seharusnya terjadi karena isValidPassword sudah mensyaratkan
-    // ADMIN_PASSWORD terisi, tapi dijaga eksplisit agar tidak pernah diam-diam
-    // mengeset cookie sesi dengan nilai yang tidak valid.
-    return NextResponse.json({ error: "Konfigurasi admin tidak lengkap." }, { status: 500 });
+    return NextResponse.json({ error: "Konfigurasi server tidak lengkap." }, { status: 500 });
   }
+
+  logActivity({ userId: user.id, username: user.username, action: "login" });
 
   const response = NextResponse.json({ ok: true, twoFactorRequired: false });
   response.cookies.set(ADMIN_COOKIE, token, {

@@ -77,20 +77,27 @@ Untuk skala website sekolah biasa (bukan trafik tinggi), deploy ke VPS jauh lebi
 
 ## Panel Admin
 
-Buka `/admin`, masuk dengan `ADMIN_PASSWORD`. Menu yang tersedia:
+Buka `/admin`. Setiap staf punya **akun individual** (username + password sendiri, bukan lagi satu password bersama) dengan salah satu dari 2 peran:
 
-| Menu | Fungsi |
-| --- | --- |
-| **Pengaturan** | Ganti favicon/icon situs & tagline. Berlaku instan (favicon) atau dalam ≤1 menit (tagline, lewat ISR). Juga tempat mengaktifkan **Verifikasi Dua Langkah (2FA)** - login butuh kode 6 digit dari aplikasi authenticator (Google Authenticator/Authy/1Password) selain password. |
-| **Berita** | Tulis, edit, hapus artikel berita/pengumuman lengkap dengan gambar sampul. |
-| **Galeri** | Unggah & hapus foto kegiatan, dikategorikan Kelas/Acara/Aktivitas. |
-| **Guru** | Tambah, edit, hapus profil tenaga pengajar beserta foto. |
-| **Program** | Kelola daftar jenjang/kelas (TK A - Kelas 6) beserta poin unggulan. |
-| **Pendaftaran** | Lihat semua pendaftaran siswa baru yang masuk lewat halaman Kontak, dan ubah statusnya (Baru/Dihubungi/Diterima/Ditolak). |
+- **Owner** - akses penuh: semua menu di bawah, ditambah **Pengguna** (kelola akun staf) dan **Aktivitas** (riwayat siapa mengubah apa).
+- **Editor** - kelola konten saja (tidak bisa melihat/mengubah daftar pengguna atau riwayat aktivitas staf lain).
+
+| Menu | Fungsi | Peran |
+| --- | --- | --- |
+| **Pengaturan** | Ganti favicon/icon situs & tagline, dan aktifkan **Verifikasi Dua Langkah (2FA)** untuk akun sendiri (kode 6 digit dari aplikasi authenticator, selain password). | Semua |
+| **Berita** | Tulis, edit, hapus artikel berita/pengumuman lengkap dengan gambar sampul. | Semua |
+| **Galeri** | Unggah & hapus foto kegiatan, dikategorikan Kelas/Acara/Aktivitas. | Semua |
+| **Guru** | Tambah, edit, hapus profil tenaga pengajar beserta foto. | Semua |
+| **Program** | Kelola daftar jenjang/kelas (TK A - Kelas 6) beserta poin unggulan. | Semua |
+| **Pendaftaran** | Lihat semua pendaftaran siswa baru yang masuk lewat halaman Kontak, dan ubah statusnya (Baru/Dihubungi/Diterima/Ditolak). | Semua |
+| **Pengguna** | Tambah/edit/nonaktifkan/hapus akun staf, ganti peran, reset password staf lain. | Owner |
+| **Aktivitas** | Riwayat login dan setiap perubahan konten/pengaturan/pengguna, lengkap dengan siapa pelakunya. | Owner |
 
 Perubahan di Berita/Galeri/Guru/Program otomatis memicu revalidasi halaman publik terkait (`revalidatePath`), jadi tampil seketika tanpa perlu menunggu atau deploy ulang.
 
-**Kehilangan akses ke aplikasi authenticator (2FA)?** Tidak ada mekanisme reset lewat website (disengaja, supaya tidak jadi celah bypass). Pulihkan lewat akses server langsung: hapus `data/2fa.json` di server (SSH), lalu login ulang hanya dengan password - 2FA akan kembali nonaktif sampai diaktifkan ulang.
+**Akun admin pertama** dibuat otomatis sekali saat server pertama kali jalan: username `admin`, password diambil dari `ADMIN_PASSWORD` di `.env`, peran `owner`. Setelah itu, `ADMIN_PASSWORD` **tidak dipakai lagi untuk login** (login memakai password per-akun di database) - env var ini hanya masih dipakai sebagai kunci penandatanganan sesi. Kelola akun lain (tambah staf, ganti password/peran) lewat menu **Pengguna**.
+
+**Kehilangan akses ke aplikasi authenticator (2FA)?** Tidak ada mekanisme reset lewat website (disengaja, supaya tidak jadi celah bypass). Owner bisa membantu lewat akses server langsung: jalankan `sqlite3 data/cms.sqlite "UPDATE admin_users SET two_factor_enabled=0, two_factor_secret=NULL WHERE username='USERNAME_YANG_TERKUNCI';"`, lalu staf tersebut login ulang hanya dengan password dan bisa mengaktifkan 2FA lagi dari awal.
 
 ## Testing
 

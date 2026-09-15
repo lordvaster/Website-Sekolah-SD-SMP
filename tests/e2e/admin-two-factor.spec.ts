@@ -24,6 +24,7 @@ test.describe("Verifikasi Dua Langkah (2FA) admin", () => {
     // Simulasikan browser baru yang belum login sama sekali.
     await page.context().clearCookies();
     await page.goto("/admin");
+    await page.fill("#username", "admin");
     await page.fill("#password", E2E_ADMIN_PASSWORD);
     await page.getByRole("button", { name: "Masuk" }).click();
     await expect(page.getByRole("heading", { name: "Verifikasi Dua Langkah" })).toBeVisible();

@@ -23,6 +23,7 @@ test.describe("Akses panel admin", () => {
 
   test("password salah menampilkan pesan error", async ({ page }) => {
     await page.goto("/admin");
+    await page.fill("#username", "admin");
     await page.fill("#password", "password-salah-sekali");
     await page.getByRole("button", { name: "Masuk" }).click();
     await expect(page.locator('p[role="alert"]')).toHaveText(/password salah/i);
@@ -31,6 +32,7 @@ test.describe("Akses panel admin", () => {
 
   test("password benar login dan redirect ke pengaturan", async ({ page }) => {
     await page.goto("/admin");
+    await page.fill("#username", "admin");
     await page.fill("#password", E2E_ADMIN_PASSWORD);
     await page.getByRole("button", { name: "Masuk" }).click();
     await expect(page).toHaveURL(/\/admin\/pengaturan$/);

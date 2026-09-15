@@ -11,6 +11,17 @@ export function formatDate(iso: string) {
   }).format(new Date(iso));
 }
 
+// SQLite datetime('now') menyimpan waktu UTC tanpa penanda "Z" - tambahkan
+// eksplisit di sini, kalau tidak Date akan salah mengiranya sebagai waktu
+// lokal server dan bergeser sesuai zona waktu.
+export function formatDateTime(sqliteUtcDateTime: string) {
+  const iso = sqliteUtcDateTime.includes("T") ? sqliteUtcDateTime : `${sqliteUtcDateTime.replace(" ", "T")}Z`;
+  return new Intl.DateTimeFormat("id-ID", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(iso));
+}
+
 const htmlEscapes: Record<string, string> = {
   "&": "&amp;",
   "<": "&lt;",

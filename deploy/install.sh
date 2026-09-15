@@ -80,7 +80,10 @@ if [ ! -f .env ]; then
   sed -i "s|^NEXT_PUBLIC_SITE_URL=.*|NEXT_PUBLIC_SITE_URL=https://${DOMAIN}|" .env
   sed -i "s|^ADMIN_PASSWORD=.*|ADMIN_PASSWORD=${GENERATED_PASSWORD}|" .env
   echo
-  echo "    Password admin awal (dibuat otomatis, catat sekarang): ${GENERATED_PASSWORD}"
+  echo "    Login admin pertama (dibuat otomatis saat server pertama jalan):"
+  echo "      Username: admin"
+  echo "      Password: ${GENERATED_PASSWORD}"
+  echo "    Catat sekarang. Setelah login, kelola akun staf lain lewat menu Pengguna."
   echo
   echo "    .env sudah dibuat, tapi SMTP_*, CONTACT_RECEIVER_EMAIL, dan"
   echo "    NEXT_PUBLIC_SHOW_DEVELOPER_CREDIT masih nilai contoh - wajib diisi"

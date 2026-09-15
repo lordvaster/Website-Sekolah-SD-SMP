@@ -1,9 +1,10 @@
 // Author: Zeday | https://join.co.id
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdminUser } from "@/lib/require-admin";
 import { validationErrorResponse } from "@/lib/api-helpers";
 import { updateRegistrationStatus } from "@/lib/repositories/registrations";
+import { logActivity } from "@/lib/repositories/activity-log";
 
 const statusSchema = z.object({
   status: z.enum(["baru", "dihubungi", "diterima", "ditolak"]),
@@ -13,8 +14,8 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const unauthorized = await requireAdmin(request);
-  if (unauthorized) return unauthorized;
+  const auth = await requireAdminUser(request);
+  if ("unauthorized" in auth) return auth.unauthorized;
 
   const body = await request.json().catch(() => null);
   const parsed = statusSchema.safeParse(body);
@@ -30,5 +31,11 @@ export async function PATCH(
   if (!updated) {
     return NextResponse.json({ error: "Pendaftaran tidak ditemukan." }, { status: 404 });
   }
+  logActivity({
+    userId: auth.user.id,
+    username: auth.user.username,
+    action: "registration.status",
+    target: `#${idNum} -> ${parsed.data.status}`,
+  });
   return NextResponse.json({ ok: true });
 }

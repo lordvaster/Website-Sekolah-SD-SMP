@@ -1,17 +1,18 @@
 // Author: Zeday | https://join.co.id
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdminUser } from "@/lib/require-admin";
 import { validationErrorResponse } from "@/lib/api-helpers";
 import { programAdminSchema, slugSchema } from "@/lib/admin-validation";
 import { deleteProgram, getProgramById, updateProgram } from "@/lib/repositories/programs";
+import { logActivity } from "@/lib/repositories/activity-log";
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const unauthorized = await requireAdmin(request);
-  if (unauthorized) return unauthorized;
+  const auth = await requireAdminUser(request);
+  if ("unauthorized" in auth) return auth.unauthorized;
 
   const { id: idParam } = await params;
   const id = Number(idParam);
@@ -35,6 +36,12 @@ export async function PUT(
     });
     revalidatePath("/program");
     revalidatePath("/kontak");
+    logActivity({
+      userId: auth.user.id,
+      username: auth.user.username,
+      action: "program.update",
+      target: updated?.name,
+    });
     return NextResponse.json(updated);
   } catch (error) {
     if (String(error).includes("UNIQUE constraint failed")) {
@@ -52,8 +59,8 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const unauthorized = await requireAdmin(request);
-  if (unauthorized) return unauthorized;
+  const auth = await requireAdminUser(request);
+  if ("unauthorized" in auth) return auth.unauthorized;
 
   const { id } = await params;
   const idNum = Number(id);
@@ -61,11 +68,18 @@ export async function DELETE(
     return NextResponse.json({ error: "ID tidak valid." }, { status: 400 });
   }
 
+  const existing = getProgramById(idNum);
   const deleted = deleteProgram(idNum);
   if (!deleted) {
     return NextResponse.json({ error: "Program tidak ditemukan." }, { status: 404 });
   }
   revalidatePath("/program");
   revalidatePath("/kontak");
+  logActivity({
+    userId: auth.user.id,
+    username: auth.user.username,
+    action: "program.delete",
+    target: existing?.name,
+  });
   return NextResponse.json({ ok: true });
 }

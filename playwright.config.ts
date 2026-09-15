@@ -54,7 +54,6 @@ export default defineConfig({
       ADMIN_PASSWORD: E2E_ADMIN_PASSWORD,
       CMS_DB_PATH: "./data/cms.e2e-test.sqlite",
       SETTINGS_PATH: "./data/settings.e2e-test.json",
-      TWO_FACTOR_STATE_PATH: "./data/2fa.e2e-test.json",
       // Nginx (yang menimpa x-real-ip di produksi) tidak ada di depan
       // `next dev` saat E2E - semua request jadi terlihat berasal dari IP
       // "unknown" yang sama, jadi login berulang antar spec + retry bisa

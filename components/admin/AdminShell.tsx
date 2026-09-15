@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
+import type { AdminRole } from "@/lib/repositories/admin-users";
 
 const links = [
   { href: "/admin/pengaturan", label: "Pengaturan" },
@@ -16,9 +17,21 @@ const links = [
   { href: "/admin/pendaftaran", label: "Pendaftaran" },
 ];
 
-export default function AdminShell({ children }: { children: ReactNode }) {
+const ownerOnlyLinks = [
+  { href: "/admin/pengguna", label: "Pengguna" },
+  { href: "/admin/aktivitas", label: "Aktivitas" },
+];
+
+export default function AdminShell({
+  children,
+  user,
+}: {
+  children: ReactNode;
+  user: { name: string; role: AdminRole };
+}) {
   const pathname = usePathname();
   const router = useRouter();
+  const visibleLinks = user.role === "owner" ? [...links, ...ownerOnlyLinks] : links;
 
   const onLogout = async () => {
     await fetch("/api/admin/logout", { method: "POST" });
@@ -33,17 +46,22 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           <span className="font-heading font-bold text-primary dark:text-primary-light">
             Panel Admin
           </span>
-          <button
-            type="button"
-            onClick={onLogout}
-            className="flex items-center gap-1 text-sm font-semibold text-ink/60 hover:text-cta dark:text-ink-dark/60"
-          >
-            <LogOut className="h-4 w-4" /> Keluar
-          </button>
+          <div className="flex items-center gap-4">
+            <span className="hidden text-sm text-ink/60 dark:text-ink-dark/60 sm:inline">
+              {user.name} · <span className="capitalize">{user.role}</span>
+            </span>
+            <button
+              type="button"
+              onClick={onLogout}
+              className="flex items-center gap-1 text-sm font-semibold text-ink/60 hover:text-cta dark:text-ink-dark/60"
+            >
+              <LogOut className="h-4 w-4" /> Keluar
+            </button>
+          </div>
         </div>
         <nav aria-label="Navigasi admin" className="container-page">
           <ul className="flex flex-wrap gap-1 pb-3">
-            {links.map((link) => {
+            {visibleLinks.map((link) => {
               const active = pathname.startsWith(link.href);
               return (
                 <li key={link.href}>

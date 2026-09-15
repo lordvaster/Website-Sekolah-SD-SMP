@@ -14,7 +14,7 @@ export async function proxy(request: NextRequest) {
 
   const token = request.cookies.get(ADMIN_COOKIE)?.value;
 
-  if (!(await isValidSessionToken(token))) {
+  if ((await isValidSessionToken(token)) === null) {
     const loginUrl = new URL("/admin", request.url);
     return NextResponse.redirect(loginUrl);
   }

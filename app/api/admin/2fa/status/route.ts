@@ -1,11 +1,10 @@
 // Author: Zeday | https://join.co.id
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/admin-auth";
-import { isTwoFactorEnabled } from "@/lib/two-factor";
+import { requireAdminUser } from "@/lib/require-admin";
 
 export async function GET(request: NextRequest) {
-  const unauthorized = await requireAdmin(request);
-  if (unauthorized) return unauthorized;
+  const auth = await requireAdminUser(request);
+  if ("unauthorized" in auth) return auth.unauthorized;
 
-  return NextResponse.json({ enabled: await isTwoFactorEnabled() });
+  return NextResponse.json({ enabled: auth.user.twoFactorEnabled });
 }

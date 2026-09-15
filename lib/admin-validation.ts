@@ -72,3 +72,30 @@ export const programAdminSchema = z.object({
 export function randomHue() {
   return Math.floor(Math.random() * 360);
 }
+
+const usernameSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .min(3, "Username minimal 3 karakter")
+  .max(32, "Username maksimal 32 karakter")
+  .regex(/^[a-z0-9._-]+$/, "Username hanya boleh huruf kecil, angka, titik, garis bawah, atau strip");
+
+const passwordSchema = z.string().min(8, "Password minimal 8 karakter").max(200);
+
+export const createUserSchema = z.object({
+  username: usernameSchema,
+  name: z.string().trim().min(2, "Nama minimal 2 karakter").max(100),
+  password: passwordSchema,
+  role: z.enum(["owner", "editor"]),
+});
+
+export const updateUserSchema = z.object({
+  name: z.string().trim().min(2, "Nama minimal 2 karakter").max(100),
+  role: z.enum(["owner", "editor"]),
+  active: z.boolean(),
+});
+
+export const resetPasswordSchema = z.object({
+  password: passwordSchema,
+});

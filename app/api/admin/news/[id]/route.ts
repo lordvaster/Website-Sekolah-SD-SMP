@@ -1,17 +1,18 @@
 // Author: Zeday | https://join.co.id
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdminUser } from "@/lib/require-admin";
 import { validationErrorResponse } from "@/lib/api-helpers";
 import { newsAdminSchema, slugSchema } from "@/lib/admin-validation";
 import { deleteNews, getNewsById, updateNews } from "@/lib/repositories/news";
+import { logActivity } from "@/lib/repositories/activity-log";
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const unauthorized = await requireAdmin(request);
-  if (unauthorized) return unauthorized;
+  const auth = await requireAdminUser(request);
+  if ("unauthorized" in auth) return auth.unauthorized;
 
   const { id: idParam } = await params;
   const id = Number(idParam);
@@ -30,6 +31,12 @@ export async function PUT(
     revalidatePath("/berita");
     revalidatePath(`/berita/${existing.slug}`);
     if (slug !== existing.slug) revalidatePath(`/berita/${slug}`);
+    logActivity({
+      userId: auth.user.id,
+      username: auth.user.username,
+      action: "news.update",
+      target: updated?.title,
+    });
     return NextResponse.json(updated);
   } catch (error) {
     if (String(error).includes("UNIQUE constraint failed")) {
@@ -47,8 +54,8 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const unauthorized = await requireAdmin(request);
-  if (unauthorized) return unauthorized;
+  const auth = await requireAdminUser(request);
+  if ("unauthorized" in auth) return auth.unauthorized;
 
   const { id: idParam } = await params;
   const id = Number(idParam);
@@ -57,5 +64,11 @@ export async function DELETE(
   revalidatePath("/");
   revalidatePath("/berita");
   if (existing) revalidatePath(`/berita/${existing.slug}`);
+  logActivity({
+    userId: auth.user.id,
+    username: auth.user.username,
+    action: "news.delete",
+    target: existing?.title,
+  });
   return NextResponse.json({ ok: true });
 }

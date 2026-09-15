@@ -8,6 +8,7 @@ import { Loader2, Lock, ShieldCheck } from "lucide-react";
 export default function AdminLoginPage() {
   const router = useRouter();
   const [step, setStep] = useState<"password" | "twoFactor">("password");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
@@ -21,7 +22,7 @@ export default function AdminLoginPage() {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ username, password }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -76,14 +77,30 @@ export default function AdminLoginPage() {
           </p>
 
           <div className="mt-6">
+            <label htmlFor="username" className="block text-sm font-semibold text-ink dark:text-ink-dark">
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              autoComplete="username"
+              required
+              autoFocus
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
+            />
+          </div>
+
+          <div className="mt-4">
             <label htmlFor="password" className="block text-sm font-semibold text-ink dark:text-ink-dark">
               Password
             </label>
             <input
               id="password"
               type="password"
+              autoComplete="current-password"
               required
-              autoFocus
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"

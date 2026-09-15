@@ -1,11 +1,12 @@
 // Author: Zeday | https://join.co.id
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdminUser } from "@/lib/require-admin";
 import { readSettings, writeSettings } from "@/lib/settings";
 import { iconPresets, type IconPresetKey } from "@/lib/icon-presets";
 import { rateLimitGuard } from "@/lib/rate-limit";
 import { validationErrorResponse } from "@/lib/api-helpers";
+import { logActivity } from "@/lib/repositories/activity-log";
 
 const updateSchema = z.object({
   activeIcon: z.enum(Object.keys(iconPresets) as [string, ...string[]]),
@@ -24,8 +25,8 @@ export async function POST(request: NextRequest) {
   const limited = rateLimitGuard(request, "settings");
   if (limited) return limited;
 
-  const unauthorized = await requireAdmin(request);
-  if (unauthorized) return unauthorized;
+  const auth = await requireAdminUser(request);
+  if ("unauthorized" in auth) return auth.unauthorized;
 
   const body = await request.json().catch(() => null);
   const parsed = updateSchema.safeParse(body);
@@ -36,6 +37,7 @@ export async function POST(request: NextRequest) {
       activeIcon: parsed.data.activeIcon as IconPresetKey,
       siteTagline: parsed.data.siteTagline,
     });
+    logActivity({ userId: auth.user.id, username: auth.user.username, action: "settings.update" });
     return NextResponse.json(updated);
   } catch (error) {
     console.error("[api/settings] Gagal menyimpan data/settings.json:", error);

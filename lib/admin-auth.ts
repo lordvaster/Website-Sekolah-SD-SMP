@@ -1,17 +1,22 @@
 // Author: Zeday | https://join.co.id
-import { NextResponse, type NextRequest } from "next/server";
-
 // Menggunakan Web Crypto API (bukan node:crypto) agar satu implementasi
 // yang sama bisa dipakai baik oleh proxy.ts (Edge Runtime) maupun route
-// handler di app/api/** (Node.js runtime).
+// handler di app/api/** (Node.js runtime). File ini SENGAJA tidak
+// mengimpor lib/db.ts (better-sqlite3, modul native Node) - itu tidak
+// tersedia di Edge Runtime. Pengecekan yang butuh data pengguna dari
+// database (peran, status aktif) ada di lib/require-admin.ts, hanya
+// dipakai oleh route handler (Node.js runtime), tidak pernah oleh proxy.ts.
 //
-// Token sesi berupa "<expiredAtEpochSeconds>.<hmacHex>" yang ditandatangani
-// dengan HMAC-SHA256 (ADMIN_PASSWORD sebagai kunci). crypto.subtle.verify
-// membandingkan signature secara timing-safe, sehingga verifikasi token
-// tidak bocor lewat timing side-channel. Ini bukan pengganti session store
-// sungguhan: token yang bocor sebelum masa berlakunya habis tetap valid
-// sampai kedaluwarsa (tidak ada revocation list). Untuk kebutuhan admin
-// yang lebih sensitif, ganti dengan session store terpusat (mis. Redis).
+// Token sesi berupa "<userId>.<expiredAtEpochSeconds>.<hmacHex>" yang
+// ditandatangani dengan HMAC-SHA256 memakai ADMIN_PASSWORD sebagai kunci
+// (nama env var ini sekarang berperan sebagai kunci penandatanganan sesi
+// server-wide, bukan lagi password bersama - lihat lib/repositories/
+// admin-users.ts untuk password per akun). crypto.subtle.verify
+// membandingkan signature secara timing-safe. Ini bukan pengganti session
+// store sungguhan: token yang bocor sebelum masa berlakunya habis tetap
+// valid sampai kedaluwarsa (tidak ada revocation list terpusat) - untuk
+// kebutuhan admin yang lebih sensitif, ganti dengan session store terpusat
+// (mis. Redis).
 
 export const ADMIN_COOKIE = "admin_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 8; // 8 jam, samakan dengan cookie maxAge
@@ -25,7 +30,7 @@ export const ADMIN_2FA_PENDING_COOKIE = "admin_2fa_pending";
 const PENDING_TTL_SECONDS = 60 * 5;
 const PENDING_PREFIX = "pending2fa:";
 
-function getSecret() {
+function getSessionSecret() {
   return process.env.ADMIN_PASSWORD || "";
 }
 
@@ -54,109 +59,66 @@ async function getHmacKey(secret: string) {
   );
 }
 
-// Perbandingan string tanpa early-exit, untuk mengurangi celah timing
-// side-channel pada pengecekan password polos (bukan signature HMAC,
-// yang verifikasinya sudah timing-safe lewat crypto.subtle.verify).
-function constantTimeStringEqual(a: string, b: string) {
-  const aBytes = new TextEncoder().encode(a);
-  const bBytes = new TextEncoder().encode(b);
-  const length = Math.max(aBytes.length, bBytes.length, 1);
-  let diff = aBytes.length === bBytes.length ? 0 : 1;
-  for (let i = 0; i < length; i++) {
-    diff |= (aBytes[i] ?? 0) ^ (bBytes[i] ?? 0);
-  }
-  return diff === 0;
-}
-
-export function isValidPassword(password: string) {
-  const secret = getSecret();
-  return Boolean(secret) && constantTimeStringEqual(password, secret);
-}
-
-export async function createSessionToken(): Promise<string | null> {
-  const secret = getSecret();
+async function sign(message: string): Promise<string | null> {
+  const secret = getSessionSecret();
   if (!secret) return null;
-
-  const expiresAt = Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS;
   const key = await getHmacKey(secret);
-  const signature = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    new TextEncoder().encode(String(expiresAt))
-  );
-  return `${expiresAt}.${toHex(signature)}`;
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(message));
+  return toHex(signature);
 }
 
-export async function isValidSessionToken(token: string | undefined) {
-  if (!token) return false;
-  const secret = getSecret();
+async function verify(message: string, signatureHex: string): Promise<boolean> {
+  const secret = getSessionSecret();
   if (!secret) return false;
-
-  const [expiresAtRaw, signatureHex] = token.split(".");
-  const expiresAt = Number(expiresAtRaw);
-  if (!expiresAtRaw || !signatureHex || Number.isNaN(expiresAt)) return false;
-  if (Math.floor(Date.now() / 1000) > expiresAt) return false;
-
   const signatureBytes = fromHex(signatureHex);
   if (!signatureBytes) return false;
-
   const key = await getHmacKey(secret);
-  return crypto.subtle.verify(
-    "HMAC",
-    key,
-    signatureBytes,
-    new TextEncoder().encode(String(expiresAt))
-  );
+  return crypto.subtle.verify("HMAC", key, signatureBytes, new TextEncoder().encode(message));
 }
 
 export const SESSION_MAX_AGE_SECONDS = SESSION_TTL_SECONDS;
 export const PENDING_2FA_MAX_AGE_SECONDS = PENDING_TTL_SECONDS;
 
-export async function createPendingTwoFactorToken(): Promise<string | null> {
-  const secret = getSecret();
-  if (!secret) return null;
-
-  const expiresAt = Math.floor(Date.now() / 1000) + PENDING_TTL_SECONDS;
-  const key = await getHmacKey(secret);
-  const signature = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    new TextEncoder().encode(PENDING_PREFIX + expiresAt)
-  );
-  return `${expiresAt}.${toHex(signature)}`;
+export async function createSessionToken(userId: number): Promise<string | null> {
+  const expiresAt = Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS;
+  const signatureHex = await sign(`${userId}.${expiresAt}`);
+  if (!signatureHex) return null;
+  return `${userId}.${expiresAt}.${signatureHex}`;
 }
 
-export async function isValidPendingTwoFactorToken(token: string | undefined) {
-  if (!token) return false;
-  const secret = getSecret();
-  if (!secret) return false;
+// Mengembalikan userId yang tertanam di token bila valid, atau null bila
+// tidak (kedaluwarsa, signature tidak cocok, atau format rusak).
+export async function isValidSessionToken(token: string | undefined): Promise<number | null> {
+  if (!token) return null;
 
-  const [expiresAtRaw, signatureHex] = token.split(".");
+  const [userIdRaw, expiresAtRaw, signatureHex] = token.split(".");
+  const userId = Number(userIdRaw);
   const expiresAt = Number(expiresAtRaw);
-  if (!expiresAtRaw || !signatureHex || Number.isNaN(expiresAt)) return false;
-  if (Math.floor(Date.now() / 1000) > expiresAt) return false;
+  if (!userIdRaw || !expiresAtRaw || !signatureHex) return null;
+  if (Number.isNaN(userId) || Number.isNaN(expiresAt)) return null;
+  if (Math.floor(Date.now() / 1000) > expiresAt) return null;
 
-  const signatureBytes = fromHex(signatureHex);
-  if (!signatureBytes) return false;
-
-  const key = await getHmacKey(secret);
-  return crypto.subtle.verify(
-    "HMAC",
-    key,
-    signatureBytes,
-    new TextEncoder().encode(PENDING_PREFIX + expiresAt)
-  );
+  const ok = await verify(`${userId}.${expiresAt}`, signatureHex);
+  return ok ? userId : null;
 }
 
-// Dipakai bersama oleh setiap route handler admin (selain login) supaya
-// pengecekan cookie + verifikasi token tidak disalin-tempel di tiap route -
-// proxy.ts sudah melindungi navigasi halaman /admin/**, helper ini
-// melindungi route API /api/admin/** (dan /api/settings) dengan cara yang
-// sama karena route handler tidak dilewati oleh proxy halaman.
-export async function requireAdmin(request: NextRequest) {
-  const token = request.cookies.get(ADMIN_COOKIE)?.value;
-  if (!(await isValidSessionToken(token))) {
-    return NextResponse.json({ error: "Tidak diizinkan." }, { status: 401 });
-  }
-  return null;
+export async function createPendingTwoFactorToken(userId: number): Promise<string | null> {
+  const expiresAt = Math.floor(Date.now() / 1000) + PENDING_TTL_SECONDS;
+  const signatureHex = await sign(`${PENDING_PREFIX}${userId}.${expiresAt}`);
+  if (!signatureHex) return null;
+  return `${userId}.${expiresAt}.${signatureHex}`;
+}
+
+export async function isValidPendingTwoFactorToken(token: string | undefined): Promise<number | null> {
+  if (!token) return null;
+
+  const [userIdRaw, expiresAtRaw, signatureHex] = token.split(".");
+  const userId = Number(userIdRaw);
+  const expiresAt = Number(expiresAtRaw);
+  if (!userIdRaw || !expiresAtRaw || !signatureHex) return null;
+  if (Number.isNaN(userId) || Number.isNaN(expiresAt)) return null;
+  if (Math.floor(Date.now() / 1000) > expiresAt) return null;
+
+  const ok = await verify(`${PENDING_PREFIX}${userId}.${expiresAt}`, signatureHex);
+  return ok ? userId : null;
 }

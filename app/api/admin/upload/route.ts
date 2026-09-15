@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/require-admin";
 import { rateLimitGuard } from "@/lib/rate-limit";
 
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
