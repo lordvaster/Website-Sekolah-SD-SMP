@@ -64,7 +64,7 @@ Buka [http://localhost:3000](http://localhost:3000). Database SQLite (`data/cms.
 
 ## Database & Penyimpanan File (Penting Sebelum Deploy)
 
-CMS (Berita, Galeri, Guru, Program, Pendaftaran) disimpan di **file SQLite** (`data/cms.sqlite`, dibaca lewat `better-sqlite3`), dan foto yang diunggah admin disimpan sebagai file biasa di `public/uploads/`.
+CMS (Berita, Galeri, Guru, Program, Pendaftaran) disimpan di **file SQLite** (`data/cms.sqlite`, dibaca lewat `better-sqlite3`), foto yang diunggah admin disimpan sebagai file biasa di `public/uploads/`, dan pengaturan situs (`data/settings.json`) serta status 2FA admin (`data/2fa.json`) juga disimpan sebagai file di server. Semuanya **wajib ikut dibackup** - bukan cuma `data/cms.sqlite`.
 
 Ini bekerja baik untuk **deploy di server Node.js sendiri (VPS)** yang disknya persisten antar-request — lihat bagian Build & Deploy di bawah.
 
@@ -81,7 +81,7 @@ Buka `/admin`, masuk dengan `ADMIN_PASSWORD`. Menu yang tersedia:
 
 | Menu | Fungsi |
 | --- | --- |
-| **Pengaturan** | Ganti favicon/icon situs & tagline. Berlaku instan (favicon) atau dalam ≤1 menit (tagline, lewat ISR). |
+| **Pengaturan** | Ganti favicon/icon situs & tagline. Berlaku instan (favicon) atau dalam ≤1 menit (tagline, lewat ISR). Juga tempat mengaktifkan **Verifikasi Dua Langkah (2FA)** - login butuh kode 6 digit dari aplikasi authenticator (Google Authenticator/Authy/1Password) selain password. |
 | **Berita** | Tulis, edit, hapus artikel berita/pengumuman lengkap dengan gambar sampul. |
 | **Galeri** | Unggah & hapus foto kegiatan, dikategorikan Kelas/Acara/Aktivitas. |
 | **Guru** | Tambah, edit, hapus profil tenaga pengajar beserta foto. |
@@ -89,6 +89,8 @@ Buka `/admin`, masuk dengan `ADMIN_PASSWORD`. Menu yang tersedia:
 | **Pendaftaran** | Lihat semua pendaftaran siswa baru yang masuk lewat halaman Kontak, dan ubah statusnya (Baru/Dihubungi/Diterima/Ditolak). |
 
 Perubahan di Berita/Galeri/Guru/Program otomatis memicu revalidasi halaman publik terkait (`revalidatePath`), jadi tampil seketika tanpa perlu menunggu atau deploy ulang.
+
+**Kehilangan akses ke aplikasi authenticator (2FA)?** Tidak ada mekanisme reset lewat website (disengaja, supaya tidak jadi celah bypass). Pulihkan lewat akses server langsung: hapus `data/2fa.json` di server (SSH), lalu login ulang hanya dengan password - 2FA akan kembali nonaktif sampai diaktifkan ulang.
 
 ## Testing
 

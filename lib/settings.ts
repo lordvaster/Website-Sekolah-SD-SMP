@@ -3,7 +3,12 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { defaultIcon, IconPresetKey, iconPresets } from "./icon-presets";
 
-const settingsPath = path.join(process.cwd(), "data", "settings.json");
+// SETTINGS_PATH memungkinkan test E2E (lihat playwright.config.ts) memakai
+// file terpisah dari data/settings.json yang sungguhan, supaya menjalankan
+// test tidak ikut mengubah pengaturan situs produksi yang sedang berjalan.
+const settingsPath = process.env.SETTINGS_PATH
+  ? path.resolve(process.env.SETTINGS_PATH)
+  : path.join(process.cwd(), "data", "settings.json");
 const DEFAULT_TAGLINE = "Belajar Seru, Tumbuh Percaya Diri";
 
 export type SiteSettings = {

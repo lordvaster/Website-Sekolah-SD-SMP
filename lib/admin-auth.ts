@@ -16,6 +16,15 @@ import { NextResponse, type NextRequest } from "next/server";
 export const ADMIN_COOKIE = "admin_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 8; // 8 jam, samakan dengan cookie maxAge
 
+// Cookie sementara antara "password benar" dan "kode 2FA benar" saat 2FA
+// aktif - sengaja dibuat pendek (5 menit) dan ditandatangani dengan pesan
+// yang diberi awalan berbeda dari token sesi penuh (lihat PENDING_PREFIX di
+// bawah), supaya token ini tidak bisa dipakai sebagai pengganti sesi admin
+// yang sesungguhnya walau sama-sama ditandatangani dengan kunci yang sama.
+export const ADMIN_2FA_PENDING_COOKIE = "admin_2fa_pending";
+const PENDING_TTL_SECONDS = 60 * 5;
+const PENDING_PREFIX = "pending2fa:";
+
 function getSecret() {
   return process.env.ADMIN_PASSWORD || "";
 }
@@ -101,6 +110,43 @@ export async function isValidSessionToken(token: string | undefined) {
 }
 
 export const SESSION_MAX_AGE_SECONDS = SESSION_TTL_SECONDS;
+export const PENDING_2FA_MAX_AGE_SECONDS = PENDING_TTL_SECONDS;
+
+export async function createPendingTwoFactorToken(): Promise<string | null> {
+  const secret = getSecret();
+  if (!secret) return null;
+
+  const expiresAt = Math.floor(Date.now() / 1000) + PENDING_TTL_SECONDS;
+  const key = await getHmacKey(secret);
+  const signature = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    new TextEncoder().encode(PENDING_PREFIX + expiresAt)
+  );
+  return `${expiresAt}.${toHex(signature)}`;
+}
+
+export async function isValidPendingTwoFactorToken(token: string | undefined) {
+  if (!token) return false;
+  const secret = getSecret();
+  if (!secret) return false;
+
+  const [expiresAtRaw, signatureHex] = token.split(".");
+  const expiresAt = Number(expiresAtRaw);
+  if (!expiresAtRaw || !signatureHex || Number.isNaN(expiresAt)) return false;
+  if (Math.floor(Date.now() / 1000) > expiresAt) return false;
+
+  const signatureBytes = fromHex(signatureHex);
+  if (!signatureBytes) return false;
+
+  const key = await getHmacKey(secret);
+  return crypto.subtle.verify(
+    "HMAC",
+    key,
+    signatureBytes,
+    new TextEncoder().encode(PENDING_PREFIX + expiresAt)
+  );
+}
 
 // Dipakai bersama oleh setiap route handler admin (selain login) supaya
 // pengecekan cookie + verifikasi token tidak disalin-tempel di tiap route -
