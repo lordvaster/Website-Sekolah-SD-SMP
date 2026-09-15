@@ -90,17 +90,19 @@ export default function Footer({ tagline }: { tagline?: string }) {
           <p>
             © {new Date().getFullYear()} {siteConfig.name}. Semua hak dilindungi.
           </p>
-          <p>
-            Dikembangkan oleh{" "}
-            <a
-              href={siteConfig.developer.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold text-primary hover:underline dark:text-primary-light"
-            >
-              {siteConfig.developer.name}
-            </a>
-          </p>
+          {siteConfig.developer.showCredit && (
+            <p>
+              Dikembangkan oleh{" "}
+              <a
+                href={siteConfig.developer.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-primary hover:underline dark:text-primary-light"
+              >
+                {siteConfig.developer.name}
+              </a>
+            </p>
+          )}
         </div>
       </div>
     </footer>

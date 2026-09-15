@@ -23,6 +23,11 @@ export const siteConfig = {
   developer: {
     name: "Zeday",
     url: "https://join.co.id",
+    // Opsional per klien: beberapa sekolah mungkin membeli paket tanpa
+    // kredit developer di footer. Default tetap tampil (nilai apa pun
+    // selain literal "false" dianggap tampil) supaya deployment lama
+    // yang belum mengisi env ini tidak tiba-tiba kehilangan kreditnya.
+    showCredit: process.env.NEXT_PUBLIC_SHOW_DEVELOPER_CREDIT !== "false",
   },
   gaId: process.env.NEXT_PUBLIC_GA_ID || "",
 };
