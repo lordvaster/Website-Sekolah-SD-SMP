@@ -1,57 +1,87 @@
 # SD Inovasi Ceria — Website Sekolah
 
 Website resmi SD Inovasi Ceria: "Belajar Seru, Tumbuh Percaya Diri".
-Dibangun dengan Next.js 14 (App Router), React 18, dan TailwindCSS.
+Dibangun dengan Next.js 16 (App Router), React 18, TailwindCSS, dan
+SQLite sebagai CMS ringan yang bisa dikelola penuh lewat panel admin.
 
 Dikembangkan oleh **Zeday** — [https://join.co.id](https://join.co.id)
 
 ## Fitur Utama
 
 - Halaman: Beranda, Tentang Sekolah, Program & Kelas, Galeri, Berita/Blog, Kontak & Pendaftaran.
+- **Panel admin dengan CMS penuh** (`/admin`): kelola Berita, Galeri, Guru, Program, dan lihat/atur status Pendaftaran siswa baru — semua lewat form, tanpa perlu edit kode atau deploy ulang.
+- Unggah gambar asli (JPG/PNG/WebP, maks 5MB) untuk berita, galeri, dan foto profil guru; otomatis memakai placeholder SVG bila belum ada foto.
 - Dark mode toggle (default: light mode), fully responsive (mobile-first).
-- SEO: metadata per halaman, Open Graph, JSON-LD, `sitemap.xml`, `robots.txt`.
+- SEO: metadata per halaman, Open Graph, JSON-LD, `sitemap.xml`, `robots.txt`, revalidasi otomatis saat konten admin berubah.
 - Aksesibilitas: skip-to-content, label ARIA, kontras warna sesuai WCAG AA, navigasi keyboard.
-- Form kontak & pendaftaran siswa baru dengan validasi real-time (React Hook Form + Zod) dan email konfirmasi (opsional, via SMTP).
+- Form kontak & pendaftaran siswa baru dengan validasi real-time (React Hook Form + Zod), email konfirmasi (opsional, via SMTP), dan pendaftaran tersimpan permanen di database (bisa dilihat/dikelola admin meski email gagal terkirim).
 - Galeri foto dengan filter kategori & lightbox, video YouTube embed.
 - PWA dasar: manifest + service worker untuk caching offline halaman utama.
-- Favicon/icon situs dapat diganti langsung dari halaman admin (`/admin`) tanpa perlu deploy ulang.
+- Favicon/icon situs & tagline dapat diganti langsung dari panel admin.
+- Test end-to-end otomatis (Playwright) dan pipeline CI (GitHub Actions) yang menjalankan lint, build, dan test di setiap push/PR.
 
 ## Menjalankan Secara Lokal
 
 ```bash
 npm install
-cp .env.example .env   # lalu isi sesuai kebutuhan
+cp .env.example .env   # lalu isi sesuai kebutuhan, minimal ADMIN_PASSWORD
 npm run dev
 ```
 
-Buka [http://localhost:3000](http://localhost:3000).
+Buka [http://localhost:3000](http://localhost:3000). Database SQLite (`data/cms.sqlite`) dan folder unggahan (`public/uploads/`) dibuat otomatis beserta data contoh (seed) saat pertama kali server dijalankan.
 
 ## Konfigurasi Environment (`.env`)
 
 | Variabel | Keterangan |
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Domain produksi, contoh `https://sd.join.co.id` |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | Untuk mengaktifkan email konfirmasi form kontak/pendaftaran. Jika kosong, form tetap berfungsi namun email tidak terkirim (hanya dicatat di log server). |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | Untuk mengaktifkan email konfirmasi form kontak/pendaftaran. Jika kosong, form tetap berfungsi (pendaftaran tetap tersimpan di database) namun email tidak terkirim (hanya dicatat di log server). |
 | `CONTACT_RECEIVER_EMAIL` | Email tujuan penerima pesan kontak & pendaftaran. |
 | `NEXT_PUBLIC_GA_ID` | ID Google Analytics (opsional). |
 | `NEXT_PUBLIC_MAPS_EMBED_SRC` | URL embed Google Maps lokasi sekolah. |
-| `ADMIN_PASSWORD` | Password untuk masuk ke `/admin` (wajib diisi sebelum deploy produksi). |
+| `ADMIN_PASSWORD` | Password untuk masuk ke `/admin` (**wajib diisi** sebelum deploy produksi — tanpa ini `/admin` tidak bisa diakses sama sekali). |
+| `CMS_DB_PATH` | Opsional. Path kustom untuk file database SQLite; dipakai test E2E agar tidak mengotori `data/cms.sqlite` asli. Tidak perlu diisi untuk pemakaian normal. |
 
-## Mengganti Konten
+## Database & Penyimpanan File (Penting Sebelum Deploy)
 
-Sebagian besar data dummy berada di [`lib/data.ts`](lib/data.ts) (berita, guru, galeri, testimoni, program) dan [`lib/site-config.ts`](lib/site-config.ts) (nama sekolah, alamat, kontak, sosial media). Edit file tersebut lalu deploy ulang untuk memperbarui konten.
+CMS (Berita, Galeri, Guru, Program, Pendaftaran) disimpan di **file SQLite** (`data/cms.sqlite`, dibaca lewat `better-sqlite3`), dan foto yang diunggah admin disimpan sebagai file biasa di `public/uploads/`.
 
-Foto/galeri saat ini menggunakan placeholder SVG generatif (tanpa file gambar) agar situs tetap ringan. Untuk mengganti dengan foto asli:
-1. Simpan foto di folder `public/images/`.
-2. Ganti komponen `PlaceholderPhoto` dengan komponen `next/image` yang menunjuk ke file tersebut pada bagian yang relevan.
+Ini bekerja baik untuk **deploy di server Node.js sendiri (VPS)** yang disknya persisten antar-request — lihat bagian Build & Deploy di bawah.
 
-## Admin: Mengganti Favicon
+⚠️ **Tidak cocok untuk Vercel (atau platform serverless lain) tanpa penyesuaian.** Filesystem di lingkungan serverless bersifat sementara (reset tiap deploy, dan tiap instance/region bisa punya disk berbeda) — artinya seluruh isi CMS dan foto yang diunggah admin **akan hilang**. Jika ingin tetap deploy ke Vercel:
 
-1. Buka `https://domain-anda/admin`.
-2. Masuk menggunakan `ADMIN_PASSWORD` yang sudah diatur di environment.
-3. Pilih salah satu preset icon, ubah tagline jika perlu, lalu klik **Simpan Perubahan**.
+1. Ganti lapisan database di `lib/db.ts` dan `lib/repositories/*.ts` dengan database eksternal (mis. [Vercel Postgres](https://vercel.com/storage/postgres), [Neon](https://neon.tech), atau [Turso](https://turso.tech) untuk tetap memakai SQL/SQLite-compatible).
+2. Ganti penyimpanan file di `app/api/admin/upload/route.ts` dengan storage eksternal (mis. Vercel Blob, Cloudinary, atau S3) alih-alih menulis ke `public/uploads/`.
 
-Favicon akan langsung berubah di seluruh situs tanpa perlu build ulang.
+Untuk skala website sekolah biasa (bukan trafik tinggi), deploy ke VPS jauh lebih sederhana dan tidak memerlukan perubahan kode sama sekali.
+
+## Panel Admin
+
+Buka `/admin`, masuk dengan `ADMIN_PASSWORD`. Menu yang tersedia:
+
+| Menu | Fungsi |
+| --- | --- |
+| **Pengaturan** | Ganti favicon/icon situs & tagline. Berlaku instan (favicon) atau dalam ≤1 menit (tagline, lewat ISR). |
+| **Berita** | Tulis, edit, hapus artikel berita/pengumuman lengkap dengan gambar sampul. |
+| **Galeri** | Unggah & hapus foto kegiatan, dikategorikan Kelas/Acara/Aktivitas. |
+| **Guru** | Tambah, edit, hapus profil tenaga pengajar beserta foto. |
+| **Program** | Kelola daftar jenjang/kelas (TK A - Kelas 6) beserta poin unggulan. |
+| **Pendaftaran** | Lihat semua pendaftaran siswa baru yang masuk lewat halaman Kontak, dan ubah statusnya (Baru/Dihubungi/Diterima/Ditolak). |
+
+Perubahan di Berita/Galeri/Guru/Program otomatis memicu revalidasi halaman publik terkait (`revalidatePath`), jadi tampil seketika tanpa perlu menunggu atau deploy ulang.
+
+## Testing
+
+```bash
+npx playwright install --with-deps chromium   # sekali saja, unduh browser untuk testing
+npm run test:e2e
+```
+
+Test end-to-end (Playwright) mencakup: alur login/akses admin, CRUD penuh Berita/Galeri/Guru/Program (termasuk unggah gambar), alur pendaftaran siswa baru dari sisi pengunjung sampai terlihat di panel admin, serta smoke test halaman publik (dark mode, menu mobile, validasi form). Test berjalan otomatis di setiap push/PR lewat GitHub Actions (`.github/workflows/ci.yml`), memakai database SQLite terpisah (`CMS_DB_PATH`) agar tidak mengganggu data asli.
+
+## Mengganti Konten Non-CMS
+
+Beberapa bagian masih berupa data statis di kode (dianggap jarang berubah, belum diberi form admin): testimoni, daftar ekstrakurikuler, FAQ, dan statistik ringkas di beranda — semuanya ada di [`lib/data.ts`](lib/data.ts). Informasi umum sekolah (nama, alamat, kontak, sosial media) ada di [`lib/site-config.ts`](lib/site-config.ts). Edit file tersebut lalu deploy ulang untuk memperbarui.
 
 ## Build & Deploy
 
@@ -60,38 +90,49 @@ npm run build
 npm run start
 ```
 
-Direkomendasikan deploy ke [Vercel](https://vercel.com) (platform resmi Next.js):
+Cara paling sederhana: jalankan di **server Node.js sendiri (VPS)**, idealnya di belakang reverse proxy (Nginx) dengan HTTPS — `data/cms.sqlite` dan `public/uploads/` akan tetap ada antar-restart selama disk VPS-nya persisten. Contoh alur:
 
 1. Push repository ke GitHub.
-2. Import project di Vercel, isi Environment Variables sesuai `.env.example`.
-3. Arahkan domain `sd.join.co.id` ke deployment Vercel (tambahkan CNAME/A record sesuai instruksi Vercel).
+2. Di server: `git pull`, `npm ci`, `npm run build`, lalu jalankan `npm run start` (idealnya lewat process manager seperti `pm2` agar otomatis restart).
+3. Arahkan domain `sd.join.co.id` ke server tersebut, dan pasang HTTPS (mis. Certbot) di reverse proxy.
+4. **Backup rutin** folder `data/` dan `public/uploads/` — ini satu-satunya sumber data CMS.
 
-Bisa juga dijalankan di server Node.js sendiri (VPS) menggunakan `npm run build && npm run start`, idealnya di belakang reverse proxy (Nginx) dengan HTTPS.
+Untuk deploy ke **Vercel**, baca dulu bagian "Database & Penyimpanan File" di atas — perlu mengganti database dan penyimpanan file ke layanan eksternal terlebih dahulu, karena filesystem Vercel bersifat sementara.
 
 ### Catatan Keamanan Sebelum Go-Live
 
 - **Rate limiting** (`lib/rate-limit.ts`) mengenali klien lewat header `x-real-ip`/`x-forwarded-for`. Jika di-deploy di belakang Nginx/reverse proxy sendiri, pastikan proxy tersebut **menimpa** (bukan meneruskan apa adanya) header ini agar tidak mudah dilewati dengan memalsukan header dari klien.
 - **`ADMIN_PASSWORD`** wajib diisi dengan nilai yang kuat sebelum deploy; tanpa nilai ini halaman `/admin` tidak bisa diakses sama sekali (aman secara default, tapi juga tidak berguna).
-- Sesi admin berupa token yang ditandatangani dan **kedaluwarsa otomatis setelah 8 jam**, namun belum ada mekanisme revoke terpusat (mis. saat logout, token lama masih sah sampai kedaluwarsa jika sempat bocor). Untuk kebutuhan admin yang lebih sensitif, ganti dengan session store terpusat (Redis, database, dll).
-- Form kontak & pendaftaran akan **menolak pengiriman** (bukan berpura-pura berhasil) jika `SMTP_*` belum dikonfigurasi saat `NODE_ENV=production`, agar tidak ada pesan pengunjung yang hilang tanpa jejak.
+- Sesi admin berupa token yang ditandatangani (HMAC-SHA256) dan **kedaluwarsa otomatis setelah 8 jam**, namun belum ada mekanisme revoke terpusat (mis. saat logout, token lama masih sah sampai kedaluwarsa jika sempat bocor). Untuk kebutuhan admin yang lebih sensitif, ganti dengan session store terpusat (Redis, database, dll).
+- Form kontak akan **menolak pengiriman** (bukan berpura-pura berhasil) jika `SMTP_*` belum dikonfigurasi saat `NODE_ENV=production`. Form pendaftaran tetap "berhasil" walau email gagal, karena datanya sudah aman tersimpan di database dan bisa dilihat admin kapan saja di menu Pendaftaran.
+- `data/cms.sqlite` ditulis secara sinkron oleh `better-sqlite3`; untuk trafik admin yang sangat tinggi/bersamaan, pertimbangkan migrasi ke database server (Postgres) alih-alih file SQLite.
 
 ## Tips Maintenance
 
-- **Update berita/prestasi**: tambahkan entri baru di array `newsArticles` pada `lib/data.ts`.
-- **Tambah/ubah guru**: edit array `teachers` pada `lib/data.ts`.
+- **Update berita, galeri, guru, program**: semuanya lewat panel admin (`/admin`), tidak lagi lewat edit kode.
 - **Cek broken link & SEO** secara berkala dengan Google Search Console.
-- **Backup** `data/settings.json` sebelum melakukan deploy besar, karena file ini menyimpan preferensi favicon dari admin.
+- **Backup** folder `data/` (berisi `cms.sqlite` dan `settings.json`) serta `public/uploads/` sebelum melakukan perubahan besar di server — ini adalah satu-satunya sumber data CMS dan tidak ikut ter-commit ke git.
 - **Perbarui dependency** secara berkala dengan `npm outdated` dan `npm update` untuk menjaga keamanan.
 - Untuk skala trafik besar, ganti rate-limiter sederhana di `lib/rate-limit.ts` dengan solusi terdistribusi (mis. Upstash Redis).
 
 ## Struktur Folder Singkat
 
 ```
-app/            Halaman & route (App Router)
-  api/          Route handler (contact, pendaftaran, settings, admin auth)
-  admin/        Halaman login & pengaturan admin
-components/     Komponen React yang dapat dipakai ulang
-lib/            Data dummy, konfigurasi situs, util, validasi
-data/           settings.json (state favicon/tagline, diubah lewat admin)
-public/         Aset statis & service worker (sw.js)
+app/
+  (site)/       Halaman publik (Beranda, Tentang, Program, Galeri, Berita, Kontak) + layout Navbar/Footer
+  admin/
+    page.tsx        Halaman login admin (publik, tidak dilindungi)
+    (protected)/    Semua halaman admin lain (Pengaturan/Berita/Galeri/Guru/Program/Pendaftaran) + shell AdminShell
+  api/
+    admin/           Route handler CRUD untuk CMS (news/gallery/teachers/programs/registrations/upload) + login/logout
+    contact, pendaftaran, settings   Route handler untuk form publik
+components/       Komponen React yang dapat dipakai ulang (termasuk components/admin/* khusus panel admin)
+lib/
+  repositories/    Fungsi CRUD ke database (satu file per jenis konten)
+  db.ts, seed.ts   Koneksi SQLite, skema tabel, dan data contoh awal
+  data.ts          Data statis yang belum diberi form admin (testimoni, FAQ, dll)
+data/             cms.sqlite (database CMS) & settings.json (favicon/tagline) - tidak ikut di-commit
+public/uploads/   Foto yang diunggah admin - tidak ikut di-commit
+tests/e2e/        Test end-to-end Playwright
+.github/workflows/ci.yml   Pipeline CI: lint, build, test E2E
 ```

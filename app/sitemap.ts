@@ -1,7 +1,7 @@
 // Author: Zeday | https://join.co.id
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/site-config";
-import { newsArticles } from "@/lib/data";
+import { listNews } from "@/lib/repositories/news";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
@@ -18,7 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route === "" ? 1 : 0.8,
   }));
 
-  const newsRoutes = newsArticles.map((article) => ({
+  const newsRoutes = listNews().map((article) => ({
     url: `${siteConfig.url}/berita/${article.slug}`,
     lastModified: new Date(article.date),
     changeFrequency: "monthly" as const,

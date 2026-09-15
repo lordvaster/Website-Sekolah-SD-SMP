@@ -1,16 +1,19 @@
 // Author: Zeday | https://join.co.id
-import { teachers } from "@/lib/data";
-import PlaceholderPhoto from "./PlaceholderPhoto";
+import { listTeachers } from "@/lib/repositories/teachers";
+import MediaThumb from "./MediaThumb";
 import RevealOnScroll from "./RevealOnScroll";
 
 export default function TeacherGrid() {
+  const teachers = listTeachers();
+
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {teachers.map((t, i) => (
         <RevealOnScroll key={t.slug} delay={(i % 4) * 0.06}>
           <div className="card overflow-hidden text-center">
             <div className="flex justify-center bg-primary/5 py-6 dark:bg-primary/10">
-              <PlaceholderPhoto
+              <MediaThumb
+                imagePath={t.photoPath}
                 hue={t.hue}
                 label={t.name}
                 variant="avatar"

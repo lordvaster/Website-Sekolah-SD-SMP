@@ -3,9 +3,6 @@ import type { Metadata, Viewport } from "next";
 import { Poppins, Nunito } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import SkipToContent from "@/components/SkipToContent";
 import Analytics from "@/components/Analytics";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { siteConfig } from "@/lib/site-config";
@@ -25,11 +22,11 @@ const nunito = Nunito({
   display: "swap",
 });
 
-// Halaman lain tetap dirender statis untuk performa, tapi disegarkan ulang
-// otomatis di background setiap 60 detik (ISR) - tanpa ini, tagline yang
-// diubah admin di /admin/pengaturan tidak akan pernah muncul di <title>/OG
-// dan navbar/footer sampai proyek di-build ulang, karena root layout ikut
-// dirender sekali saja saat build.
+// Halaman publik tetap dirender statis untuk performa, tapi disegarkan
+// ulang otomatis di background setiap 60 detik (ISR) - tanpa ini, tagline
+// yang diubah admin di /admin/pengaturan tidak akan pernah muncul di
+// <title>/OG sampai proyek di-build ulang. Halaman admin sendiri sudah
+// memaksa force-dynamic satu per satu, yang otomatis menimpa nilai ini.
 export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -81,42 +78,15 @@ export const viewport: Viewport = {
   ],
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { siteTagline } = await readSettings();
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "School",
-    name: siteConfig.name,
-    description: siteConfig.description,
-    url: siteConfig.url,
-    telephone: siteConfig.phone,
-    email: siteConfig.email,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: siteConfig.address,
-      addressCountry: "ID",
-    },
-    sameAs: Object.values(siteConfig.social),
-  };
-
   return (
     <html lang="id" suppressHydrationWarning className={`${poppins.variable} ${nunito.variable}`}>
       <body>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        <ThemeProvider>
-          <SkipToContent />
-          <Navbar tagline={siteTagline} />
-          <main id="konten-utama">{children}</main>
-          <Footer tagline={siteTagline} />
-        </ThemeProvider>
+        <ThemeProvider>{children}</ThemeProvider>
         <Analytics />
         <ServiceWorkerRegister />
       </body>

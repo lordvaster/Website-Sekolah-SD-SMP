@@ -1,14 +1,12 @@
 // Author: Zeday | https://join.co.id
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { AlertCircle, CheckCircle2, Loader2, LogOut } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { iconPresets, type IconPresetKey } from "@/lib/icon-presets";
 import type { SiteSettings } from "@/lib/settings";
 
 export default function SettingsForm({ initial }: { initial: SiteSettings }) {
-  const router = useRouter();
   const [activeIcon, setActiveIcon] = useState<IconPresetKey>(initial.activeIcon);
   const [siteTagline, setSiteTagline] = useState(initial.siteTagline);
   const [saving, setSaving] = useState(false);
@@ -36,12 +34,6 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
     } finally {
       setSaving(false);
     }
-  };
-
-  const onLogout = async () => {
-    await fetch("/api/admin/logout", { method: "POST" });
-    router.push("/admin");
-    router.refresh();
   };
 
   return (
@@ -117,13 +109,6 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
             <CheckCircle2 className="h-4 w-4" /> Tersimpan
           </span>
         )}
-        <button
-          type="button"
-          onClick={onLogout}
-          className="ml-auto flex items-center gap-1 text-sm font-semibold text-ink/60 hover:text-cta dark:text-ink-dark/60"
-        >
-          <LogOut className="h-4 w-4" /> Keluar
-        </button>
       </div>
     </div>
   );

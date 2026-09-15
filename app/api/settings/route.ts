@@ -1,7 +1,7 @@
 // Author: Zeday | https://join.co.id
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { ADMIN_COOKIE, isValidSessionToken } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/admin-auth";
 import { readSettings, writeSettings } from "@/lib/settings";
 import { iconPresets, type IconPresetKey } from "@/lib/icon-presets";
 import { rateLimitGuard } from "@/lib/rate-limit";
@@ -24,10 +24,8 @@ export async function POST(request: NextRequest) {
   const limited = rateLimitGuard(request, "settings");
   if (limited) return limited;
 
-  const token = request.cookies.get(ADMIN_COOKIE)?.value;
-  if (!(await isValidSessionToken(token))) {
-    return NextResponse.json({ error: "Tidak diizinkan." }, { status: 401 });
-  }
+  const unauthorized = await requireAdmin(request);
+  if (unauthorized) return unauthorized;
 
   const body = await request.json().catch(() => null);
   const parsed = updateSchema.safeParse(body);

@@ -5,10 +5,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { registrationSchema, type RegistrationInput } from "@/lib/validation";
-import { programs } from "@/lib/data";
+import type { Program } from "@/lib/repositories/programs";
 import { useFormSubmit } from "@/lib/hooks/useFormSubmit";
 
-export default function RegistrationForm() {
+export default function RegistrationForm({ programs }: { programs: Program[] }) {
   const { status, errorMessage, submit } = useFormSubmit<RegistrationInput>("/api/pendaftaran");
 
   const {

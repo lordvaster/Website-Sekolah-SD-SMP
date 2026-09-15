@@ -5,7 +5,8 @@ import { sendMail } from "@/lib/email";
 import { rateLimitGuard } from "@/lib/rate-limit";
 import { siteConfig } from "@/lib/site-config";
 import { escapeHtml } from "@/lib/utils";
-import { emailNotConfiguredResponse, validationErrorResponse } from "@/lib/api-helpers";
+import { validationErrorResponse } from "@/lib/api-helpers";
+import { createRegistration } from "@/lib/repositories/registrations";
 
 export async function POST(request: NextRequest) {
   const limited = rateLimitGuard(request, "pendaftaran");
@@ -20,18 +21,32 @@ export async function POST(request: NextRequest) {
   const safeProgram = escapeHtml(program);
   const safeParentName = escapeHtml(parentName);
 
+  // Menyimpan ke database adalah langkah wajib - inilah yang membuat
+  // pendaftaran benar-benar "tercatat" dan bisa dilihat admin di
+  // /admin/pendaftaran, tidak lagi bergantung sepenuhnya pada email
+  // terkirim atau tidak seperti sebelumnya.
+  let registrationId: number;
   try {
-    // Notifikasi ke sekolah bersifat wajib - inilah yang membuat pendaftaran
-    // "tercatat". Email konfirmasi ke orang tua bersifat best-effort dan
-    // dijadwalkan lewat after() supaya tidak memperlambat respons dan tidak
-    // menggagalkan pendaftaran bila pengiriman ke orang tua sempat gagal
-    // (mencegah pengguna submit ulang dan menggandakan notifikasi ke admin).
-    const adminResult = await sendMail({
+    const registration = createRegistration({ childName, childAge, program, parentName, email, phone });
+    registrationId = registration.id;
+  } catch (error) {
+    console.error("[api/pendaftaran] Gagal menyimpan pendaftaran ke database:", error);
+    return NextResponse.json(
+      { error: "Gagal menyimpan pendaftaran. Silakan coba lagi nanti." },
+      { status: 500 }
+    );
+  }
+
+  // Notifikasi email bersifat best-effort di kedua sisi (sekolah & orang
+  // tua) - kegagalannya dicatat tapi tidak menggagalkan pendaftaran yang
+  // datanya sudah aman tersimpan di database.
+  try {
+    await sendMail({
       to: process.env.CONTACT_RECEIVER_EMAIL || siteConfig.email,
       subject: `Pendaftaran siswa baru: ${childName}`,
       replyTo: email,
       html: `
-        <h2>Pendaftaran Siswa Baru</h2>
+        <h2>Pendaftaran Siswa Baru #${registrationId}</h2>
         <p><strong>Nama Anak:</strong> ${safeChildName}</p>
         <p><strong>Usia:</strong> ${childAge} tahun</p>
         <p><strong>Jenjang Dituju:</strong> ${safeProgram}</p>
@@ -40,36 +55,28 @@ export async function POST(request: NextRequest) {
         <p><strong>Telepon:</strong> ${escapeHtml(phone)}</p>
       `,
     });
-
-    if (!adminResult.sent && process.env.NODE_ENV === "production") {
-      return emailNotConfiguredResponse();
-    }
-
-    after(async () => {
-      try {
-        await sendMail({
-          to: email,
-          subject: `Konfirmasi Pendaftaran - ${siteConfig.name}`,
-          html: `
-            <h2>Terima kasih, ${safeParentName}!</h2>
-            <p>Pendaftaran untuk ananda <strong>${safeChildName}</strong> pada jenjang
-            <strong>${safeProgram}</strong> telah kami terima.</p>
-            <p>Tim admisi kami akan menghubungi anda dalam 1-2 hari kerja untuk
-            proses selanjutnya.</p>
-            <p>Salam hangat,<br/>${siteConfig.name}</p>
-          `,
-        });
-      } catch (error) {
-        console.error("[api/pendaftaran] Gagal mengirim email konfirmasi ke orang tua:", error);
-      }
-    });
-
-    return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("[api/pendaftaran] Gagal memproses pendaftaran:", error);
-    return NextResponse.json(
-      { error: "Gagal mengirim pendaftaran. Silakan coba lagi nanti." },
-      { status: 500 }
-    );
+    console.error("[api/pendaftaran] Gagal mengirim notifikasi email ke sekolah:", error);
   }
+
+  after(async () => {
+    try {
+      await sendMail({
+        to: email,
+        subject: `Konfirmasi Pendaftaran - ${siteConfig.name}`,
+        html: `
+          <h2>Terima kasih, ${safeParentName}!</h2>
+          <p>Pendaftaran untuk ananda <strong>${safeChildName}</strong> pada jenjang
+          <strong>${safeProgram}</strong> telah kami terima.</p>
+          <p>Tim admisi kami akan menghubungi anda dalam 1-2 hari kerja untuk
+          proses selanjutnya.</p>
+          <p>Salam hangat,<br/>${siteConfig.name}</p>
+        `,
+      });
+    } catch (error) {
+      console.error("[api/pendaftaran] Gagal mengirim email konfirmasi ke orang tua:", error);
+    }
+  });
+
+  return NextResponse.json({ ok: true });
 }

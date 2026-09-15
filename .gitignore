@@ -38,3 +38,21 @@ next-env.d.ts
 # tidak di-commit ke repo publik ini
 AGENTS.md
 CLAUDE.md
+
+# database CMS (berita, galeri, guru, program, pendaftaran) dan foto yang
+# diunggah admin - ini adalah DATA RUNTIME milik deployment masing-masing,
+# bukan kode; dibuat & diisi otomatis (seed) saat pertama kali dijalankan.
+# WAJIB DI-BACKUP terpisah di server produksi, lihat README.
+data/cms.sqlite
+data/cms.sqlite-journal
+data/cms.sqlite-wal
+data/cms.sqlite-shm
+data/cms.e2e-test.sqlite*
+public/uploads/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

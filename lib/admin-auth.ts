@@ -1,4 +1,6 @@
 // Author: Zeday | https://join.co.id
+import { NextResponse, type NextRequest } from "next/server";
+
 // Menggunakan Web Crypto API (bukan node:crypto) agar satu implementasi
 // yang sama bisa dipakai baik oleh proxy.ts (Edge Runtime) maupun route
 // handler di app/api/** (Node.js runtime).
@@ -99,3 +101,16 @@ export async function isValidSessionToken(token: string | undefined) {
 }
 
 export const SESSION_MAX_AGE_SECONDS = SESSION_TTL_SECONDS;
+
+// Dipakai bersama oleh setiap route handler admin (selain login) supaya
+// pengecekan cookie + verifikasi token tidak disalin-tempel di tiap route -
+// proxy.ts sudah melindungi navigasi halaman /admin/**, helper ini
+// melindungi route API /api/admin/** (dan /api/settings) dengan cara yang
+// sama karena route handler tidak dilewati oleh proxy halaman.
+export async function requireAdmin(request: NextRequest) {
+  const token = request.cookies.get(ADMIN_COOKIE)?.value;
+  if (!(await isValidSessionToken(token))) {
+    return NextResponse.json({ error: "Tidak diizinkan." }, { status: 401 });
+  }
+  return null;
+}

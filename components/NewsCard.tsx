@@ -1,14 +1,15 @@
 // Author: Zeday | https://join.co.id
 import Link from "next/link";
-import type { NewsArticle } from "@/lib/data";
+import type { NewsArticle } from "@/lib/repositories/news";
 import { formatDate } from "@/lib/utils";
-import PlaceholderPhoto from "./PlaceholderPhoto";
+import MediaThumb from "./MediaThumb";
 
 export default function NewsCard({ article }: { article: NewsArticle }) {
   return (
     <Link href={`/berita/${article.slug}`} className="card group block overflow-hidden">
       <div className="aspect-[16/10] overflow-hidden">
-        <PlaceholderPhoto
+        <MediaThumb
+          imagePath={article.imagePath}
           hue={article.hue}
           label={article.category}
           className="h-full w-full transition-transform duration-300 group-hover:scale-105"

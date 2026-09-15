@@ -1,13 +1,13 @@
 // Author: Zeday | https://join.co.id
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { newsArticles } from "@/lib/data";
+import { listNews } from "@/lib/repositories/news";
 import SectionHeading from "./SectionHeading";
 import NewsCard from "./NewsCard";
 import RevealOnScroll from "./RevealOnScroll";
 
 export default function LatestNews() {
-  const latest = newsArticles.slice(0, 4);
+  const latest = listNews().slice(0, 4);
 
   return (
     <section className="bg-secondary/5 py-16 dark:bg-secondary/10 sm:py-20">

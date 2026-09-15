@@ -3,12 +3,12 @@
 
 import { useMemo, useState } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import { galleryItems, type GalleryCategory } from "@/lib/data";
-import PlaceholderPhoto from "./PlaceholderPhoto";
+import type { GalleryCategory, GalleryItem } from "@/lib/repositories/gallery";
+import MediaThumb from "./MediaThumb";
 
 const categories: (GalleryCategory | "Semua")[] = ["Semua", "Kelas", "Acara", "Aktivitas"];
 
-export default function GalleryGrid() {
+export default function GalleryGrid({ items: galleryItems }: { items: GalleryItem[] }) {
   const [filter, setFilter] = useState<(typeof categories)[number]>("Semua");
   const [activeId, setActiveId] = useState<number | null>(null);
 
@@ -17,7 +17,7 @@ export default function GalleryGrid() {
       filter === "Semua"
         ? galleryItems
         : galleryItems.filter((item) => item.category === filter),
-    [filter]
+    [galleryItems, filter]
   );
 
   const activeIndex = filtered.findIndex((item) => item.id === activeId);
@@ -57,7 +57,7 @@ export default function GalleryGrid() {
             onClick={() => setActiveId(item.id)}
             className="mb-4 block w-full overflow-hidden rounded-xl2 shadow-sm ring-1 ring-black/5 transition-transform hover:-translate-y-1 hover:shadow-md dark:ring-white/10"
           >
-            <PlaceholderPhoto hue={item.hue} label={item.caption} className="w-full" />
+            <MediaThumb imagePath={item.imagePath} hue={item.hue} label={item.caption} className="w-full" />
           </button>
         ))}
       </div>
@@ -93,7 +93,7 @@ export default function GalleryGrid() {
             className="w-full max-w-2xl overflow-hidden rounded-xl2"
             onClick={(e) => e.stopPropagation()}
           >
-            <PlaceholderPhoto hue={active.hue} label={active.caption} className="w-full" />
+            <MediaThumb imagePath={active.imagePath} hue={active.hue} label={active.caption} className="w-full" />
             <p className="bg-white p-4 text-center font-semibold text-ink dark:bg-surface-dark dark:text-ink-dark">
               {active.caption}
             </p>

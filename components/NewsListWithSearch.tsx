@@ -3,17 +3,17 @@
 
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { newsArticles } from "@/lib/data";
+import type { NewsArticle } from "@/lib/repositories/news";
 import NewsCard from "./NewsCard";
 
 const categories = ["Semua", "Prestasi", "Kegiatan", "Pengumuman", "Tips Parenting"] as const;
 
-export default function NewsListWithSearch() {
+export default function NewsListWithSearch({ articles }: { articles: NewsArticle[] }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<(typeof categories)[number]>("Semua");
 
   const filtered = useMemo(() => {
-    return newsArticles.filter((article) => {
+    return articles.filter((article) => {
       const matchCategory = category === "Semua" || article.category === category;
       const matchQuery =
         query.trim().length === 0 ||
@@ -21,7 +21,7 @@ export default function NewsListWithSearch() {
         article.excerpt.toLowerCase().includes(query.toLowerCase());
       return matchCategory && matchQuery;
     });
-  }, [query, category]);
+  }, [articles, query, category]);
 
   return (
     <div>
