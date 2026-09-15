@@ -68,6 +68,13 @@ Direkomendasikan deploy ke [Vercel](https://vercel.com) (platform resmi Next.js)
 
 Bisa juga dijalankan di server Node.js sendiri (VPS) menggunakan `npm run build && npm run start`, idealnya di belakang reverse proxy (Nginx) dengan HTTPS.
 
+### Catatan Keamanan Sebelum Go-Live
+
+- **Rate limiting** (`lib/rate-limit.ts`) mengenali klien lewat header `x-real-ip`/`x-forwarded-for`. Jika di-deploy di belakang Nginx/reverse proxy sendiri, pastikan proxy tersebut **menimpa** (bukan meneruskan apa adanya) header ini agar tidak mudah dilewati dengan memalsukan header dari klien.
+- **`ADMIN_PASSWORD`** wajib diisi dengan nilai yang kuat sebelum deploy; tanpa nilai ini halaman `/admin` tidak bisa diakses sama sekali (aman secara default, tapi juga tidak berguna).
+- Sesi admin berupa token yang ditandatangani dan **kedaluwarsa otomatis setelah 8 jam**, namun belum ada mekanisme revoke terpusat (mis. saat logout, token lama masih sah sampai kedaluwarsa jika sempat bocor). Untuk kebutuhan admin yang lebih sensitif, ganti dengan session store terpusat (Redis, database, dll).
+- Form kontak & pendaftaran akan **menolak pengiriman** (bukan berpura-pura berhasil) jika `SMTP_*` belum dikonfigurasi saat `NODE_ENV=production`, agar tidak ada pesan pengunjung yang hilang tanpa jejak.
+
 ## Tips Maintenance
 
 - **Update berita/prestasi**: tambahkan entri baru di array `newsArticles` pada `lib/data.ts`.

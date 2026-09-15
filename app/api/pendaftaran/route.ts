@@ -2,11 +2,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { registrationSchema } from "@/lib/validation";
 import { sendMail } from "@/lib/email";
-import { isRateLimited } from "@/lib/rate-limit";
+import { getClientIp, isRateLimited } from "@/lib/rate-limit";
 import { siteConfig } from "@/lib/site-config";
+import { escapeHtml } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
-  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const ip = getClientIp(request);
   if (isRateLimited(`pendaftaran:${ip}`)) {
     return NextResponse.json(
       { error: "Terlalu banyak permintaan, coba lagi dalam beberapa menit." },
@@ -25,35 +26,48 @@ export async function POST(request: NextRequest) {
   }
 
   const { childName, childAge, program, parentName, email, phone } = parsed.data;
+  const safeChildName = escapeHtml(childName);
+  const safeProgram = escapeHtml(program);
+  const safeParentName = escapeHtml(parentName);
 
   try {
-    await sendMail({
+    const adminResult = await sendMail({
       to: process.env.CONTACT_RECEIVER_EMAIL || siteConfig.email,
       subject: `Pendaftaran siswa baru: ${childName}`,
       replyTo: email,
       html: `
         <h2>Pendaftaran Siswa Baru</h2>
-        <p><strong>Nama Anak:</strong> ${childName}</p>
+        <p><strong>Nama Anak:</strong> ${safeChildName}</p>
         <p><strong>Usia:</strong> ${childAge} tahun</p>
-        <p><strong>Jenjang Dituju:</strong> ${program}</p>
-        <p><strong>Nama Orang Tua:</strong> ${parentName}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Telepon:</strong> ${phone}</p>
+        <p><strong>Jenjang Dituju:</strong> ${safeProgram}</p>
+        <p><strong>Nama Orang Tua:</strong> ${safeParentName}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Telepon:</strong> ${escapeHtml(phone)}</p>
       `,
     });
 
-    await sendMail({
+    const parentResult = await sendMail({
       to: email,
       subject: `Konfirmasi Pendaftaran - ${siteConfig.name}`,
       html: `
-        <h2>Terima kasih, ${parentName}!</h2>
-        <p>Pendaftaran untuk ananda <strong>${childName}</strong> pada jenjang
-        <strong>${program}</strong> telah kami terima.</p>
+        <h2>Terima kasih, ${safeParentName}!</h2>
+        <p>Pendaftaran untuk ananda <strong>${safeChildName}</strong> pada jenjang
+        <strong>${safeProgram}</strong> telah kami terima.</p>
         <p>Tim admisi kami akan menghubungi anda dalam 1-2 hari kerja untuk
         proses selanjutnya.</p>
         <p>Salam hangat,<br/>${siteConfig.name}</p>
       `,
     });
+
+    if ((!adminResult.sent || !parentResult.sent) && process.env.NODE_ENV === "production") {
+      return NextResponse.json(
+        {
+          error:
+            "Pendaftaran tidak dapat diproses karena server email belum dikonfigurasi. Silakan hubungi kami via telepon/WhatsApp.",
+        },
+        { status: 503 }
+      );
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {

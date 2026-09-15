@@ -1,15 +1,15 @@
 // Author: Zeday | https://join.co.id
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { registrationSchema, type RegistrationInput } from "@/lib/validation";
 import { programs } from "@/lib/data";
+import { useFormSubmit } from "@/lib/hooks/useFormSubmit";
 
 export default function RegistrationForm() {
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const { status, submit } = useFormSubmit<RegistrationInput>("/api/pendaftaran");
 
   const {
     register,
@@ -22,19 +22,8 @@ export default function RegistrationForm() {
   });
 
   const onSubmit = async (data: RegistrationInput) => {
-    setStatus("idle");
-    try {
-      const res = await fetch("/api/pendaftaran", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error("Gagal mengirim");
-      setStatus("success");
-      reset();
-    } catch {
-      setStatus("error");
-    }
+    const ok = await submit(data);
+    if (ok) reset();
   };
 
   return (

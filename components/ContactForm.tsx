@@ -1,14 +1,14 @@
 // Author: Zeday | https://join.co.id
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { contactSchema, type ContactInput } from "@/lib/validation";
+import { useFormSubmit } from "@/lib/hooks/useFormSubmit";
 
 export default function ContactForm() {
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const { status, submit } = useFormSubmit<ContactInput>("/api/contact");
 
   const {
     register,
@@ -21,19 +21,8 @@ export default function ContactForm() {
   });
 
   const onSubmit = async (data: ContactInput) => {
-    setStatus("idle");
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error("Gagal mengirim");
-      setStatus("success");
-      reset();
-    } catch {
-      setStatus("error");
-    }
+    const ok = await submit(data);
+    if (ok) reset();
   };
 
   return (

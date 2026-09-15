@@ -13,12 +13,13 @@ export function generateStaticParams() {
   return newsArticles.map((article) => ({ slug: article.slug }));
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
-}): Metadata {
-  const article = newsArticles.find((a) => a.slug === params.slug);
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const article = newsArticles.find((a) => a.slug === slug);
   if (!article) return {};
   return {
     title: article.title,
@@ -32,12 +33,13 @@ export function generateMetadata({
   };
 }
 
-export default function BeritaDetailPage({
+export default async function BeritaDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const article = newsArticles.find((a) => a.slug === params.slug);
+  const { slug } = await params;
+  const article = newsArticles.find((a) => a.slug === slug);
   if (!article) notFound();
 
   const related = newsArticles

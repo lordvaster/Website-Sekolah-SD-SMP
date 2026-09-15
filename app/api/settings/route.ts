@@ -27,9 +27,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Data tidak valid." }, { status: 400 });
   }
 
-  const updated = await writeSettings({
-    activeIcon: parsed.data.activeIcon as IconPresetKey,
-    siteTagline: parsed.data.siteTagline,
-  });
-  return NextResponse.json(updated);
+  try {
+    const updated = await writeSettings({
+      activeIcon: parsed.data.activeIcon as IconPresetKey,
+      siteTagline: parsed.data.siteTagline,
+    });
+    return NextResponse.json(updated);
+  } catch (error) {
+    console.error("[api/settings] Gagal menyimpan data/settings.json:", error);
+    return NextResponse.json(
+      {
+        error:
+          "Gagal menyimpan pengaturan. Pastikan berkas data/settings.json dapat ditulis di server (tidak read-only), lalu coba lagi.",
+      },
+      { status: 500 }
+    );
+  }
 }

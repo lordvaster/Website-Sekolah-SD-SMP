@@ -11,6 +11,18 @@ export function formatDate(iso: string) {
   }).format(new Date(iso));
 }
 
+const htmlEscapes: Record<string, string> = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#39;",
+};
+
+export function escapeHtml(input: string) {
+  return input.replace(/[&<>"']/g, (char) => htmlEscapes[char]);
+}
+
 export function initials(name: string) {
   return name
     .split(" ")

@@ -3,7 +3,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CheckCircle2, Loader2, LogOut } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2, LogOut } from "lucide-react";
 import { iconPresets, type IconPresetKey } from "@/lib/icon-presets";
 import type { SiteSettings } from "@/lib/settings";
 
@@ -13,17 +13,26 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
   const [siteTagline, setSiteTagline] = useState(initial.siteTagline);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   const onSave = async () => {
     setSaving(true);
     setSaved(false);
+    setError("");
     try {
       const res = await fetch("/api/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ activeIcon, siteTagline }),
       });
-      if (res.ok) setSaved(true);
+      if (res.ok) {
+        setSaved(true);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Gagal menyimpan pengaturan.");
+      }
+    } catch {
+      setError("Gagal menyimpan pengaturan. Periksa koneksi anda.");
     } finally {
       setSaving(false);
     }
@@ -88,6 +97,12 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
           className="mt-1 w-full max-w-md rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
         />
       </div>
+
+      {error && (
+        <p role="alert" className="flex items-center gap-2 text-sm font-semibold text-cta">
+          <AlertCircle className="h-4 w-4" /> {error}
+        </p>
+      )}
 
       <div className="flex items-center gap-4">
         <button type="button" onClick={onSave} disabled={saving} className="btn-primary disabled:opacity-70">

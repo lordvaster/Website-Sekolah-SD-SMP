@@ -2,11 +2,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { contactSchema } from "@/lib/validation";
 import { sendMail } from "@/lib/email";
-import { isRateLimited } from "@/lib/rate-limit";
+import { getClientIp, isRateLimited } from "@/lib/rate-limit";
 import { siteConfig } from "@/lib/site-config";
+import { escapeHtml } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
-  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const ip = getClientIp(request);
   if (isRateLimited(`contact:${ip}`)) {
     return NextResponse.json(
       { error: "Terlalu banyak permintaan, coba lagi dalam beberapa menit." },
@@ -27,19 +28,29 @@ export async function POST(request: NextRequest) {
   const { name, email, phone, message } = parsed.data;
 
   try {
-    await sendMail({
+    const result = await sendMail({
       to: process.env.CONTACT_RECEIVER_EMAIL || siteConfig.email,
       subject: `Pesan baru dari ${name} melalui website`,
       replyTo: email,
       html: `
         <h2>Pesan Kontak Baru</h2>
-        <p><strong>Nama:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Telepon:</strong> ${phone}</p>
+        <p><strong>Nama:</strong> ${escapeHtml(name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Telepon:</strong> ${escapeHtml(phone)}</p>
         <p><strong>Pesan:</strong></p>
-        <p>${message.replace(/\n/g, "<br />")}</p>
+        <p>${escapeHtml(message).replace(/\n/g, "<br />")}</p>
       `,
     });
+
+    if (!result.sent && process.env.NODE_ENV === "production") {
+      return NextResponse.json(
+        {
+          error:
+            "Pesan tidak dapat dikirim karena server email belum dikonfigurasi. Silakan hubungi kami via telepon/WhatsApp.",
+        },
+        { status: 503 }
+      );
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {

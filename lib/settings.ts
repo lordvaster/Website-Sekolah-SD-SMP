@@ -19,7 +19,13 @@ export async function readSettings(): Promise<SiteSettings> {
       parsed.activeIcon = defaultIcon;
     }
     return parsed;
-  } catch {
+  } catch (error) {
+    // ENOENT saat pertama kali dijalankan (file belum ada) itu wajar dan
+    // diam-diam memakai default; error lain (JSON korup, izin baca) dicatat
+    // agar tidak lolos tanpa jejak.
+    if ((error as NodeJS.ErrnoException)?.code !== "ENOENT") {
+      console.error("[settings] Gagal membaca data/settings.json, memakai default:", error);
+    }
     return {
       activeIcon: defaultIcon,
       siteTagline: "Belajar Seru, Tumbuh Percaya Diri",
