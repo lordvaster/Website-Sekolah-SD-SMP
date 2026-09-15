@@ -39,25 +39,29 @@ export async function POST(request: NextRequest) {
 
   // Notifikasi email bersifat best-effort di kedua sisi (sekolah & orang
   // tua) - kegagalannya dicatat tapi tidak menggagalkan pendaftaran yang
-  // datanya sudah aman tersimpan di database.
-  try {
-    await sendMail({
-      to: process.env.CONTACT_RECEIVER_EMAIL || siteConfig.email,
-      subject: `Pendaftaran siswa baru: ${childName}`,
-      replyTo: email,
-      html: `
-        <h2>Pendaftaran Siswa Baru #${registrationId}</h2>
-        <p><strong>Nama Anak:</strong> ${safeChildName}</p>
-        <p><strong>Usia:</strong> ${childAge} tahun</p>
-        <p><strong>Jenjang Dituju:</strong> ${safeProgram}</p>
-        <p><strong>Nama Orang Tua:</strong> ${safeParentName}</p>
-        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-        <p><strong>Telepon:</strong> ${escapeHtml(phone)}</p>
-      `,
-    });
-  } catch (error) {
-    console.error("[api/pendaftaran] Gagal mengirim notifikasi email ke sekolah:", error);
-  }
+  // datanya sudah aman tersimpan di database. Keduanya dijalankan lewat
+  // after() (bukan di-await sebelum respons) supaya orang tua tidak
+  // menunggu round-trip SMTP tambahan hanya untuk melihat halaman sukses.
+  after(async () => {
+    try {
+      await sendMail({
+        to: process.env.CONTACT_RECEIVER_EMAIL || siteConfig.email,
+        subject: `Pendaftaran siswa baru: ${childName}`,
+        replyTo: email,
+        html: `
+          <h2>Pendaftaran Siswa Baru #${registrationId}</h2>
+          <p><strong>Nama Anak:</strong> ${safeChildName}</p>
+          <p><strong>Usia:</strong> ${childAge} tahun</p>
+          <p><strong>Jenjang Dituju:</strong> ${safeProgram}</p>
+          <p><strong>Nama Orang Tua:</strong> ${safeParentName}</p>
+          <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+          <p><strong>Telepon:</strong> ${escapeHtml(phone)}</p>
+        `,
+      });
+    } catch (error) {
+      console.error("[api/pendaftaran] Gagal mengirim notifikasi email ke sekolah:", error);
+    }
+  });
 
   after(async () => {
     try {

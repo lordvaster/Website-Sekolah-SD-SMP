@@ -6,6 +6,14 @@ import RevealOnScroll from "./RevealOnScroll";
 export default function TeacherGrid() {
   const teachers = listTeachers();
 
+  if (teachers.length === 0) {
+    return (
+      <p className="text-center text-ink/60 dark:text-ink-dark/60">
+        Profil guru belum ditambahkan.
+      </p>
+    );
+  }
+
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {teachers.map((t, i) => (

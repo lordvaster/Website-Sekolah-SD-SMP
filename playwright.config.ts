@@ -53,6 +53,13 @@ export default defineConfig({
     env: {
       ADMIN_PASSWORD: E2E_ADMIN_PASSWORD,
       CMS_DB_PATH: "./data/cms.e2e-test.sqlite",
+      // Nginx (yang menimpa x-real-ip di produksi) tidak ada di depan
+      // `next dev` saat E2E - semua request jadi terlihat berasal dari IP
+      // "unknown" yang sama, jadi login berulang antar spec + retry bisa
+      // kena rate-limit /api/admin/login (5x/60 detik) meski dari "user"
+      // yang berbeda. Tidak ada spec yang menguji perilaku 429 itu sendiri,
+      // jadi aman dilewati khusus di lingkungan test ini saja.
+      E2E_TEST_MODE: "true",
     },
   },
 });

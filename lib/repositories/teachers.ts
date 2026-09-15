@@ -97,6 +97,7 @@ export function updateTeacher(id: number, input: TeacherInput): Teacher | undefi
   return getTeacherById(id);
 }
 
-export function deleteTeacher(id: number) {
-  db.prepare("DELETE FROM teachers WHERE id = ?").run(id);
+export function deleteTeacher(id: number): boolean {
+  const result = db.prepare("DELETE FROM teachers WHERE id = ?").run(id);
+  return result.changes > 0;
 }

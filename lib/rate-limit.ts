@@ -62,6 +62,10 @@ export function getClientIp(request: NextRequest) {
 // agar bentuk key (prefix per-endpoint) dan respons 429 konsisten tanpa
 // diduplikasi di setiap route.ts.
 export function rateLimitGuard(request: NextRequest, prefix: string) {
+  // Hanya diset oleh playwright.config.ts untuk server dev yang dipakai
+  // E2E test - tidak pernah ada di lingkungan produksi sungguhan.
+  if (process.env.E2E_TEST_MODE === "true") return null;
+
   const ip = getClientIp(request);
   if (isRateLimited(`${prefix}:${ip}`)) {
     return NextResponse.json(

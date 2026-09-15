@@ -23,7 +23,7 @@ export type ContactInput = z.infer<typeof contactSchema>;
 export const registrationSchema = z.object({
   childName: z.string().trim().min(2, "Nama anak minimal 2 karakter").max(100),
   childAge: z.coerce.number().int().min(3, "Usia minimal 3 tahun").max(13, "Usia maksimal 13 tahun"),
-  program: z.string().trim().min(1, "Pilih jenjang yang dituju"),
+  program: z.string().trim().min(1, "Pilih jenjang yang dituju").max(120),
   parentName: z.string().trim().min(2, "Nama orang tua minimal 2 karakter").max(100),
   email: emailSchema,
   phone: phoneSchema,

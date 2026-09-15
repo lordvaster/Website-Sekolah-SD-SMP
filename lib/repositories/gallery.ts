@@ -65,6 +65,7 @@ export function createGalleryItem(input: GalleryInput): GalleryItem {
   return getGalleryItemById(Number(result.lastInsertRowid))!;
 }
 
-export function deleteGalleryItem(id: number) {
-  db.prepare("DELETE FROM gallery_items WHERE id = ?").run(id);
+export function deleteGalleryItem(id: number): boolean {
+  const result = db.prepare("DELETE FROM gallery_items WHERE id = ?").run(id);
+  return result.changes > 0;
 }

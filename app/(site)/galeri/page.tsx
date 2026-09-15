@@ -11,11 +11,10 @@ export const metadata: Metadata = {
     "Lihat momen keseruan aktivitas belajar, acara, dan kegiatan siswa SD Inovasi Ceria dalam galeri foto dan video.",
 };
 
-// Ganti id video dummy di bawah ini dengan video YouTube resmi sekolah.
-const videos = [
-  { id: "aqz-KE-bpKQ", title: "Profil Sekolah SD Inovasi Ceria" },
-  { id: "aqz-KE-bpKQ", title: "Keseruan Pentas Seni Akhir Tahun" },
-];
+// Placeholder tunggal untuk contoh tampilan - tambahkan video YouTube resmi
+// sekolah di sini (id unik per video) sebelum situs dipakai publik. Section
+// ini belum bisa diedit lewat admin panel.
+const videos = [{ id: "aqz-KE-bpKQ", title: "Profil Sekolah SD Inovasi Ceria (contoh)" }];
 
 export default function GaleriPage() {
   const items = listGalleryItems();
@@ -40,7 +39,7 @@ export default function GaleriPage() {
       <section className="bg-primary/5 py-14 dark:bg-primary/10 sm:py-20">
         <div className="container-page">
           <SectionHeading eyebrow="Video Highlights" title="Video Kegiatan Sekolah" />
-          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+          <div className="mx-auto mt-10 grid max-w-xl gap-6 sm:grid-cols-2">
             {videos.map((v) => (
               <div key={v.title} className="card overflow-hidden">
                 <div className="aspect-video">

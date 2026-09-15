@@ -56,7 +56,15 @@ export async function DELETE(
   if (unauthorized) return unauthorized;
 
   const { id } = await params;
-  deleteProgram(Number(id));
+  const idNum = Number(id);
+  if (!Number.isInteger(idNum)) {
+    return NextResponse.json({ error: "ID tidak valid." }, { status: 400 });
+  }
+
+  const deleted = deleteProgram(idNum);
+  if (!deleted) {
+    return NextResponse.json({ error: "Program tidak ditemukan." }, { status: 404 });
+  }
   revalidatePath("/program");
   revalidatePath("/kontak");
   return NextResponse.json({ ok: true });

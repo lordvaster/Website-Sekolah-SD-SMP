@@ -37,6 +37,11 @@ function createConnection() {
   const db = new Database(dbPath);
   db.pragma("journal_mode = WAL");
   db.pragma("foreign_keys = ON");
+  // Tanpa ini, proses lain yang sempat memegang write lock di file yang
+  // sama (mis. `sqlite3 data/cms.sqlite ".backup ..."` atau VACUUM manual)
+  // akan membuat query dari sini langsung gagal dengan SQLITE_BUSY alih-alih
+  // menunggu sebentar - default better-sqlite3 adalah 0ms (tidak menunggu).
+  db.pragma("busy_timeout = 5000");
   return db;
 }
 

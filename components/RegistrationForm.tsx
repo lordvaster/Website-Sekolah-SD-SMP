@@ -26,6 +26,15 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
     if (ok) reset();
   };
 
+  if (programs.length === 0) {
+    return (
+      <p className="rounded-lg bg-accent/10 p-4 text-sm text-ink/80 dark:text-ink-dark/80">
+        Menu pendaftaran online belum tersedia saat ini. Silakan hubungi kami langsung lewat
+        formulir kontak atau kontak di atas untuk mendaftarkan putra-putri anda.
+      </p>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
       <div className="grid gap-5 sm:grid-cols-2">
@@ -37,11 +46,12 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
             id="childName"
             type="text"
             aria-invalid={!!errors.childName}
+            aria-describedby={errors.childName ? "childName-error" : undefined}
             {...register("childName")}
             className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
           />
           {errors.childName && (
-            <p role="alert" className="mt-1 text-sm text-cta">{errors.childName.message}</p>
+            <p id="childName-error" role="alert" className="mt-1 text-sm text-cta">{errors.childName.message}</p>
           )}
         </div>
 
@@ -55,11 +65,12 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
             min={3}
             max={13}
             aria-invalid={!!errors.childAge}
+            aria-describedby={errors.childAge ? "childAge-error" : undefined}
             {...register("childAge")}
             className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
           />
           {errors.childAge && (
-            <p role="alert" className="mt-1 text-sm text-cta">{errors.childAge.message}</p>
+            <p id="childAge-error" role="alert" className="mt-1 text-sm text-cta">{errors.childAge.message}</p>
           )}
         </div>
       </div>
@@ -72,6 +83,7 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
           id="program"
           defaultValue=""
           aria-invalid={!!errors.program}
+          aria-describedby={errors.program ? "program-error" : undefined}
           {...register("program")}
           className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
         >
@@ -85,7 +97,7 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
           ))}
         </select>
         {errors.program && (
-          <p role="alert" className="mt-1 text-sm text-cta">{errors.program.message}</p>
+          <p id="program-error" role="alert" className="mt-1 text-sm text-cta">{errors.program.message}</p>
         )}
       </div>
 
@@ -97,11 +109,12 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
           id="parentName"
           type="text"
           aria-invalid={!!errors.parentName}
+          aria-describedby={errors.parentName ? "parentName-error" : undefined}
           {...register("parentName")}
           className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
         />
         {errors.parentName && (
-          <p role="alert" className="mt-1 text-sm text-cta">{errors.parentName.message}</p>
+          <p id="parentName-error" role="alert" className="mt-1 text-sm text-cta">{errors.parentName.message}</p>
         )}
       </div>
 
@@ -114,11 +127,12 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
             id="reg-email"
             type="email"
             aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "reg-email-error" : undefined}
             {...register("email")}
             className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
           />
           {errors.email && (
-            <p role="alert" className="mt-1 text-sm text-cta">{errors.email.message}</p>
+            <p id="reg-email-error" role="alert" className="mt-1 text-sm text-cta">{errors.email.message}</p>
           )}
         </div>
         <div>
@@ -129,11 +143,12 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
             id="reg-phone"
             type="tel"
             aria-invalid={!!errors.phone}
+            aria-describedby={errors.phone ? "reg-phone-error" : undefined}
             {...register("phone")}
             className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
           />
           {errors.phone && (
-            <p role="alert" className="mt-1 text-sm text-cta">{errors.phone.message}</p>
+            <p id="reg-phone-error" role="alert" className="mt-1 text-sm text-cta">{errors.phone.message}</p>
           )}
         </div>
       </div>

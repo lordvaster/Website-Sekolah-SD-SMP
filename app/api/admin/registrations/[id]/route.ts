@@ -21,6 +21,14 @@ export async function PATCH(
   if (!parsed.success) return validationErrorResponse(parsed.error);
 
   const { id } = await params;
-  updateRegistrationStatus(Number(id), parsed.data.status);
+  const idNum = Number(id);
+  if (!Number.isInteger(idNum)) {
+    return NextResponse.json({ error: "ID tidak valid." }, { status: 400 });
+  }
+
+  const updated = updateRegistrationStatus(idNum, parsed.data.status);
+  if (!updated) {
+    return NextResponse.json({ error: "Pendaftaran tidak ditemukan." }, { status: 404 });
+  }
   return NextResponse.json({ ok: true });
 }

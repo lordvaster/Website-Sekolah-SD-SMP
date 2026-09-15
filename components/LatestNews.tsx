@@ -25,13 +25,19 @@ export default function LatestNews() {
             Lihat semua berita <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {latest.map((article, i) => (
-            <RevealOnScroll key={article.slug} delay={i * 0.07}>
-              <NewsCard article={article} />
-            </RevealOnScroll>
-          ))}
-        </div>
+        {latest.length === 0 ? (
+          <p className="mt-10 text-center text-ink/60 dark:text-ink-dark/60">
+            Belum ada berita yang dipublikasikan.
+          </p>
+        ) : (
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {latest.map((article, i) => (
+              <RevealOnScroll key={article.slug} delay={i * 0.07}>
+                <NewsCard article={article} />
+              </RevealOnScroll>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

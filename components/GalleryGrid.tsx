@@ -49,18 +49,26 @@ export default function GalleryGrid({ items: galleryItems }: { items: GalleryIte
         ))}
       </div>
 
-      <div className="mt-10 columns-2 gap-4 sm:columns-3 lg:columns-4 [column-fill:_balance]">
-        {filtered.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => setActiveId(item.id)}
-            className="mb-4 block w-full overflow-hidden rounded-xl2 shadow-sm ring-1 ring-black/5 transition-transform hover:-translate-y-1 hover:shadow-md dark:ring-white/10"
-          >
-            <MediaThumb imagePath={item.imagePath} hue={item.hue} label={item.caption} className="w-full" />
-          </button>
-        ))}
-      </div>
+      {filtered.length === 0 ? (
+        <p className="mt-12 text-center text-ink/60 dark:text-ink-dark/60">
+          {galleryItems.length === 0
+            ? "Belum ada foto di galeri."
+            : "Tidak ada foto pada kategori ini."}
+        </p>
+      ) : (
+        <div className="mt-10 columns-2 gap-4 sm:columns-3 lg:columns-4 [column-fill:_balance]">
+          {filtered.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setActiveId(item.id)}
+              className="mb-4 block w-full overflow-hidden rounded-xl2 shadow-sm ring-1 ring-black/5 transition-transform hover:-translate-y-1 hover:shadow-md dark:ring-white/10"
+            >
+              <MediaThumb imagePath={item.imagePath} hue={item.hue} label={item.caption} className="w-full" />
+            </button>
+          ))}
+        </div>
+      )}
 
       {active && (
         <div

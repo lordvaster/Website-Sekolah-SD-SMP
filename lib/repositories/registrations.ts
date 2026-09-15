@@ -70,6 +70,7 @@ export function createRegistration(input: RegistrationInput): Registration {
   return mapRow(row);
 }
 
-export function updateRegistrationStatus(id: number, status: RegistrationStatus) {
-  db.prepare("UPDATE registrations SET status = ? WHERE id = ?").run(status, id);
+export function updateRegistrationStatus(id: number, status: RegistrationStatus): boolean {
+  const result = db.prepare("UPDATE registrations SET status = ? WHERE id = ?").run(status, id);
+  return result.changes > 0;
 }

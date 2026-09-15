@@ -91,6 +91,7 @@ export function updateProgram(id: number, input: ProgramInput): Program | undefi
   return getProgramById(id);
 }
 
-export function deleteProgram(id: number) {
-  db.prepare("DELETE FROM programs WHERE id = ?").run(id);
+export function deleteProgram(id: number): boolean {
+  const result = db.prepare("DELETE FROM programs WHERE id = ?").run(id);
+  return result.changes > 0;
 }

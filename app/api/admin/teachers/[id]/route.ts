@@ -48,7 +48,15 @@ export async function DELETE(
   if (unauthorized) return unauthorized;
 
   const { id } = await params;
-  deleteTeacher(Number(id));
+  const idNum = Number(id);
+  if (!Number.isInteger(idNum)) {
+    return NextResponse.json({ error: "ID tidak valid." }, { status: 400 });
+  }
+
+  const deleted = deleteTeacher(idNum);
+  if (!deleted) {
+    return NextResponse.json({ error: "Guru tidak ditemukan." }, { status: 404 });
+  }
   revalidatePath("/tentang");
   return NextResponse.json({ ok: true });
 }
