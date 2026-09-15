@@ -52,7 +52,7 @@ fi
 
 echo "==> Memasang paket sistem (nginx, certbot, git) bila belum ada..."
 apt-get update -y
-apt-get install -y nginx certbot python3-certbot-nginx git
+apt-get install -y nginx certbot python3-certbot-nginx git nano
 
 if ! command -v pm2 >/dev/null 2>&1; then
   echo "==> Memasang PM2 secara global..."
@@ -86,7 +86,12 @@ if [ ! -f .env ]; then
   echo "    NEXT_PUBLIC_SHOW_DEVELOPER_CREDIT masih nilai contoh - wajib diisi"
   echo "    sesuai data sekolah/klien ini sebelum lanjut."
   echo
-  "${EDITOR:-nano}" .env
+  if command -v "${EDITOR:-nano}" >/dev/null 2>&1; then
+    "${EDITOR:-nano}" .env
+  else
+    echo "Editor '${EDITOR:-nano}' tidak ditemukan. Edit manual: nano ${TARGET_DIR}/.env lalu jalankan ulang script ini." >&2
+    exit 1
+  fi
 else
   echo "==> .env sudah ada, tidak ditimpa. Pastikan isinya sudah sesuai domain/klien ini."
 fi
@@ -98,6 +103,29 @@ mkdir -p logs
 
 echo "==> Menjalankan lewat PM2..."
 if pm2 describe sd-inovasi-ceria > /dev/null 2>&1; then
+  # Nama proses PM2 ("sd-inovasi-ceria") tetap sama di semua deployment,
+  # jadi kalau VPS ini kebetulan sudah menjalankan situs klien LAIN dengan
+  # nama proses yang sama, "pm2 reload" di bawah akan menimpa proses itu
+  # dengan folder/database klien saat ini - dua situs berbeda domain jadi
+  # menunjuk ke satu proses & satu database yang sama. Cegah lebih dulu.
+  EXISTING_CWD=$(pm2 jlist | node -e '
+    let d = "";
+    process.stdin.on("data", (c) => (d += c));
+    process.stdin.on("end", () => {
+      try {
+        const app = JSON.parse(d).find((a) => a.name === "sd-inovasi-ceria");
+        process.stdout.write(app?.pm2_env?.pm_cwd || app?.pm2_env?.cwd || "");
+      } catch {
+        // biarkan kosong - dianggap tidak bisa dipastikan, gagal aman di bawah
+      }
+    });
+  ')
+  if [ -z "$EXISTING_CWD" ] || [ "$(cd "$EXISTING_CWD" 2>/dev/null && pwd)" != "$(pwd)" ]; then
+    echo "PM2 sudah menjalankan proses 'sd-inovasi-ceria' dari folder lain (${EXISTING_CWD:-tidak diketahui})." >&2
+    echo "Script ini mengasumsikan SATU situs per VPS. Jangan pakai VPS yang sama untuk klien lain" >&2
+    echo "tanpa mengganti nama app di ecosystem.config.cjs dan port di dalamnya terlebih dahulu." >&2
+    exit 1
+  fi
   pm2 reload ecosystem.config.cjs --env production
 else
   pm2 start ecosystem.config.cjs --env production
