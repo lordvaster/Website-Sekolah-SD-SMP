@@ -32,3 +32,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# file agen AI yang dibuat otomatis oleh `next dev` (lihat
+# node_modules/next/dist/server/lib/generate-agent-files.js) - sengaja
+# tidak di-commit ke repo publik ini
+AGENTS.md
+CLAUDE.md
