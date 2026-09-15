@@ -1,0 +1,54 @@
+/* Author: Zeday | https://join.co.id */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-surface text-ink dark:bg-surface-dark dark:text-ink-dark font-body;
+  min-height: 100vh;
+}
+
+.skip-link {
+  @apply sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-white;
+}
+
+.container-page {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-semibold shadow-sm transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary;
+}
+
+.btn-primary {
+  @apply btn bg-cta text-white hover:bg-cta-dark hover:shadow-lg hover:-translate-y-0.5;
+}
+
+.btn-secondary {
+  @apply btn bg-white text-primary ring-1 ring-primary/30 hover:bg-primary/5 dark:bg-surface-dark dark:text-primary-light dark:ring-primary-light/30;
+}
+
+.card {
+  @apply rounded-xl2 bg-white shadow-sm ring-1 ring-black/5 transition-all duration-200 hover:shadow-md hover:-translate-y-1 dark:bg-white/5 dark:ring-white/10;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

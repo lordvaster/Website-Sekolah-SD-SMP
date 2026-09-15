@@ -1,0 +1,116 @@
+// Author: Zeday | https://join.co.id
+"use client";
+
+import { useMemo, useState } from "react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { galleryItems, type GalleryCategory } from "@/lib/data";
+import PlaceholderPhoto from "./PlaceholderPhoto";
+
+const categories: (GalleryCategory | "Semua")[] = ["Semua", "Kelas", "Acara", "Aktivitas"];
+
+export default function GalleryGrid() {
+  const [filter, setFilter] = useState<(typeof categories)[number]>("Semua");
+  const [activeId, setActiveId] = useState<number | null>(null);
+
+  const filtered = useMemo(
+    () =>
+      filter === "Semua"
+        ? galleryItems
+        : galleryItems.filter((item) => item.category === filter),
+    [filter]
+  );
+
+  const activeIndex = filtered.findIndex((item) => item.id === activeId);
+  const active = activeIndex >= 0 ? filtered[activeIndex] : null;
+
+  const goTo = (delta: number) => {
+    if (activeIndex < 0) return;
+    const next = (activeIndex + delta + filtered.length) % filtered.length;
+    setActiveId(filtered[next].id);
+  };
+
+  return (
+    <div>
+      <div className="flex flex-wrap justify-center gap-2" role="group" aria-label="Filter kategori galeri">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            type="button"
+            onClick={() => setFilter(cat)}
+            aria-pressed={filter === cat}
+            className={`rounded-full px-5 py-2 text-sm font-semibold transition-colors ${
+              filter === cat
+                ? "bg-primary text-white"
+                : "bg-primary/10 text-primary hover:bg-primary/20 dark:text-primary-light"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-10 columns-2 gap-4 sm:columns-3 lg:columns-4 [column-fill:_balance]">
+        {filtered.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => setActiveId(item.id)}
+            className="mb-4 block w-full overflow-hidden rounded-xl2 shadow-sm ring-1 ring-black/5 transition-transform hover:-translate-y-1 hover:shadow-md dark:ring-white/10"
+          >
+            <PlaceholderPhoto hue={item.hue} label={item.caption} className="w-full" />
+          </button>
+        ))}
+      </div>
+
+      {active && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={active.caption}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setActiveId(null)}
+        >
+          <button
+            type="button"
+            aria-label="Tutup"
+            onClick={() => setActiveId(null)}
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+          >
+            <X className="h-6 w-6" />
+          </button>
+          <button
+            type="button"
+            aria-label="Sebelumnya"
+            onClick={(e) => {
+              e.stopPropagation();
+              goTo(-1);
+            }}
+            className="absolute left-2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:left-6"
+          >
+            <ChevronLeft className="h-7 w-7" />
+          </button>
+          <div
+            className="w-full max-w-2xl overflow-hidden rounded-xl2"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <PlaceholderPhoto hue={active.hue} label={active.caption} className="w-full" />
+            <p className="bg-white p-4 text-center font-semibold text-ink dark:bg-surface-dark dark:text-ink-dark">
+              {active.caption}
+            </p>
+          </div>
+          <button
+            type="button"
+            aria-label="Berikutnya"
+            onClick={(e) => {
+              e.stopPropagation();
+              goTo(1);
+            }}
+            className="absolute right-2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:right-6"
+          >
+            <ChevronRight className="h-7 w-7" />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
