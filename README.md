@@ -6,6 +6,26 @@ SQLite sebagai CMS ringan yang bisa dikelola penuh lewat panel admin.
 
 Dikembangkan oleh **Zeday** — [https://join.co.id](https://join.co.id)
 
+> Contoh live (data & sekolah di bawah ini masih dummy/contoh): [sd.join.co.id](https://sd.join.co.id)
+
+## Preview
+
+| Beranda | Tentang Sekolah |
+| --- | --- |
+| ![Beranda](screenshots/01-beranda.png) | ![Tentang Sekolah](screenshots/02-tentang.png) |
+
+| Program & Kelas | Galeri |
+| --- | --- |
+| ![Program & Kelas](screenshots/03-program.png) | ![Galeri](screenshots/04-galeri.png) |
+
+| Berita | Kontak & Pendaftaran |
+| --- | --- |
+| ![Berita](screenshots/05-berita.png) | ![Kontak & Pendaftaran](screenshots/06-kontak.png) |
+
+| Dark Mode | Tampilan Mobile |
+| --- | --- |
+| ![Dark Mode](screenshots/07-dark-mode.png) | <img src="screenshots/08-mobile.png" width="260" alt="Tampilan Mobile" /> |
+
 ## Fitur Utama
 
 - Halaman: Beranda, Tentang Sekolah, Program & Kelas, Galeri, Berita/Blog, Kontak & Pendaftaran.
