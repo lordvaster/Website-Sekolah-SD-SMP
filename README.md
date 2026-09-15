@@ -154,6 +154,19 @@ bash deploy/deploy.sh
 
 Script ini menjalankan `git pull` → `npm ci` → `npm run build` → reload PM2, tanpa menyentuh `data/` atau `public/uploads/`.
 
+### Instalasi Otomatis di VPS Klien Lain
+
+Setiap klien dijalankan sebagai deployment terpisah (bukan multi-tenant), jadi VPS baru perlu setup awal dari nol seperti bagian "Setup Awal" di atas. `deploy/install.sh` merangkum langkah 1-4 jadi sekali jalan (clone/pakai folder yang ada → `.env` → build → PM2 → Nginx → sertifikat SSL):
+
+```bash
+# Prasyarat: VPS Debian/Ubuntu, Node.js >=20.9 sudah terpasang,
+# dan domain klien sudah diarahkan (DNS A record) ke IP VPS ini.
+sudo bash deploy/install.sh sdmaju.sch.id admin@sdmaju.sch.id \
+  git@github.com:lordvaster/Website-Sekolah-SD-SMP.git /var/www/sdmaju
+```
+
+Script akan membuatkan `.env` baru dari `.env.example` (dengan `NEXT_PUBLIC_SITE_URL` dan `ADMIN_PASSWORD` acak terisi otomatis sesuai domain), lalu membuka editor supaya `SMTP_*`, `CONTACT_RECEIVER_EMAIL`, dan `NEXT_PUBLIC_SHOW_DEVELOPER_CREDIT` diisi manual sesuai data klien tersebut sebelum lanjut build — nilai-nilai ini spesifik per sekolah dan tidak boleh disalin dari deployment lain. Setelah selesai, ganti juga seluruh konten dummy (berita, galeri, guru, program, pengaturan) lewat `/admin` sebelum situs klien go-live publik.
+
 ### Auto-Deploy dari GitHub (Opsional)
 
 `.github/workflows/deploy.yml` sudah disiapkan untuk otomatis menjalankan `deploy/deploy.sh` di server lewat SSH setiap kali push ke `main` lolos CI. **Tidak aktif secara default** — untuk mengaktifkan, tambahkan secrets berikut di GitHub repo (Settings → Secrets and variables → Actions):
