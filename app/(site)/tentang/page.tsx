@@ -6,6 +6,7 @@ import SectionHeading from "@/components/SectionHeading";
 import RevealOnScroll from "@/components/RevealOnScroll";
 import PlaceholderPhoto from "@/components/PlaceholderPhoto";
 import TeacherGrid from "@/components/TeacherGrid";
+import AchievementGrid from "@/components/AchievementGrid";
 import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
@@ -130,6 +131,15 @@ export default function TentangPage() {
                 </div>
               </RevealOnScroll>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-14 sm:py-20">
+        <div className="container-page">
+          <SectionHeading eyebrow="Prestasi" title="Prestasi & Penghargaan" />
+          <div className="mt-10">
+            <AchievementGrid />
           </div>
         </div>
       </section>

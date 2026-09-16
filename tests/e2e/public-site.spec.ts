@@ -66,6 +66,13 @@ test.describe("Situs publik", () => {
     }
   });
 
+  test("section cara mendaftar (4 langkah) tampil di beranda", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("heading", { name: "Cara Mendaftar, Mudah dalam 4 Langkah" })).toBeVisible();
+    await expect(page.getByText("Isi Formulir Online")).toBeVisible();
+    await expect(page.getByText("Konfirmasi Diterima")).toBeVisible();
+  });
+
   test("tombol WhatsApp mengambang tampil dan mengarah ke wa.me", async ({ page }) => {
     // CTASection di beranda juga punya link "Chat via WhatsApp" (teks biasa,
     // tanpa aria-label) - getByLabel di sini menyasar khusus tombol

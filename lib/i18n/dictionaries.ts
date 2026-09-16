@@ -79,6 +79,17 @@ const id = {
     ctaRegister: "Daftar Sekarang",
     ctaWhatsapp: "Chat via WhatsApp",
   },
+  howToRegister: {
+    eyebrow: "Alur Pendaftaran",
+    title: "Cara Mendaftar, Mudah dalam 4 Langkah",
+    description: "Ikuti langkah-langkah berikut untuk mendaftarkan putra-putri anda sebagai siswa baru.",
+    steps: [
+      { title: "Isi Formulir Online", desc: "Lengkapi formulir pendaftaran di halaman Kontak & Pendaftaran." },
+      { title: "Verifikasi Data", desc: "Tim admisi kami akan menghubungi anda untuk verifikasi data dan dokumen." },
+      { title: "Kunjungan & Tes", desc: "Jadwalkan kunjungan sekolah atau tes penempatan sesuai jenjang yang dipilih." },
+      { title: "Konfirmasi Diterima", desc: "Terima konfirmasi penerimaan dan lakukan daftar ulang." },
+    ],
+  },
   contactForm: {
     name: "Nama Lengkap",
     email: "Email",
@@ -196,6 +207,17 @@ const en: typeof id = {
     ctaRegister: "Enroll Now",
     ctaWhatsapp: "Chat via WhatsApp",
   },
+  howToRegister: {
+    eyebrow: "Enrollment Process",
+    title: "How to Enroll, Easy in 4 Steps",
+    description: "Follow these steps to enroll your child as a new student.",
+    steps: [
+      { title: "Fill Out the Online Form", desc: "Complete the enrollment form on the Contact & Registration page." },
+      { title: "Data Verification", desc: "Our admissions team will contact you to verify your data and documents." },
+      { title: "School Visit & Assessment", desc: "Schedule a school visit or placement assessment for the chosen grade level." },
+      { title: "Enrollment Confirmed", desc: "Receive your acceptance confirmation and complete re-registration." },
+    ],
+  },
   contactForm: {
     name: "Full Name",
     email: "Email",
@@ -312,6 +334,17 @@ const ja: typeof id = {
     ctaRegister: "今すぐ入学申込",
     ctaWhatsapp: "WhatsAppでチャット",
   },
+  howToRegister: {
+    eyebrow: "入学の流れ",
+    title: "簡単4ステップで入学申込",
+    description: "以下のステップに沿って、お子様の新入生登録を行ってください。",
+    steps: [
+      { title: "オンラインフォームに入力", desc: "「お問い合わせ・入学申込」ページで申込フォームにご入力ください。" },
+      { title: "データの確認", desc: "入学審査チームがご記入内容と書類の確認のためご連絡いたします。" },
+      { title: "学校見学・アセスメント", desc: "選択した学年に応じた学校見学またはプレースメントテストの日程を調整します。" },
+      { title: "入学確定", desc: "合格確認をお受け取りいただき、再登録手続きを完了してください。" },
+    ],
+  },
   contactForm: {
     name: "氏名",
     email: "メールアドレス",
@@ -427,6 +460,17 @@ const zh: typeof id = {
     subtitle: "新学年报名名额有限，请立即联系我们了解更多信息及预约参观学校。",
     ctaRegister: "立即报名",
     ctaWhatsapp: "通过WhatsApp联系",
+  },
+  howToRegister: {
+    eyebrow: "报名流程",
+    title: "简单4步完成报名",
+    description: "请按照以下步骤为您的孩子办理新生报名。",
+    steps: [
+      { title: "填写在线表格", desc: "在「联系与报名」页面完整填写报名表格。" },
+      { title: "资料核实", desc: "招生团队将联系您核实资料与相关文件。" },
+      { title: "参观与测评", desc: "根据所选年级安排学校参观或入学测评。" },
+      { title: "确认录取", desc: "收到录取确认后完成注册手续。" },
+    ],
   },
   contactForm: {
     name: "姓名",

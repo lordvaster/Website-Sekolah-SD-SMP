@@ -5,6 +5,7 @@ import StatsSection from "@/components/StatsSection";
 import FeatureCards from "@/components/FeatureCards";
 import LatestNews from "@/components/LatestNews";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
+import HowToRegister from "@/components/HowToRegister";
 import CTASection from "@/components/CTASection";
 import { readSettings } from "@/lib/settings";
 import { listTestimonials } from "@/lib/repositories/testimonials";
@@ -26,6 +27,7 @@ export default async function HomePage() {
       <FeatureCards />
       <LatestNews />
       <TestimonialCarousel testimonials={testimonials} />
+      <HowToRegister />
       <CTASection whatsapp={schoolWhatsapp} />
     </>
   );

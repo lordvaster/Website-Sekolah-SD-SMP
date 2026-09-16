@@ -81,6 +81,16 @@ export const faqAdminSchema = z.object({
   answer: z.string().trim().min(5, "Jawaban minimal 5 karakter").max(1000),
 });
 
+export const achievementAdminSchema = z.object({
+  title: z.string().trim().min(3, "Judul prestasi minimal 3 karakter").max(150),
+  description: z.string().trim().min(5, "Keterangan minimal 5 karakter").max(300),
+  year: z
+    .string()
+    .trim()
+    .regex(/^\d{4}$/, "Tahun harus 4 digit angka, contoh: 2026"),
+  imagePath: z.string().trim().nullable().optional(),
+});
+
 export function randomHue() {
   return Math.floor(Math.random() * 360);
 }

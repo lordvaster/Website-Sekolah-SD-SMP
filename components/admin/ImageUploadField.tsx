@@ -7,7 +7,7 @@ import PlaceholderPhoto from "@/components/PlaceholderPhoto";
 
 type Props = {
   label: string;
-  folder: "news" | "gallery" | "teachers" | "testimonials";
+  folder: "news" | "gallery" | "teachers" | "testimonials" | "achievements";
   value: string | null;
   onChange: (path: string | null) => void;
   placeholderLabel: string;

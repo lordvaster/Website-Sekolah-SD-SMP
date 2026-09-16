@@ -9,6 +9,7 @@ import { createTeacher } from "./repositories/teachers";
 import { createProgram } from "./repositories/programs";
 import { createTestimonial } from "./repositories/testimonials";
 import { createFaq } from "./repositories/faqs";
+import { createAchievement } from "./repositories/achievements";
 import { countAdminUsers, createAdminUser } from "./repositories/admin-users";
 
 function count(table: string) {
@@ -206,6 +207,20 @@ function seedFaqs() {
   faqs.forEach((f) => createFaq(f));
 }
 
+function seedAchievements() {
+  if (count("achievements") > 0) return;
+
+  const achievements = [
+    { title: "Juara 1 Lomba Sains Tingkat Kota", description: "Tim sains kelas 5, Kompetisi Sains Anak Palangkaraya", year: "2026", hue: 205 },
+    { title: "Juara 2 Lomba Renang Antar SD", description: "Kategori gaya bebas 50m putra-putri", year: "2025", hue: 152 },
+    { title: "Juara 1 Lomba Mewarnai Tingkat Provinsi", description: "Kategori usia 7-9 tahun", year: "2025", hue: 28 },
+    { title: "Juara 3 Cerdas Cermat Se-Kalimantan Tengah", description: "Tim cerdas cermat kelas 6", year: "2024", hue: 320 },
+    { title: "Juara Harapan 1 Lomba Futsal Antar SD", description: "Turnamen futsal pelajar se-kota", year: "2024", hue: 190 },
+  ];
+
+  achievements.forEach((a) => createAchievement(a));
+}
+
 // Akun admin pertama ("owner") dibuat sekali dari ADMIN_PASSWORD di .env,
 // supaya deployment yang sudah ada (dari sebelum fitur multi-akun ini)
 // tidak langsung terkunci begitu update di-deploy. Setelah ini, kelola
@@ -239,6 +254,7 @@ export async function ensureSeeded() {
   seedPrograms();
   seedTestimonials();
   seedFaqs();
+  seedAchievements();
   // Di-await (bukan fire-and-forget) - lihat instrumentation.ts: register()
   // harus benar-benar selesai, termasuk bagian async ini, sebelum server
   // mulai menerima request, supaya tidak ada window tanpa akun admin sama
