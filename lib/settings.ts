@@ -69,6 +69,11 @@ export type SiteSettings = {
   socialYoutube: string;
   mapsEmbedSrc: string;
   privacyPolicyContent: string;
+  // Tanggal batas akhir pendaftaran, format "YYYY-MM-DD". String kosong
+  // berarti fitur countdown pendaftaran di Beranda dinonaktifkan (tidak
+  // ditampilkan sama sekali) - bukan tanggal fallback seperti field
+  // lain, karena tidak ada "tanggal default" yang masuk akal untuk ini.
+  registrationDeadline: string;
   updatedAt: string;
 };
 
@@ -87,6 +92,7 @@ function defaultSettings(): SiteSettings {
     socialYoutube: siteConfig.social.youtube,
     mapsEmbedSrc: siteConfig.mapsEmbedSrc,
     privacyPolicyContent: DEFAULT_PRIVACY_POLICY,
+    registrationDeadline: "",
     updatedAt: new Date().toISOString(),
   };
 }
@@ -107,6 +113,7 @@ const STRING_FIELDS_WITH_DEFAULT: Record<
   socialYoutube: siteConfig.social.youtube,
   mapsEmbedSrc: siteConfig.mapsEmbedSrc,
   privacyPolicyContent: DEFAULT_PRIVACY_POLICY,
+  registrationDeadline: "",
 };
 
 // Versi tidak di-cache, dipakai writeSettings() sendiri untuk read-modify-

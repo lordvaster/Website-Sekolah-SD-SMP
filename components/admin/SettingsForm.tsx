@@ -20,6 +20,7 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
   const [socialYoutube, setSocialYoutube] = useState(initial.socialYoutube);
   const [mapsEmbedSrc, setMapsEmbedSrc] = useState(initial.mapsEmbedSrc);
   const [privacyPolicyContent, setPrivacyPolicyContent] = useState(initial.privacyPolicyContent);
+  const [registrationDeadline, setRegistrationDeadline] = useState(initial.registrationDeadline);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
@@ -46,6 +47,7 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
           socialYoutube,
           mapsEmbedSrc,
           privacyPolicyContent,
+          registrationDeadline,
         }),
       });
       if (res.ok) {
@@ -276,6 +278,28 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
               Dari Google Maps: cari lokasi → Bagikan → Sematkan peta → salin URL di dalam <code>src=&quot;...&quot;</code>.
             </p>
           </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 className="font-heading text-lg font-bold text-ink dark:text-ink-dark">
+          Countdown Pendaftaran
+        </h2>
+        <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+          Jika diisi, hitung mundur menuju tanggal ini tampil di Beranda untuk mendorong calon
+          pendaftar segera mendaftar. Kosongkan untuk menyembunyikan hitung mundur.
+        </p>
+        <div className="mt-4 max-w-xs">
+          <label htmlFor="registrationDeadline" className="block text-sm font-semibold text-ink dark:text-ink-dark">
+            Batas Akhir Pendaftaran
+          </label>
+          <input
+            id="registrationDeadline"
+            type="date"
+            value={registrationDeadline}
+            onChange={(e) => setRegistrationDeadline(e.target.value)}
+            className={inputClass}
+          />
         </div>
       </div>
 

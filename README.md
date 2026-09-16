@@ -33,6 +33,7 @@ Dikembangkan oleh **Zeday** — [https://join.co.id](https://join.co.id)
 - Tombol WhatsApp mengambang (sticky) di semua halaman publik, memakai nomor WhatsApp sekolah dari Pengaturan.
 - Angka statistik di Beranda (jumlah siswa, guru, dll.) beranimasi menghitung naik saat discroll ke tampilan.
 - Section "Cara Mendaftar" (4 langkah) di Beranda, dan "Prestasi & Penghargaan" di halaman Tentang Sekolah.
+- Countdown batas akhir pendaftaran (opsional, diatur dari Pengaturan) tampil di section CTA Beranda untuk mendorong calon pendaftar segera mendaftar.
 - Unggah gambar asli (JPG/PNG/WebP, maks 5MB) untuk berita, galeri, dan foto profil guru; otomatis memakai placeholder SVG bila belum ada foto.
 - Dark mode toggle (default: light mode), fully responsive (mobile-first).
 - **Pilihan bahasa** (Indonesia/English/日本語/中文) lewat dropdown di navbar — menerjemahkan UI (menu, tombol, label form, halaman Kontak, Kebijakan Privasi). Lihat bagian "Bahasa (i18n)" untuk detail cakupannya.
@@ -90,7 +91,7 @@ Buka `/admin`. Setiap staf punya **akun individual** (username + password sendir
 
 | Menu | Fungsi | Peran |
 | --- | --- | --- |
-| **Pengaturan** | Ganti favicon/icon, tagline, deskripsi/alamat/telepon/WhatsApp/email/jam operasional/media sosial sekolah (tampil di footer & halaman Kontak), isi **Kebijakan Privasi**, dan aktifkan **Verifikasi Dua Langkah (2FA)** untuk akun sendiri. | Semua |
+| **Pengaturan** | Ganti favicon/icon, tagline, deskripsi/alamat/telepon/WhatsApp/email/jam operasional/media sosial sekolah (tampil di footer & halaman Kontak), isi **Kebijakan Privasi**, atur **batas akhir pendaftaran** (menampilkan countdown di Beranda), dan aktifkan **Verifikasi Dua Langkah (2FA)** untuk akun sendiri. | Semua |
 | **Berita** | Tulis, edit, hapus artikel berita/pengumuman lengkap dengan gambar sampul. | Semua |
 | **Galeri** | Unggah & hapus foto kegiatan, dikategorikan Kelas/Acara/Aktivitas. | Semua |
 | **Guru** | Tambah, edit, hapus profil tenaga pengajar beserta foto. | Semua |

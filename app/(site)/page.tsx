@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const { schoolWhatsapp, siteTagline } = await readSettings();
+  const { schoolWhatsapp, siteTagline, registrationDeadline } = await readSettings();
   const testimonials = listTestimonials();
 
   return (
@@ -28,7 +28,7 @@ export default async function HomePage() {
       <LatestNews />
       <TestimonialCarousel testimonials={testimonials} />
       <HowToRegister />
-      <CTASection whatsapp={schoolWhatsapp} />
+      <CTASection whatsapp={schoolWhatsapp} registrationDeadline={registrationDeadline} />
     </>
   );
 }

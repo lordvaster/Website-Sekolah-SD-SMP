@@ -28,6 +28,10 @@ const updateSchema = z.object({
   socialYoutube: optionalUrl,
   mapsEmbedSrc: z.string().trim().min(1, "Wajib diisi").max(2000),
   privacyPolicyContent: z.string().trim().min(1, "Wajib diisi").max(20000),
+  registrationDeadline: z.union([
+    z.literal(""),
+    z.string().trim().regex(/^\d{4}-\d{2}-\d{2}$/, "Format tanggal tidak valid"),
+  ]),
 });
 
 export async function GET() {

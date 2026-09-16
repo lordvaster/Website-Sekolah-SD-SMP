@@ -3,8 +3,15 @@
 
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n/LocaleContext";
+import CountdownTimer from "./CountdownTimer";
 
-export default function CTASection({ whatsapp }: { whatsapp: string }) {
+export default function CTASection({
+  whatsapp,
+  registrationDeadline,
+}: {
+  whatsapp: string;
+  registrationDeadline: string;
+}) {
   const { dict } = useTranslation();
 
   return (
@@ -17,6 +24,7 @@ export default function CTASection({ whatsapp }: { whatsapp: string }) {
           <p className="mx-auto mt-3 max-w-xl text-white/90">
             {dict.cta.subtitle}
           </p>
+          {registrationDeadline && <CountdownTimer deadline={registrationDeadline} />}
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               href="/kontak"

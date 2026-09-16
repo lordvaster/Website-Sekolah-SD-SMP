@@ -90,6 +90,13 @@ const id = {
       { title: "Konfirmasi Diterima", desc: "Terima konfirmasi penerimaan dan lakukan daftar ulang." },
     ],
   },
+  countdown: {
+    label: "Pendaftaran ditutup dalam",
+    days: "Hari",
+    hours: "Jam",
+    minutes: "Menit",
+    seconds: "Detik",
+  },
   contactForm: {
     name: "Nama Lengkap",
     email: "Email",
@@ -218,6 +225,13 @@ const en: typeof id = {
       { title: "Enrollment Confirmed", desc: "Receive your acceptance confirmation and complete re-registration." },
     ],
   },
+  countdown: {
+    label: "Enrollment closes in",
+    days: "Days",
+    hours: "Hours",
+    minutes: "Minutes",
+    seconds: "Seconds",
+  },
   contactForm: {
     name: "Full Name",
     email: "Email",
@@ -345,6 +359,13 @@ const ja: typeof id = {
       { title: "入学確定", desc: "合格確認をお受け取りいただき、再登録手続きを完了してください。" },
     ],
   },
+  countdown: {
+    label: "入学申込締切まで",
+    days: "日",
+    hours: "時間",
+    minutes: "分",
+    seconds: "秒",
+  },
   contactForm: {
     name: "氏名",
     email: "メールアドレス",
@@ -471,6 +492,13 @@ const zh: typeof id = {
       { title: "参观与测评", desc: "根据所选年级安排学校参观或入学测评。" },
       { title: "确认录取", desc: "收到录取确认后完成注册手续。" },
     ],
+  },
+  countdown: {
+    label: "报名截止倒计时",
+    days: "天",
+    hours: "小时",
+    minutes: "分钟",
+    seconds: "秒",
   },
   contactForm: {
     name: "姓名",
