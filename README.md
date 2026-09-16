@@ -39,7 +39,7 @@ Dikembangkan oleh **Zeday** — [https://join.co.id](https://join.co.id)
 - SEO: metadata per halaman, Open Graph, JSON-LD, `sitemap.xml`, `robots.txt`, revalidasi otomatis saat konten admin berubah.
 - Aksesibilitas: skip-to-content, label ARIA, kontras warna sesuai WCAG AA, navigasi keyboard.
 - Form kontak & pendaftaran siswa baru dengan validasi real-time (React Hook Form + Zod), email konfirmasi (opsional, via SMTP), dan pendaftaran tersimpan permanen di database (bisa dilihat/dikelola admin meski email gagal terkirim).
-- Galeri foto dengan filter kategori & lightbox, video YouTube embed.
+- Galeri foto dengan layout masonry (tinggi kartu bervariasi), filter kategori & lightbox, video YouTube embed.
 - PWA dasar: manifest + service worker untuk caching offline halaman utama.
 - Favicon/icon situs & tagline dapat diganti langsung dari panel admin.
 - Test end-to-end otomatis (Playwright) dan pipeline CI (GitHub Actions) yang menjalankan lint, build, dan test di setiap push/PR.

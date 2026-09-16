@@ -8,6 +8,13 @@ type Props = {
   label: string;
   variant?: "photo" | "avatar";
   className?: string;
+  // Rasio lebar/tinggi kotak pembungkus (mis. galeri masonry memakai kartu
+  // dengan tinggi bervariasi). viewBox disesuaikan ke rasio ini alih-alih
+  // memakai preserveAspectRatio="...slice" pada viewBox tetap 4:3 - cara
+  // lama itu memotong sisi kiri/kanan atau atas/bawah gambar tergantung
+  // rasio target, sehingga label teks (diposisikan tetap di viewBox asli)
+  // bisa ikut terpotong/hilang dari tampilan.
+  aspectRatio?: number;
 };
 
 export default function PlaceholderPhoto({
@@ -15,6 +22,7 @@ export default function PlaceholderPhoto({
   label,
   variant = "photo",
   className,
+  aspectRatio = 4 / 3,
 }: Props) {
   const c1 = `hsl(${hue}, 78%, 62%)`;
   const c2 = `hsl(${(hue + 40) % 360}, 78%, 48%)`;
@@ -50,13 +58,15 @@ export default function PlaceholderPhoto({
     );
   }
 
+  const vbW = 400;
+  const vbH = Math.round(vbW / aspectRatio);
+
   return (
     <svg
-      viewBox="0 0 400 300"
+      viewBox={`0 0 ${vbW} ${vbH}`}
       role="img"
       aria-label={label}
       className={className}
-      preserveAspectRatio="xMidYMid slice"
     >
       <defs>
         <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
@@ -64,12 +74,12 @@ export default function PlaceholderPhoto({
           <stop offset="100%" stopColor={c2} />
         </linearGradient>
       </defs>
-      <rect width="400" height="300" fill={`url(#${gradId})`} />
-      <circle cx="330" cy="60" r="70" fill="white" opacity="0.12" />
-      <circle cx="40" cy="260" r="90" fill="white" opacity="0.1" />
+      <rect width={vbW} height={vbH} fill={`url(#${gradId})`} />
+      <circle cx={vbW * 0.825} cy={vbH * 0.2} r={vbH * 0.35} fill="white" opacity="0.12" />
+      <circle cx={vbW * 0.1} cy={vbH * 0.87} r={vbH * 0.45} fill="white" opacity="0.1" />
       <text
         x="20"
-        y="270"
+        y={vbH - 30}
         fontSize="20"
         fontWeight="700"
         fill="white"

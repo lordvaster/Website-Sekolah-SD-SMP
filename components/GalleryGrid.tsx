@@ -8,6 +8,29 @@ import MediaThumb from "./MediaThumb";
 
 const categories: (GalleryCategory | "Semua")[] = ["Semua", "Kelas", "Acara", "Aktivitas"];
 
+// Rasio tinggi yang divariasikan per foto (dipilih berdasarkan id, jadi
+// konsisten antar render) supaya susunan kolom terlihat seperti masonry
+// asli (tinggi kartu tidak seragam) - baik untuk foto asli yang diunggah
+// admin maupun placeholder generatif sebelum ada foto asli. `ratio` dipakai
+// PlaceholderPhoto untuk menyesuaikan viewBox-nya sendiri (bukan crop),
+// supaya label teksnya tidak ikut terpotong di rasio non-4:3.
+const aspectVariants = [
+  { className: "aspect-[3/4]", ratio: 3 / 4 },
+  { className: "aspect-square", ratio: 1 },
+  { className: "aspect-[4/3]", ratio: 4 / 3 },
+  { className: "aspect-[4/5]", ratio: 4 / 5 },
+  { className: "aspect-video", ratio: 16 / 9 },
+];
+
+// Modulo id biasa gampang "beresonansi" dengan jumlah kolom (mis. 20 foto /
+// 4 kolom / 5 varian rasio bisa pas siklus penuh per kolom, jadi tiap
+// kolom kebetulan sinkron dan susunan terlihat seperti baris rapi, bukan
+// masonry acak). Hash perkalian sederhana ini memutus pola periodik itu.
+function pickAspectVariant(id: number) {
+  const hashed = Math.imul(id, 2654435761) >>> 0;
+  return aspectVariants[hashed % aspectVariants.length];
+}
+
 export default function GalleryGrid({ items: galleryItems }: { items: GalleryItem[] }) {
   const [filter, setFilter] = useState<(typeof categories)[number]>("Semua");
   const [activeId, setActiveId] = useState<number | null>(null);
@@ -57,16 +80,25 @@ export default function GalleryGrid({ items: galleryItems }: { items: GalleryIte
         </p>
       ) : (
         <div className="mt-10 columns-2 gap-4 sm:columns-3 lg:columns-4 [column-fill:_balance]">
-          {filtered.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => setActiveId(item.id)}
-              className="mb-4 block w-full overflow-hidden rounded-xl2 shadow-sm ring-1 ring-black/5 transition-transform hover:-translate-y-1 hover:shadow-md dark:ring-white/10"
-            >
-              <MediaThumb imagePath={item.imagePath} hue={item.hue} label={item.caption} className="w-full" />
-            </button>
-          ))}
+          {filtered.map((item) => {
+            const variant = pickAspectVariant(item.id);
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveId(item.id)}
+                className="mb-4 block w-full overflow-hidden rounded-xl2 shadow-sm ring-1 ring-black/5 transition-transform hover:-translate-y-1 hover:shadow-md dark:ring-white/10"
+              >
+                <MediaThumb
+                  imagePath={item.imagePath}
+                  hue={item.hue}
+                  label={item.caption}
+                  className={`w-full ${variant.className}`}
+                  aspectRatio={variant.ratio}
+                />
+              </button>
+            );
+          })}
         </div>
       )}
 

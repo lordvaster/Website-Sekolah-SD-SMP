@@ -91,6 +91,16 @@ test.describe("Situs publik", () => {
     await expect(page.getByText("Pesan minimal 10 karakter")).toBeVisible();
   });
 
+  test("galeri tampil masonry (tinggi kartu bervariasi, bukan seragam)", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/galeri");
+    const heights = await page
+      .locator("main button svg[role='img'], main button img")
+      .evaluateAll((els) => els.slice(0, 8).map((el) => el.getBoundingClientRect().height));
+    const distinctHeights = new Set(heights.map((h) => Math.round(h)));
+    expect(distinctHeights.size, "tinggi kartu galeri harus bervariasi (efek masonry)").toBeGreaterThan(1);
+  });
+
   test("halaman berita, galeri, program, dan tentang bisa diakses", async ({ page }) => {
     for (const path of ["/berita", "/galeri", "/program", "/tentang"]) {
       const res = await page.goto(path);

@@ -10,9 +10,17 @@ type Props = {
   label: string;
   variant?: "photo" | "avatar";
   className?: string;
+  aspectRatio?: number;
 };
 
-export default function MediaThumb({ imagePath, hue, label, variant = "photo", className }: Props) {
+export default function MediaThumb({
+  imagePath,
+  hue,
+  label,
+  variant = "photo",
+  className,
+  aspectRatio,
+}: Props) {
   if (imagePath) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
@@ -20,5 +28,13 @@ export default function MediaThumb({ imagePath, hue, label, variant = "photo", c
     );
   }
 
-  return <PlaceholderPhoto hue={hue} label={label} variant={variant} className={className} />;
+  return (
+    <PlaceholderPhoto
+      hue={hue}
+      label={label}
+      variant={variant}
+      className={className}
+      aspectRatio={aspectRatio}
+    />
+  );
 }
