@@ -15,10 +15,15 @@ const config: Config = {
         // (4.5:1) sebagai teks/tombol di atas latar terang, ditemukan lewat
         // audit Lighthouse (lihat riwayat commit). primary.light tidak
         // diubah - dipakai khusus di dark mode (teks terang di atas latar
-        // gelap), sudah jauh di atas ambang kontras.
+        // gelap), sudah jauh di atas ambang kontras. Nilai primary.DEFAULT
+        // digelapkan dua kali - percobaan pertama (#2B6CB0) lolos di
+        // sebagian besar tempat tapi masih tipis gagal (4.35, butuh 4.5)
+        // di tombol filter kategori Galeri (latar bg-primary/10 yang
+        // sedikit lebih gelap dari perkiraan awal) - #265D95 punya margin
+        // lebih aman di semua kombinasi latar yang dipakai di situs ini.
         primary: {
-          DEFAULT: "#2B6CB0",
-          dark: "#22548A",
+          DEFAULT: "#265D95",
+          dark: "#1E4A77",
           light: "#7CB0EC",
         },
         secondary: {
