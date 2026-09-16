@@ -4,15 +4,17 @@ import { ChevronRight } from "lucide-react";
 
 export default function Breadcrumb({
   items,
+  homeLabel = "Beranda",
 }: {
   items: { label: string; href?: string }[];
+  homeLabel?: string;
 }) {
   return (
     <nav aria-label="Breadcrumb" className="border-b border-black/5 bg-primary/5 dark:border-white/10 dark:bg-primary/10">
       <ol className="container-page flex flex-wrap items-center gap-1 py-3 text-sm text-ink/70 dark:text-ink-dark/70">
         <li>
           <Link href="/" className="hover:text-primary dark:hover:text-primary-light">
-            Beranda
+            {homeLabel}
           </Link>
         </li>
         {items.map((item) => (

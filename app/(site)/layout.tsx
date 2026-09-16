@@ -4,13 +4,17 @@ import Footer from "@/components/Footer";
 import SkipToContent from "@/components/SkipToContent";
 import { siteConfig } from "@/lib/site-config";
 import { readSettings } from "@/lib/settings";
+import { getLocale } from "@/lib/i18n/get-locale";
+import { LocaleProvider } from "@/lib/i18n/LocaleContext";
+import { dictionaries } from "@/lib/i18n/dictionaries";
 
 export default async function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await readSettings();
+  const [settings, locale] = await Promise.all([readSettings(), getLocale()]);
+  const dict = dictionaries[locale];
   const { siteTagline, schoolDescription, schoolAddress, schoolPhone, schoolEmail } = settings;
 
   const jsonLd = {
@@ -30,16 +34,17 @@ export default async function SiteLayout({
   };
 
   return (
-    <>
+    <LocaleProvider locale={locale}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <SkipToContent />
+      <SkipToContent label={dict.common.skipToContent} />
       <Navbar tagline={siteTagline} />
       <main id="konten-utama">{children}</main>
       <Footer
         tagline={siteTagline}
+        dict={dict}
         info={{
           schoolDescription,
           schoolAddress,
@@ -50,6 +55,6 @@ export default async function SiteLayout({
           socialYoutube: settings.socialYoutube,
         }}
       />
-    </>
+    </LocaleProvider>
   );
 }

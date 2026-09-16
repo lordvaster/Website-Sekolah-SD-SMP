@@ -1,16 +1,20 @@
 // Author: Zeday | https://join.co.id
 "use client";
 
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { registrationSchema, type RegistrationInput } from "@/lib/validation";
+import { getRegistrationSchema, type RegistrationInput } from "@/lib/validation";
 import type { Program } from "@/lib/repositories/programs";
 import { useFormSubmit } from "@/lib/hooks/useFormSubmit";
+import { useTranslation } from "@/lib/i18n/LocaleContext";
 
 export default function RegistrationForm({ programs }: { programs: Program[] }) {
+  const { dict } = useTranslation();
   const { status, errorMessage, submit } = useFormSubmit<RegistrationInput>("/api/pendaftaran");
+  const schema = useMemo(() => getRegistrationSchema(dict), [dict]);
 
   const {
     register,
@@ -18,7 +22,7 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
     reset,
     formState: { errors, isSubmitting },
   } = useForm<RegistrationInput>({
-    resolver: zodResolver(registrationSchema),
+    resolver: zodResolver(schema),
     mode: "onBlur",
   });
 
@@ -30,8 +34,7 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
   if (programs.length === 0) {
     return (
       <p className="rounded-lg bg-accent/10 p-4 text-sm text-ink/80 dark:text-ink-dark/80">
-        Menu pendaftaran online belum tersedia saat ini. Silakan hubungi kami langsung lewat
-        formulir kontak atau kontak di atas untuk mendaftarkan putra-putri anda.
+        {dict.registrationForm.noProgramsAvailable}
       </p>
     );
   }
@@ -41,7 +44,7 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="childName" className="block text-sm font-semibold text-ink dark:text-ink-dark">
-            Nama Anak
+            {dict.registrationForm.childName}
           </label>
           <input
             id="childName"
@@ -58,7 +61,7 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
 
         <div>
           <label htmlFor="childAge" className="block text-sm font-semibold text-ink dark:text-ink-dark">
-            Usia Anak
+            {dict.registrationForm.childAge}
           </label>
           <input
             id="childAge"
@@ -78,7 +81,7 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
 
       <div>
         <label htmlFor="program" className="block text-sm font-semibold text-ink dark:text-ink-dark">
-          Jenjang yang Dituju
+          {dict.registrationForm.program}
         </label>
         <select
           id="program"
@@ -89,7 +92,7 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
           className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
         >
           <option value="" disabled>
-            Pilih jenjang
+            {dict.registrationForm.choosePlaceholder}
           </option>
           {programs.map((p) => (
             <option key={p.slug} value={p.name}>
@@ -104,7 +107,7 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
 
       <div>
         <label htmlFor="parentName" className="block text-sm font-semibold text-ink dark:text-ink-dark">
-          Nama Orang Tua/Wali
+          {dict.registrationForm.parentName}
         </label>
         <input
           id="parentName"
@@ -122,7 +125,7 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="reg-email" className="block text-sm font-semibold text-ink dark:text-ink-dark">
-            Email
+            {dict.registrationForm.email}
           </label>
           <input
             id="reg-email"
@@ -138,7 +141,7 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
         </div>
         <div>
           <label htmlFor="reg-phone" className="block text-sm font-semibold text-ink dark:text-ink-dark">
-            Nomor Telepon
+            {dict.registrationForm.phone}
           </label>
           <input
             id="reg-phone"
@@ -155,21 +158,21 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
       </div>
 
       <p className="text-xs text-ink/60 dark:text-ink-dark/60">
-        Dengan mendaftar, anda menyetujui{" "}
+        {dict.registrationForm.consentPrefix}{" "}
         <Link href="/kebijakan-privasi" className="text-primary underline hover:no-underline dark:text-primary-light">
-          Kebijakan Privasi
+          {dict.registrationForm.consentLink}
         </Link>{" "}
-        kami mengenai data yang anda berikan di sini.
+        {dict.registrationForm.consentSuffix}
       </p>
 
       <button type="submit" disabled={isSubmitting} className="btn-primary w-full disabled:opacity-70">
         {isSubmitting && <Loader2 className="h-5 w-5 animate-spin" />}
-        {isSubmitting ? "Mengirim..." : "Daftar Sekarang"}
+        {isSubmitting ? dict.registrationForm.submitting : dict.registrationForm.submit}
       </button>
 
       {status === "success" && (
         <p role="status" className="flex items-center gap-2 text-sm font-semibold text-secondary-dark dark:text-secondary-light">
-          <CheckCircle2 className="h-5 w-5" /> Pendaftaran berhasil! Cek email anda untuk konfirmasi.
+          <CheckCircle2 className="h-5 w-5" /> {dict.registrationForm.success}
         </p>
       )}
       {status === "error" && (

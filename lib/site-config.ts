@@ -1,4 +1,6 @@
 // Author: Zeday | https://join.co.id
+import type { Dictionary } from "./i18n/dictionaries";
+
 export const siteConfig = {
   name: "SD Inovasi Ceria",
   shortName: "SD Ceria",
@@ -32,11 +34,15 @@ export const siteConfig = {
   gaId: process.env.NEXT_PUBLIC_GA_ID || "",
 };
 
-export const navLinks = [
-  { href: "/", label: "Beranda" },
-  { href: "/tentang", label: "Tentang Sekolah" },
-  { href: "/program", label: "Program & Kelas" },
-  { href: "/galeri", label: "Galeri" },
-  { href: "/berita", label: "Berita" },
-  { href: "/kontak", label: "Kontak" },
-];
+// Dipakai Navbar & Footer - dibuat lewat fungsi (bukan array statis) supaya
+// label-nya ikut berubah sesuai bahasa yang dipilih pengunjung.
+export function getNavLinks(dict: Dictionary) {
+  return [
+    { href: "/", label: dict.nav.home },
+    { href: "/tentang", label: dict.nav.about },
+    { href: "/program", label: dict.nav.programs },
+    { href: "/galeri", label: dict.nav.gallery },
+    { href: "/berita", label: dict.nav.news },
+    { href: "/kontak", label: dict.nav.contact },
+  ];
+}

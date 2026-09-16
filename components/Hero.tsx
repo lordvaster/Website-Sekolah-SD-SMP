@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import PlaceholderPhoto from "./PlaceholderPhoto";
+import { useTranslation } from "@/lib/i18n/LocaleContext";
 
 const slides = [
   { hue: 205, label: "Belajar sambil bermain" },
@@ -12,8 +13,9 @@ const slides = [
   { hue: 28, label: "Fasilitas ramah anak" },
 ];
 
-export default function Hero() {
+export default function Hero({ tagline }: { tagline: string }) {
   const [index, setIndex] = useState(0);
+  const { dict } = useTranslation();
 
   useEffect(() => {
     const id = setInterval(() => setIndex((i) => (i + 1) % slides.length), 4500);
@@ -25,24 +27,20 @@ export default function Hero() {
       <div className="container-page grid items-center gap-10 py-14 sm:py-20 lg:grid-cols-2">
         <div>
           <span className="inline-block animate-fade-in-up rounded-full bg-secondary/15 px-4 py-1 text-sm font-bold text-secondary-dark dark:text-secondary-light">
-            Penerimaan Siswa Baru 2027/2028 Dibuka!
+            {dict.hero.badge}
           </span>
           <h1 className="mt-4 animate-fade-in-up font-heading text-4xl font-extrabold leading-tight text-ink dark:text-ink-dark sm:text-5xl">
-            Belajar Seru,{" "}
-            <span className="text-primary dark:text-primary-light">Tumbuh</span>{" "}
-            Percaya Diri
+            {tagline}
           </h1>
           <p className="mt-4 max-w-lg animate-fade-in-up text-lg leading-relaxed text-ink/70 dark:text-ink-dark/70">
-            SD Inovasi Ceria menghadirkan pengalaman belajar yang menyenangkan
-            untuk anak usia 6-12 tahun, didukung guru berpengalaman dan
-            fasilitas yang aman serta nyaman.
+            {dict.hero.subtitle}
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Link href="/kontak" className="btn-primary">
-              Daftar Sekarang
+              {dict.hero.ctaRegister}
             </Link>
             <Link href="/kontak" className="btn-secondary">
-              Hubungi Kami
+              {dict.hero.ctaContact}
             </Link>
           </div>
         </div>

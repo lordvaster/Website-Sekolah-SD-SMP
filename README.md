@@ -32,6 +32,7 @@ Dikembangkan oleh **Zeday** — [https://join.co.id](https://join.co.id)
 - **Panel admin dengan CMS penuh** (`/admin`): kelola Berita, Galeri, Guru, Program, dan lihat/atur status Pendaftaran siswa baru — semua lewat form, tanpa perlu edit kode atau deploy ulang.
 - Unggah gambar asli (JPG/PNG/WebP, maks 5MB) untuk berita, galeri, dan foto profil guru; otomatis memakai placeholder SVG bila belum ada foto.
 - Dark mode toggle (default: light mode), fully responsive (mobile-first).
+- **Pilihan bahasa** (Indonesia/English/日本語/中文) lewat dropdown di navbar — menerjemahkan UI (menu, tombol, label form, halaman Kontak, Kebijakan Privasi). Lihat bagian "Bahasa (i18n)" untuk detail cakupannya.
 - SEO: metadata per halaman, Open Graph, JSON-LD, `sitemap.xml`, `robots.txt`, revalidasi otomatis saat konten admin berubah.
 - Aksesibilitas: skip-to-content, label ARIA, kontras warna sesuai WCAG AA, navigasi keyboard.
 - Form kontak & pendaftaran siswa baru dengan validasi real-time (React Hook Form + Zod), email konfirmasi (opsional, via SMTP), dan pendaftaran tersimpan permanen di database (bisa dilihat/dikelola admin meski email gagal terkirim).
@@ -113,6 +114,19 @@ Test end-to-end (Playwright) mencakup: alur login/akses admin, CRUD penuh Berita
 ## Mengganti Konten Non-CMS
 
 Beberapa bagian masih berupa data statis di kode (dianggap jarang berubah, belum diberi form admin): testimoni, daftar ekstrakurikuler, FAQ, dan statistik ringkas di beranda — semuanya ada di [`lib/data.ts`](lib/data.ts). Nama sekolah, URL situs, dan kredit developer ada di [`lib/site-config.ts`](lib/site-config.ts) — nilai di file ini juga jadi *default awal* untuk kolom di menu Pengaturan (deskripsi, alamat, telepon, WhatsApp, email, jam operasional, media sosial), yang setelah diisi lewat panel admin akan menimpa nilai di file ini tanpa perlu deploy ulang.
+
+## Bahasa (i18n)
+
+Pengunjung bisa ganti bahasa tampilan lewat dropdown di navbar (Indonesia/English/日本語/中文), tersimpan di cookie (`locale`, 1 tahun) sehingga bertahan di kunjungan berikutnya. Implementasinya sengaja ringan (dictionary + cookie, bukan library seperti next-intl) karena TIDAK ada routing per-bahasa (`/en/...`) — cukup untuk kebutuhan situs ini.
+
+**Cakupan yang diterjemahkan:** navigasi, tombol, label & pesan validasi form (Kontak dan Pendaftaran), teks pembungkus halaman Kontak dan Kebijakan Privasi, dan salinan pemasaran statis di beranda (Hero, Keunggulan, CTA).
+
+**Yang TIDAK diterjemahkan (sengaja)** — selalu tampil dalam bahasa aslinya (apa pun bahasa UI yang dipilih pengunjung), karena ditulis bebas oleh admin dan tidak ada cara menerjemahkannya secara akurat dan otomatis:
+- Konten dari panel admin: Berita, Guru, Program, keterangan Galeri, isi Kebijakan Privasi.
+- Pengaturan situs: tagline, deskripsi sekolah, alamat, dll (menu Pengaturan).
+- `lib/data.ts`: testimoni, FAQ, ekstrakurikuler, statistik.
+
+Kalau ingin menambah teks baru ke daftar yang diterjemahkan: tambahkan key-nya di keempat objek bahasa (`id`, `en`, `ja`, `zh`) di [`lib/i18n/dictionaries.ts`](lib/i18n/dictionaries.ts) — TypeScript akan menandai error kalau ada bahasa yang lupa diisi (keempatnya wajib punya bentuk (shape) yang sama). Pakai `useTranslation()` (Client Component) atau `getDictionary()` (Server Component/halaman async) untuk mengaksesnya.
 
 ## Build & Deploy
 

@@ -7,6 +7,7 @@ import Analytics from "@/components/Analytics";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { siteConfig } from "@/lib/site-config";
 import { readSettings } from "@/lib/settings";
+import { getLocale } from "@/lib/i18n/get-locale";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -78,13 +79,15 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+
   return (
-    <html lang="id" suppressHydrationWarning className={`${poppins.variable} ${nunito.variable}`}>
+    <html lang={locale} suppressHydrationWarning className={`${poppins.variable} ${nunito.variable}`}>
       <body>
         <ThemeProvider>{children}</ThemeProvider>
         <Analytics />

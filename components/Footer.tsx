@@ -2,15 +2,26 @@
 import Link from "next/link";
 import { Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
 import Logo from "./Logo";
-import { navLinks, siteConfig } from "@/lib/site-config";
+import { getNavLinks, siteConfig } from "@/lib/site-config";
 import type { SiteSettings } from "@/lib/settings";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 
 type FooterInfo = Pick<
   SiteSettings,
   "schoolDescription" | "schoolAddress" | "schoolPhone" | "schoolEmail" | "socialInstagram" | "socialFacebook" | "socialYoutube"
 >;
 
-export default function Footer({ tagline, info }: { tagline?: string; info: FooterInfo }) {
+export default function Footer({
+  tagline,
+  info,
+  dict,
+}: {
+  tagline?: string;
+  info: FooterInfo;
+  dict: Dictionary;
+}) {
+  const links = getNavLinks(dict);
+
   return (
     <footer className="mt-20 border-t border-black/5 bg-white dark:border-white/10 dark:bg-surface-dark">
       <div className="container-page grid gap-10 py-12 md:grid-cols-4">
@@ -58,10 +69,10 @@ export default function Footer({ tagline, info }: { tagline?: string; info: Foot
 
         <div>
           <h2 className="font-heading text-sm font-bold uppercase tracking-wide text-ink/60 dark:text-ink-dark/60">
-            Navigasi
+            {dict.footer.navigation}
           </h2>
           <ul className="mt-4 space-y-2">
-            {navLinks.map((link) => (
+            {links.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
@@ -76,7 +87,7 @@ export default function Footer({ tagline, info }: { tagline?: string; info: Foot
 
         <div>
           <h2 className="font-heading text-sm font-bold uppercase tracking-wide text-ink/60 dark:text-ink-dark/60">
-            Kontak
+            {dict.footer.contact}
           </h2>
           <ul className="mt-4 space-y-3 text-sm text-ink/80 dark:text-ink-dark/80">
             <li className="flex items-start gap-2">
@@ -100,14 +111,14 @@ export default function Footer({ tagline, info }: { tagline?: string; info: Foot
       <div className="border-t border-black/5 py-6 dark:border-white/10">
         <div className="container-page flex flex-col items-center justify-between gap-2 text-xs text-ink/60 dark:text-ink-dark/60 sm:flex-row">
           <p>
-            © {new Date().getFullYear()} {siteConfig.name}. Semua hak dilindungi. ·{" "}
+            © {new Date().getFullYear()} {siteConfig.name}. {dict.footer.allRightsReserved} ·{" "}
             <Link href="/kebijakan-privasi" className="hover:text-primary hover:underline dark:hover:text-primary-light">
-              Kebijakan Privasi
+              {dict.footer.privacyPolicy}
             </Link>
           </p>
           {siteConfig.developer.showCredit && (
             <p>
-              Dikembangkan oleh{" "}
+              {dict.footer.developedBy}{" "}
               <a
                 href={siteConfig.developer.url}
                 target="_blank"

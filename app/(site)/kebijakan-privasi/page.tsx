@@ -5,6 +5,7 @@ import SectionHeading from "@/components/SectionHeading";
 import RichTextContent from "@/components/RichTextContent";
 import { siteConfig } from "@/lib/site-config";
 import { readSettings } from "@/lib/settings";
+import { getDictionary } from "@/lib/i18n/get-locale";
 
 export const metadata: Metadata = {
   title: "Kebijakan Privasi",
@@ -12,23 +13,23 @@ export const metadata: Metadata = {
 };
 
 export default async function KebijakanPrivasiPage() {
-  const settings = await readSettings();
+  const [settings, dict] = await Promise.all([readSettings(), getDictionary()]);
+  // Konten Kebijakan Privasi ditulis admin (bisa dalam bahasa apa pun) dan
+  // SENGAJA tidak ikut diterjemahkan otomatis - hanya teks pembungkus di
+  // halaman ini (judul/deskripsi) yang mengikuti bahasa UI yang dipilih.
   const content = settings.privacyPolicyContent
     .replaceAll("{{email}}", settings.schoolEmail)
     .replaceAll("{{phone}}", settings.schoolPhone)
     .replaceAll("{{schoolName}}", siteConfig.name);
+  const description = dict.privacy.description.replaceAll("{{schoolName}}", siteConfig.name);
 
   return (
     <>
-      <Breadcrumb items={[{ label: "Kebijakan Privasi" }]} />
+      <Breadcrumb items={[{ label: dict.privacy.title }]} homeLabel={dict.breadcrumb.home} />
 
       <section className="py-14 sm:py-20">
         <div className="container-page max-w-3xl">
-          <SectionHeading
-            eyebrow="Privasi & Data Pribadi"
-            title="Kebijakan Privasi"
-            description={`Dokumen ini menjelaskan bagaimana ${siteConfig.name} mengumpulkan, menggunakan, menyimpan, dan melindungi data pribadi yang anda berikan lewat website ini, sesuai dengan Undang-Undang No. 27 Tahun 2022 tentang Pelindungan Data Pribadi.`}
-          />
+          <SectionHeading eyebrow={dict.privacy.eyebrow} title={dict.privacy.title} description={description} />
 
           <div className="mt-10">
             <RichTextContent content={content} />

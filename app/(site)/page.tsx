@@ -15,11 +15,11 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const { schoolWhatsapp } = await readSettings();
+  const { schoolWhatsapp, siteTagline } = await readSettings();
 
   return (
     <>
-      <Hero />
+      <Hero tagline={siteTagline} />
       <StatsSection />
       <FeatureCards />
       <LatestNews />

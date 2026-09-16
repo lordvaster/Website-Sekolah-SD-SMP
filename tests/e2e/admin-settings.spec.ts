@@ -18,8 +18,10 @@ test.describe("Pengaturan situs (kontak & kebijakan privasi)", () => {
     await expect(page.getByText("Tersimpan")).toBeVisible();
 
     // Muncul di footer (semua halaman) dan kartu alamat di halaman Kontak.
+    // .first(): Navbar & Footer sempat sama-sama merender teks ini secara
+    // transisi saat client-side navigation - keduanya valid, cukup salah satu.
     await page.goto("/");
-    await expect(page.getByText(addressMarker)).toBeVisible();
+    await expect(page.getByText(addressMarker).first()).toBeVisible();
 
     await page.goto("/kontak");
     // Muncul dua kali di halaman ini (kartu Alamat + footer) - cukup

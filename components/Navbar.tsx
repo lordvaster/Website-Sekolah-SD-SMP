@@ -7,12 +7,16 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
-import { navLinks } from "@/lib/site-config";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { getNavLinks } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/LocaleContext";
 
 export default function Navbar({ tagline }: { tagline?: string }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { dict } = useTranslation();
+  const links = getNavLinks(dict);
 
   return (
     <header className="sticky top-0 z-50 border-b border-black/5 bg-white/90 backdrop-blur dark:border-white/10 dark:bg-surface-dark/90">
@@ -23,7 +27,7 @@ export default function Navbar({ tagline }: { tagline?: string }) {
         <Logo tagline={tagline} />
 
         <ul className="hidden items-center gap-1 lg:flex">
-          {navLinks.map((link) => {
+          {links.map((link) => {
             const active =
               link.href === "/"
                 ? pathname === "/"
@@ -48,16 +52,17 @@ export default function Navbar({ tagline }: { tagline?: string }) {
         </ul>
 
         <div className="flex items-center gap-2">
-          <ThemeToggle />
+          <LanguageSwitcher />
+          <ThemeToggle darkModeLabel={dict.nav.darkMode} lightModeLabel={dict.nav.lightMode} />
           <Link href="/kontak" className="btn-primary hidden sm:inline-flex">
-            Daftar Sekarang
+            {dict.nav.register}
           </Link>
           <button
             type="button"
             className="flex h-10 w-10 items-center justify-center rounded-full ring-1 ring-black/10 dark:ring-white/20 lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
-            aria-label={open ? "Tutup menu" : "Buka menu"}
+            aria-label={open ? dict.nav.closeMenu : dict.nav.openMenu}
             onClick={() => setOpen((v) => !v)}
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -71,7 +76,7 @@ export default function Navbar({ tagline }: { tagline?: string }) {
           className="border-t border-black/5 bg-white px-4 pb-6 pt-2 dark:border-white/10 dark:bg-surface-dark lg:hidden"
         >
           <ul className="flex flex-col gap-1">
-            {navLinks.map((link) => (
+            {links.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
@@ -88,7 +93,7 @@ export default function Navbar({ tagline }: { tagline?: string }) {
                 onClick={() => setOpen(false)}
                 className="btn-primary w-full"
               >
-                Daftar Sekarang
+                {dict.nav.register}
               </Link>
             </li>
           </ul>

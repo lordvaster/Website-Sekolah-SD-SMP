@@ -1,14 +1,18 @@
 // Author: Zeday | https://join.co.id
 "use client";
 
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
-import { contactSchema, type ContactInput } from "@/lib/validation";
+import { getContactSchema, type ContactInput } from "@/lib/validation";
 import { useFormSubmit } from "@/lib/hooks/useFormSubmit";
+import { useTranslation } from "@/lib/i18n/LocaleContext";
 
 export default function ContactForm() {
+  const { dict } = useTranslation();
   const { status, errorMessage, submit } = useFormSubmit<ContactInput>("/api/contact");
+  const schema = useMemo(() => getContactSchema(dict), [dict]);
 
   const {
     register,
@@ -16,7 +20,7 @@ export default function ContactForm() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ContactInput>({
-    resolver: zodResolver(contactSchema),
+    resolver: zodResolver(schema),
     mode: "onBlur",
   });
 
@@ -29,7 +33,7 @@ export default function ContactForm() {
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
       <div>
         <label htmlFor="name" className="block text-sm font-semibold text-ink dark:text-ink-dark">
-          Nama Lengkap
+          {dict.contactForm.name}
         </label>
         <input
           id="name"
@@ -49,7 +53,7 @@ export default function ContactForm() {
 
       <div>
         <label htmlFor="email" className="block text-sm font-semibold text-ink dark:text-ink-dark">
-          Email
+          {dict.contactForm.email}
         </label>
         <input
           id="email"
@@ -69,7 +73,7 @@ export default function ContactForm() {
 
       <div>
         <label htmlFor="phone" className="block text-sm font-semibold text-ink dark:text-ink-dark">
-          Nomor Telepon
+          {dict.contactForm.phone}
         </label>
         <input
           id="phone"
@@ -89,7 +93,7 @@ export default function ContactForm() {
 
       <div>
         <label htmlFor="message" className="block text-sm font-semibold text-ink dark:text-ink-dark">
-          Pesan
+          {dict.contactForm.message}
         </label>
         <textarea
           id="message"
@@ -108,12 +112,12 @@ export default function ContactForm() {
 
       <button type="submit" disabled={isSubmitting} className="btn-primary w-full disabled:opacity-70">
         {isSubmitting && <Loader2 className="h-5 w-5 animate-spin" />}
-        {isSubmitting ? "Mengirim..." : "Kirim Pesan"}
+        {isSubmitting ? dict.contactForm.submitting : dict.contactForm.submit}
       </button>
 
       {status === "success" && (
         <p role="status" className="flex items-center gap-2 text-sm font-semibold text-secondary-dark dark:text-secondary-light">
-          <CheckCircle2 className="h-5 w-5" /> Pesan berhasil dikirim, terima kasih!
+          <CheckCircle2 className="h-5 w-5" /> {dict.contactForm.success}
         </p>
       )}
       {status === "error" && (

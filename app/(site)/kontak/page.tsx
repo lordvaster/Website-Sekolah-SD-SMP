@@ -9,6 +9,7 @@ import Accordion from "@/components/Accordion";
 import { faqs } from "@/lib/data";
 import { readSettings } from "@/lib/settings";
 import { listPrograms } from "@/lib/repositories/programs";
+import { getDictionary } from "@/lib/i18n/get-locale";
 
 export const metadata: Metadata = {
   title: "Kontak & Pendaftaran",
@@ -18,43 +19,43 @@ export const metadata: Metadata = {
 
 export default async function KontakPage() {
   const programs = listPrograms();
-  const settings = await readSettings();
+  const [settings, dict] = await Promise.all([readSettings(), getDictionary()]);
 
   return (
     <>
-      <Breadcrumb items={[{ label: "Kontak & Pendaftaran" }]} />
+      <Breadcrumb items={[{ label: dict.nav.contact }]} homeLabel={dict.breadcrumb.home} />
 
       <section className="py-14 sm:py-20">
         <div className="container-page">
           <SectionHeading
-            eyebrow="Hubungi Kami"
-            title="Kontak & Informasi Sekolah"
-            description="Kami siap membantu menjawab pertanyaan anda seputar sekolah dan proses pendaftaran."
+            eyebrow={dict.kontak.eyebrow}
+            title={dict.kontak.title}
+            description={dict.kontak.description}
           />
 
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <div className="card flex flex-col items-center gap-2 p-6 text-center">
               <MapPin className="h-8 w-8 text-primary dark:text-primary-light" />
-              <p className="font-heading font-bold text-ink dark:text-ink-dark">Alamat</p>
+              <p className="font-heading font-bold text-ink dark:text-ink-dark">{dict.kontak.address}</p>
               <p className="text-sm text-ink/70 dark:text-ink-dark/70">{settings.schoolAddress}</p>
             </div>
             <div className="card flex flex-col items-center gap-2 p-6 text-center">
               <Phone className="h-8 w-8 text-primary dark:text-primary-light" />
-              <p className="font-heading font-bold text-ink dark:text-ink-dark">Telepon</p>
+              <p className="font-heading font-bold text-ink dark:text-ink-dark">{dict.kontak.phone}</p>
               <a href={`tel:${settings.schoolPhone.replace(/[^\d+]/g, "")}`} className="text-sm text-ink/70 dark:text-ink-dark/70">
                 {settings.schoolPhone}
               </a>
             </div>
             <div className="card flex flex-col items-center gap-2 p-6 text-center">
               <Mail className="h-8 w-8 text-primary dark:text-primary-light" />
-              <p className="font-heading font-bold text-ink dark:text-ink-dark">Email</p>
+              <p className="font-heading font-bold text-ink dark:text-ink-dark">{dict.kontak.email}</p>
               <a href={`mailto:${settings.schoolEmail}`} className="text-sm text-ink/70 dark:text-ink-dark/70">
                 {settings.schoolEmail}
               </a>
             </div>
             <div className="card flex flex-col items-center gap-2 p-6 text-center">
               <Clock className="h-8 w-8 text-primary dark:text-primary-light" />
-              <p className="font-heading font-bold text-ink dark:text-ink-dark">Jam Operasional</p>
+              <p className="font-heading font-bold text-ink dark:text-ink-dark">{dict.kontak.hours}</p>
               <p className="text-sm text-ink/70 dark:text-ink-dark/70">{settings.operationalHours}</p>
             </div>
           </div>
@@ -93,10 +94,10 @@ export default async function KontakPage() {
         <div className="container-page grid gap-10 lg:grid-cols-2">
           <div className="card p-6 sm:p-8">
             <h2 className="font-heading text-2xl font-bold text-ink dark:text-ink-dark">
-              Kirim Pesan
+              {dict.kontak.sendMessageTitle}
             </h2>
             <p className="mt-2 text-sm text-ink/70 dark:text-ink-dark/70">
-              Ada pertanyaan seputar sekolah? Kirimkan pesan anda dan tim kami akan segera merespon.
+              {dict.kontak.sendMessageDesc}
             </p>
             <div className="mt-6">
               <ContactForm />
@@ -105,10 +106,10 @@ export default async function KontakPage() {
 
           <div id="pendaftaran" className="card p-6 sm:p-8">
             <h2 className="font-heading text-2xl font-bold text-ink dark:text-ink-dark">
-              Formulir Pendaftaran Siswa Baru
+              {dict.kontak.registerTitle}
             </h2>
             <p className="mt-2 text-sm text-ink/70 dark:text-ink-dark/70">
-              Isi formulir berikut untuk mendaftarkan putra-putri anda. Anda akan menerima email konfirmasi setelah mendaftar.
+              {dict.kontak.registerDesc}
             </p>
             <div className="mt-6">
               <RegistrationForm programs={programs} />
@@ -119,7 +120,7 @@ export default async function KontakPage() {
 
       <section className="py-14 sm:py-20">
         <div className="container-page max-w-3xl">
-          <SectionHeading eyebrow="FAQ" title="Pertanyaan yang Sering Diajukan" />
+          <SectionHeading eyebrow={dict.kontak.faqEyebrow} title={dict.kontak.faqTitle} />
           <div className="mt-10">
             <Accordion items={faqs} />
           </div>

@@ -18,7 +18,13 @@ function useHasMounted() {
   );
 }
 
-export default function ThemeToggle() {
+export default function ThemeToggle({
+  darkModeLabel = "Aktifkan mode gelap",
+  lightModeLabel = "Aktifkan mode terang",
+}: {
+  darkModeLabel?: string;
+  lightModeLabel?: string;
+}) {
   const { theme, setTheme } = useTheme();
   const mounted = useHasMounted();
 
@@ -33,7 +39,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className="flex h-10 w-10 items-center justify-center rounded-full ring-1 ring-black/10 transition-colors hover:bg-primary/10 dark:ring-white/20 dark:hover:bg-white/10"
-      aria-label={isDark ? "Aktifkan mode terang" : "Aktifkan mode gelap"}
+      aria-label={isDark ? lightModeLabel : darkModeLabel}
     >
       {isDark ? (
         <Sun className="h-5 w-5 text-accent" />
