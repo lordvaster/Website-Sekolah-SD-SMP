@@ -9,7 +9,7 @@ export default function AchievementGrid() {
 
   if (achievements.length === 0) {
     return (
-      <p className="text-center text-ink/60 dark:text-ink-dark/60">
+      <p className="text-center text-ink/70 dark:text-ink-dark/60">
         Belum ada prestasi yang ditambahkan.
       </p>
     );
@@ -34,7 +34,7 @@ export default function AchievementGrid() {
               <h3 className="mt-1 truncate font-heading font-bold text-ink dark:text-ink-dark">
                 {a.title}
               </h3>
-              <p className="text-sm text-ink/60 dark:text-ink-dark/60">{a.description}</p>
+              <p className="text-sm text-ink/70 dark:text-ink-dark/60">{a.description}</p>
             </div>
           </div>
         </RevealOnScroll>

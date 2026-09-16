@@ -7,7 +7,6 @@ import Analytics from "@/components/Analytics";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { siteConfig } from "@/lib/site-config";
 import { readSettings } from "@/lib/settings";
-import { getLocale } from "@/lib/i18n/get-locale";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -79,15 +78,17 @@ export const viewport: Viewport = {
   ],
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const locale = await getLocale();
-
+  // lang="id" adalah default statis - lib/i18n/LocaleContext.tsx
+  // mengoreksinya di client (document.documentElement.lang) begitu locale
+  // sungguhan diketahui, supaya halaman tetap bisa dirender statis/ISR di
+  // server (lihat komentar panjang di LocaleContext.tsx untuk alasannya).
   return (
-    <html lang={locale} suppressHydrationWarning className={`${poppins.variable} ${nunito.variable}`}>
+    <html lang="id" suppressHydrationWarning className={`${poppins.variable} ${nunito.variable}`}>
       <body>
         <ThemeProvider>{children}</ThemeProvider>
         <Analytics />

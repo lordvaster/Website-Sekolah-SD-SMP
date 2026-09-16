@@ -1,10 +1,12 @@
 // Author: Zeday | https://join.co.id
+"use client";
+
 import Link from "next/link";
 import { Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
 import Logo from "./Logo";
 import { getNavLinks, siteConfig } from "@/lib/site-config";
 import type { SiteSettings } from "@/lib/settings";
-import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { useTranslation } from "@/lib/i18n/LocaleContext";
 
 type FooterInfo = Pick<
   SiteSettings,
@@ -14,12 +16,11 @@ type FooterInfo = Pick<
 export default function Footer({
   tagline,
   info,
-  dict,
 }: {
   tagline?: string;
   info: FooterInfo;
-  dict: Dictionary;
 }) {
+  const { dict } = useTranslation();
   const links = getNavLinks(dict);
 
   return (
@@ -68,7 +69,7 @@ export default function Footer({
         </div>
 
         <div>
-          <h2 className="font-heading text-sm font-bold uppercase tracking-wide text-ink/60 dark:text-ink-dark/60">
+          <h2 className="font-heading text-sm font-bold uppercase tracking-wide text-ink/70 dark:text-ink-dark/60">
             {dict.footer.navigation}
           </h2>
           <ul className="mt-4 space-y-2">
@@ -86,7 +87,7 @@ export default function Footer({
         </div>
 
         <div>
-          <h2 className="font-heading text-sm font-bold uppercase tracking-wide text-ink/60 dark:text-ink-dark/60">
+          <h2 className="font-heading text-sm font-bold uppercase tracking-wide text-ink/70 dark:text-ink-dark/60">
             {dict.footer.contact}
           </h2>
           <ul className="mt-4 space-y-3 text-sm text-ink/80 dark:text-ink-dark/80">
@@ -109,7 +110,7 @@ export default function Footer({
       </div>
 
       <div className="border-t border-black/5 py-6 dark:border-white/10">
-        <div className="container-page flex flex-col items-center justify-between gap-2 text-xs text-ink/60 dark:text-ink-dark/60 sm:flex-row">
+        <div className="container-page flex flex-col items-center justify-between gap-2 text-xs text-ink/70 dark:text-ink-dark/60 sm:flex-row">
           <p>
             © {new Date().getFullYear()} {siteConfig.name}. {dict.footer.allRightsReserved} ·{" "}
             <Link href="/kebijakan-privasi" className="hover:text-primary hover:underline dark:hover:text-primary-light">

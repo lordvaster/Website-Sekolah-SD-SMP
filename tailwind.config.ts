@@ -10,9 +10,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // primary.DEFAULT & cta.DEFAULT digelapkan dari warna aslinya
+        // (#4A90E2 / #FF6B6B) - warna asli gagal rasio kontras WCAG AA
+        // (4.5:1) sebagai teks/tombol di atas latar terang, ditemukan lewat
+        // audit Lighthouse (lihat riwayat commit). primary.light tidak
+        // diubah - dipakai khusus di dark mode (teks terang di atas latar
+        // gelap), sudah jauh di atas ambang kontras.
         primary: {
-          DEFAULT: "#4A90E2",
-          dark: "#3572B0",
+          DEFAULT: "#2B6CB0",
+          dark: "#22548A",
           light: "#7CB0EC",
         },
         secondary: {
@@ -26,8 +32,8 @@ const config: Config = {
           light: "#FFD08A",
         },
         cta: {
-          DEFAULT: "#FF6B6B",
-          dark: "#E24C4C",
+          DEFAULT: "#CC3D3D",
+          dark: "#AD3434",
         },
         surface: {
           DEFAULT: "#F5F5F5",

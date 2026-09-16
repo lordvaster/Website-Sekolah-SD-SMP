@@ -15,7 +15,7 @@ export default function AdminTestimonialsPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-heading text-2xl font-bold text-ink dark:text-ink-dark">Testimoni</h1>
-          <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+          <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
             Kelola testimoni orang tua dan siswa yang tampil di halaman Beranda.
           </p>
         </div>
@@ -60,7 +60,7 @@ export default function AdminTestimonialsPage() {
           </div>
         ))}
         {testimonials.length === 0 && (
-          <p className="col-span-full py-8 text-center text-ink/50 dark:text-ink-dark/50">
+          <p className="col-span-full py-8 text-center text-ink/70 dark:text-ink-dark/50">
             Belum ada testimoni. Klik &ldquo;Tambah Testimoni&rdquo; untuk menambahkan.
           </p>
         )}

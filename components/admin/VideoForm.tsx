@@ -90,7 +90,7 @@ export default function VideoForm({ initial }: { initial?: Video }) {
           placeholder="https://youtu.be/xxxxxxxxxxx"
           className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
         />
-        <p className="mt-1 text-xs text-ink/50 dark:text-ink-dark/50">
+        <p className="mt-1 text-xs text-ink/70 dark:text-ink-dark/50">
           Tempel URL video YouTube (dari tombol Bagikan) atau ID video-nya saja. Video harus
           bersifat publik/tidak terdaftar (bukan privat) agar bisa tampil di website.
         </p>

@@ -62,7 +62,7 @@ export default function UsersManager({
       <div className="mt-6 overflow-x-auto rounded-xl2 bg-white shadow-sm ring-1 ring-black/5 dark:bg-white/5 dark:ring-white/10">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
-            <tr className="border-b border-black/5 text-xs uppercase tracking-wide text-ink/50 dark:border-white/10 dark:text-ink-dark/50">
+            <tr className="border-b border-black/5 text-xs uppercase tracking-wide text-ink/70 dark:border-white/10 dark:text-ink-dark/50">
               <th className="px-5 py-3">Username</th>
               <th className="px-5 py-3">Nama</th>
               <th className="px-5 py-3">Peran</th>
@@ -108,7 +108,7 @@ export default function UsersManager({
                   <td className="px-5 py-3 font-semibold text-ink dark:text-ink-dark">
                     {u.name}
                     {u.id === currentUserId && (
-                      <span className="ml-2 text-xs font-normal text-ink/50 dark:text-ink-dark/50">
+                      <span className="ml-2 text-xs font-normal text-ink/70 dark:text-ink-dark/50">
                         (anda)
                       </span>
                     )}
@@ -286,7 +286,7 @@ function CreateUserForm({ busy, setBusy, setError, onDone, onCancel }: SharedFor
           {busy && <Loader2 className="h-4 w-4 animate-spin" />}
           Simpan
         </button>
-        <button type="button" onClick={onCancel} className="text-sm font-semibold text-ink/60 hover:underline dark:text-ink-dark/60">
+        <button type="button" onClick={onCancel} className="text-sm font-semibold text-ink/70 hover:underline dark:text-ink-dark/60">
           Batal
         </button>
       </div>
@@ -359,7 +359,7 @@ function EditUserRow({
             {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
             Simpan
           </button>
-          <button type="button" onClick={onCancel} aria-label="Batal" className="flex h-9 w-9 items-center justify-center rounded-full text-ink/60 hover:bg-black/5 dark:text-ink-dark/60">
+          <button type="button" onClick={onCancel} aria-label="Batal" className="flex h-9 w-9 items-center justify-center rounded-full text-ink/70 hover:bg-black/5 dark:text-ink-dark/60">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -424,7 +424,7 @@ function ResetPasswordRow({
             {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
             Simpan
           </button>
-          <button type="button" onClick={onCancel} aria-label="Batal" className="flex h-9 w-9 items-center justify-center rounded-full text-ink/60 hover:bg-black/5 dark:text-ink-dark/60">
+          <button type="button" onClick={onCancel} aria-label="Batal" className="flex h-9 w-9 items-center justify-center rounded-full text-ink/70 hover:bg-black/5 dark:text-ink-dark/60">
             <X className="h-4 w-4" />
           </button>
         </div>

@@ -56,7 +56,7 @@ export default function ProgramPage() {
                     </p>
                     <ul className="mt-3 space-y-1">
                       {p.highlights.map((h) => (
-                        <li key={h} className="text-xs text-ink/60 dark:text-ink-dark/60">
+                        <li key={h} className="text-xs text-ink/70 dark:text-ink-dark/60">
                           • {h}
                         </li>
                       ))}

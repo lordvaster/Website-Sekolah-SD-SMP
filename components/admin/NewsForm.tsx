@@ -131,7 +131,7 @@ export default function NewsForm({ initial }: { initial?: NewsArticle }) {
           onChange={(e) => setExcerpt(e.target.value)}
           className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
         />
-        <p className="mt-1 text-xs text-ink/50 dark:text-ink-dark/50">
+        <p className="mt-1 text-xs text-ink/70 dark:text-ink-dark/50">
           Tampil di kartu berita &amp; hasil pencarian Google.
         </p>
       </div>
@@ -148,7 +148,7 @@ export default function NewsForm({ initial }: { initial?: NewsArticle }) {
           onChange={(e) => setContent(e.target.value)}
           className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
         />
-        <p className="mt-1 text-xs text-ink/50 dark:text-ink-dark/50">
+        <p className="mt-1 text-xs text-ink/70 dark:text-ink-dark/50">
           Pisahkan tiap paragraf dengan baris kosong.
         </p>
       </div>

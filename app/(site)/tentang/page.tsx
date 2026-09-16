@@ -108,7 +108,7 @@ export default function TentangPage() {
             <p className="mt-4 font-heading font-bold text-ink dark:text-ink-dark">
               Sri Wahyuni, S.Pd
             </p>
-            <p className="text-sm text-ink/60 dark:text-ink-dark/60">
+            <p className="text-sm text-ink/70 dark:text-ink-dark/60">
               Kepala Sekolah SD Inovasi Ceria
             </p>
           </RevealOnScroll>

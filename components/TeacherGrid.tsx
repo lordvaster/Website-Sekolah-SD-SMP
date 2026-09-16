@@ -8,7 +8,7 @@ export default function TeacherGrid() {
 
   if (teachers.length === 0) {
     return (
-      <p className="text-center text-ink/60 dark:text-ink-dark/60">
+      <p className="text-center text-ink/70 dark:text-ink-dark/60">
         Profil guru belum ditambahkan.
       </p>
     );
@@ -35,7 +35,7 @@ export default function TeacherGrid() {
               <p className="text-sm font-semibold text-primary dark:text-primary-light">
                 {t.role}
               </p>
-              <p className="mt-1 text-xs text-ink/60 dark:text-ink-dark/60">
+              <p className="mt-1 text-xs text-ink/70 dark:text-ink-dark/60">
                 {t.subject}
               </p>
             </div>

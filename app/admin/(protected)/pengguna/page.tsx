@@ -18,7 +18,7 @@ export default async function AdminUsersPage() {
   return (
     <div>
       <h1 className="font-heading text-2xl font-bold text-ink dark:text-ink-dark">Pengguna</h1>
-      <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+      <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
         Kelola akun individual staf yang bisa masuk ke panel admin ini.
       </p>
       <div className="mt-8 card p-6 sm:p-8">

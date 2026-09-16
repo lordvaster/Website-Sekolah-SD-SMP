@@ -100,7 +100,7 @@ export default function ProgramForm({ initial }: { initial?: Program }) {
           onChange={(e) => setHighlights(e.target.value)}
           className="mt-1 w-full rounded-lg border border-black/10 px-4 py-2.5 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 dark:border-white/15 dark:bg-white/5 dark:text-ink-dark"
         />
-        <p className="mt-1 text-xs text-ink/50 dark:text-ink-dark/50">Satu poin per baris.</p>
+        <p className="mt-1 text-xs text-ink/70 dark:text-ink-dark/50">Satu poin per baris.</p>
       </div>
 
       {error && (

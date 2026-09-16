@@ -44,7 +44,7 @@ export default function TestimonialCarousel({ testimonials }: { testimonials: Te
               <p className="font-heading font-bold text-ink dark:text-ink-dark">
                 {t.name}
               </p>
-              <p className="text-sm text-ink/60 dark:text-ink-dark/60">{t.role}</p>
+              <p className="text-sm text-ink/70 dark:text-ink-dark/60">{t.role}</p>
             </div>
           </div>
           <div className="mt-6 flex items-center justify-center gap-4">

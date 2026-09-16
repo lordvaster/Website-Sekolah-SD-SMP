@@ -15,7 +15,7 @@ export default function AdminTeachersPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-heading text-2xl font-bold text-ink dark:text-ink-dark">Guru</h1>
-          <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+          <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
             Kelola profil tenaga pengajar yang tampil di halaman Tentang Sekolah.
           </p>
         </div>
@@ -54,7 +54,7 @@ export default function AdminTeachersPage() {
           </div>
         ))}
         {teachers.length === 0 && (
-          <p className="col-span-full py-8 text-center text-ink/50 dark:text-ink-dark/50">
+          <p className="col-span-full py-8 text-center text-ink/70 dark:text-ink-dark/50">
             Belum ada profil guru. Klik &ldquo;Tambah Guru&rdquo; untuk menambahkan.
           </p>
         )}

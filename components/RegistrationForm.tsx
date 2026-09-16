@@ -157,7 +157,7 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
         </div>
       </div>
 
-      <p className="text-xs text-ink/60 dark:text-ink-dark/60">
+      <p className="text-xs text-ink/70 dark:text-ink-dark/60">
         {dict.registrationForm.consentPrefix}{" "}
         <Link href="/kebijakan-privasi" className="text-primary underline hover:no-underline dark:text-primary-light">
           {dict.registrationForm.consentLink}

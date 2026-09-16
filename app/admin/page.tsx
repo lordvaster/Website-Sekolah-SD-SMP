@@ -72,7 +72,7 @@ export default function AdminLoginPage() {
           <h1 className="mt-4 text-center font-heading text-xl font-bold text-ink dark:text-ink-dark">
             Login Admin
           </h1>
-          <p className="mt-1 text-center text-sm text-ink/60 dark:text-ink-dark/60">
+          <p className="mt-1 text-center text-sm text-ink/70 dark:text-ink-dark/60">
             Khusus untuk pengelola website sekolah.
           </p>
 
@@ -126,7 +126,7 @@ export default function AdminLoginPage() {
           <h1 className="mt-4 text-center font-heading text-xl font-bold text-ink dark:text-ink-dark">
             Verifikasi Dua Langkah
           </h1>
-          <p className="mt-1 text-center text-sm text-ink/60 dark:text-ink-dark/60">
+          <p className="mt-1 text-center text-sm text-ink/70 dark:text-ink-dark/60">
             Masukkan kode 6 digit dari aplikasi authenticator anda.
           </p>
 

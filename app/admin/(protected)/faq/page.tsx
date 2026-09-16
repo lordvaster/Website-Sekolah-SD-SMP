@@ -14,7 +14,7 @@ export default function AdminFaqsPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-heading text-2xl font-bold text-ink dark:text-ink-dark">FAQ</h1>
-          <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+          <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
             Kelola pertanyaan yang sering diajukan orang tua di halaman Kontak & Pendaftaran.
           </p>
         </div>
@@ -46,7 +46,7 @@ export default function AdminFaqsPage() {
           </div>
         ))}
         {faqs.length === 0 && (
-          <p className="py-8 text-center text-ink/50 dark:text-ink-dark/50">
+          <p className="py-8 text-center text-ink/70 dark:text-ink-dark/50">
             Belum ada FAQ. Klik &ldquo;Tambah FAQ&rdquo; untuk menambahkan.
           </p>
         )}

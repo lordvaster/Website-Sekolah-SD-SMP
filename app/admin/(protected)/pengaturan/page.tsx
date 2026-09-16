@@ -14,7 +14,7 @@ export default async function AdminSettingsPage() {
         <h1 className="font-heading text-2xl font-bold text-ink dark:text-ink-dark">
           Pengaturan Situs
         </h1>
-        <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+        <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
           Favicon dan tagline yang tampil di seluruh halaman publik.
         </p>
         <div className="mt-8 card p-6 sm:p-8">
@@ -26,7 +26,7 @@ export default async function AdminSettingsPage() {
         <h1 className="font-heading text-2xl font-bold text-ink dark:text-ink-dark">
           Keamanan
         </h1>
-        <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+        <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
           Lindungi akses ke panel admin ini.
         </p>
         <div className="mt-8 card p-6 sm:p-8">

@@ -63,7 +63,7 @@ export default async function BeritaDetailPage({
           <h1 className="mt-2 font-heading text-3xl font-extrabold text-ink dark:text-ink-dark sm:text-4xl">
             {article.title}
           </h1>
-          <p className="mt-3 text-sm font-semibold text-ink/50 dark:text-ink-dark/50">
+          <p className="mt-3 text-sm font-semibold text-ink/70 dark:text-ink-dark/50">
             {formatDate(article.date)} · Ditulis oleh {article.author}
           </p>
 

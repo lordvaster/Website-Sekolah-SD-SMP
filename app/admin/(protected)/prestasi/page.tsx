@@ -15,7 +15,7 @@ export default function AdminAchievementsPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-heading text-2xl font-bold text-ink dark:text-ink-dark">Prestasi</h1>
-          <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+          <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
             Kelola daftar prestasi siswa yang tampil di halaman Tentang Sekolah.
           </p>
         </div>
@@ -36,7 +36,7 @@ export default function AdminAchievementsPage() {
             <div className="min-w-0 flex-1">
               <p className="truncate font-heading font-bold text-ink dark:text-ink-dark">{a.title}</p>
               <p className="truncate text-sm text-primary dark:text-primary-light">{a.year}</p>
-              <p className="truncate text-xs text-ink/60 dark:text-ink-dark/60">{a.description}</p>
+              <p className="truncate text-xs text-ink/70 dark:text-ink-dark/60">{a.description}</p>
             </div>
             <div className="flex shrink-0 gap-1">
               <Link
@@ -54,7 +54,7 @@ export default function AdminAchievementsPage() {
           </div>
         ))}
         {achievements.length === 0 && (
-          <p className="col-span-full py-8 text-center text-ink/50 dark:text-ink-dark/50">
+          <p className="col-span-full py-8 text-center text-ink/70 dark:text-ink-dark/50">
             Belum ada prestasi. Klik &ldquo;Tambah Prestasi&rdquo; untuk menambahkan.
           </p>
         )}

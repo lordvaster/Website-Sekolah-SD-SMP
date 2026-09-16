@@ -16,7 +16,7 @@ export default async function AdminActivityPage() {
   return (
     <div>
       <h1 className="font-heading text-2xl font-bold text-ink dark:text-ink-dark">Aktivitas</h1>
-      <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+      <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
         Riwayat siapa mengubah apa di panel admin - login, konten, pengaturan, dan pengguna.
       </p>
       <div className="mt-8">

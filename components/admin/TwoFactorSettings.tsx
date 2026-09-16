@@ -91,13 +91,13 @@ export default function TwoFactorSettings() {
       <h2 className="font-heading text-lg font-bold text-ink dark:text-ink-dark">
         Verifikasi Dua Langkah (2FA) - Akun Saya
       </h2>
-      <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+      <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
         Tambahan keamanan khusus akun anda sendiri, di luar password - login butuh
         kode 6 digit dari aplikasi authenticator (Google Authenticator, Authy, 1Password, dll).
       </p>
 
       {status === "loading" && (
-        <p className="mt-4 flex items-center gap-2 text-sm text-ink/60 dark:text-ink-dark/60">
+        <p className="mt-4 flex items-center gap-2 text-sm text-ink/70 dark:text-ink-dark/60">
           <Loader2 className="h-4 w-4 animate-spin" /> Memuat status...
         </p>
       )}
@@ -147,7 +147,7 @@ export default function TwoFactorSettings() {
               className="rounded-lg border border-black/10 dark:border-white/15"
             />
           )}
-          <p className="text-xs text-ink/50 dark:text-ink-dark/50">
+          <p className="text-xs text-ink/70 dark:text-ink-dark/50">
             Tidak bisa scan? Masukkan kode ini manual: <code className="font-mono">{secret}</code>
           </p>
 
@@ -184,7 +184,7 @@ export default function TwoFactorSettings() {
                 setCode("");
                 setError("");
               }}
-              className="text-sm font-semibold text-ink/60 hover:underline dark:text-ink-dark/60"
+              className="text-sm font-semibold text-ink/70 hover:underline dark:text-ink-dark/60"
             >
               Batal
             </button>
@@ -228,7 +228,7 @@ export default function TwoFactorSettings() {
                 setCode("");
                 setError("");
               }}
-              className="text-sm font-semibold text-ink/60 hover:underline dark:text-ink-dark/60"
+              className="text-sm font-semibold text-ink/70 hover:underline dark:text-ink-dark/60"
             >
               Batal
             </button>
@@ -237,7 +237,7 @@ export default function TwoFactorSettings() {
       )}
 
       {status === "enabled" && mode === "view" && (
-        <p className="mt-3 flex items-center gap-1 text-xs text-ink/50 dark:text-ink-dark/50">
+        <p className="mt-3 flex items-center gap-1 text-xs text-ink/70 dark:text-ink-dark/50">
           <CheckCircle2 className="h-3.5 w-3.5" /> Kehilangan akses ke aplikasi authenticator? Hubungi
           pengelola server untuk pemulihan lewat akses server langsung.
         </p>

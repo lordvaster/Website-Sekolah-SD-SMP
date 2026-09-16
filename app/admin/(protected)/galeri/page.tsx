@@ -15,7 +15,7 @@ export default function AdminGalleryPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-heading text-2xl font-bold text-ink dark:text-ink-dark">Galeri</h1>
-          <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+          <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
             Kelola foto kegiatan yang tampil di halaman Galeri.
           </p>
         </div>
@@ -40,7 +40,7 @@ export default function AdminGalleryPage() {
                 <p className="truncate text-sm font-semibold text-ink dark:text-ink-dark">
                   {item.caption}
                 </p>
-                <p className="text-xs text-ink/50 dark:text-ink-dark/50">{item.category}</p>
+                <p className="text-xs text-ink/70 dark:text-ink-dark/50">{item.category}</p>
               </div>
               <DeleteButton
                 endpoint={`/api/admin/gallery/${item.id}`}
@@ -50,7 +50,7 @@ export default function AdminGalleryPage() {
           </div>
         ))}
         {items.length === 0 && (
-          <p className="col-span-full py-8 text-center text-ink/50 dark:text-ink-dark/50">
+          <p className="col-span-full py-8 text-center text-ink/70 dark:text-ink-dark/50">
             Belum ada foto. Klik &ldquo;Tambah Foto&rdquo; untuk menambahkan.
           </p>
         )}

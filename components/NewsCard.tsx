@@ -25,7 +25,7 @@ export default function NewsCard({ article }: { article: NewsArticle }) {
         <p className="mt-2 line-clamp-2 text-sm text-ink/70 dark:text-ink-dark/70">
           {article.excerpt}
         </p>
-        <p className="mt-3 text-xs font-semibold text-ink/50 dark:text-ink-dark/50">
+        <p className="mt-3 text-xs font-semibold text-ink/70 dark:text-ink-dark/50">
           {formatDate(article.date)} · {article.author}
         </p>
       </div>

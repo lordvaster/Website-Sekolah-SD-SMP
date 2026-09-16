@@ -11,14 +11,14 @@ export default function AdminRegistrationsPage() {
   return (
     <div>
       <h1 className="font-heading text-2xl font-bold text-ink dark:text-ink-dark">Pendaftaran</h1>
-      <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+      <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
         Daftar calon siswa yang mengisi formulir pendaftaran di halaman Kontak.
       </p>
 
       <div className="mt-8 overflow-x-auto rounded-xl2 bg-white shadow-sm ring-1 ring-black/5 dark:bg-white/5 dark:ring-white/10">
         <table className="w-full min-w-[780px] text-left text-sm">
           <thead>
-            <tr className="border-b border-black/5 text-xs uppercase tracking-wide text-ink/50 dark:border-white/10 dark:text-ink-dark/50">
+            <tr className="border-b border-black/5 text-xs uppercase tracking-wide text-ink/70 dark:border-white/10 dark:text-ink-dark/50">
               <th className="px-5 py-3">Tanggal</th>
               <th className="px-5 py-3">Nama Anak</th>
               <th className="px-5 py-3">Jenjang</th>
@@ -35,7 +35,7 @@ export default function AdminRegistrationsPage() {
                 </td>
                 <td className="px-5 py-3 font-semibold text-ink dark:text-ink-dark">
                   {r.childName}
-                  <span className="block text-xs font-normal text-ink/50 dark:text-ink-dark/50">
+                  <span className="block text-xs font-normal text-ink/70 dark:text-ink-dark/50">
                     {r.childAge} tahun
                   </span>
                 </td>
@@ -56,7 +56,7 @@ export default function AdminRegistrationsPage() {
             ))}
             {registrations.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-5 py-8 text-center text-ink/50 dark:text-ink-dark/50">
+                <td colSpan={6} className="px-5 py-8 text-center text-ink/70 dark:text-ink-dark/50">
                   Belum ada pendaftaran masuk.
                 </td>
               </tr>

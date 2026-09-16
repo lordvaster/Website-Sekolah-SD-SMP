@@ -26,7 +26,7 @@ export default function LatestNews() {
           </Link>
         </div>
         {latest.length === 0 ? (
-          <p className="mt-10 text-center text-ink/60 dark:text-ink-dark/60">
+          <p className="mt-10 text-center text-ink/70 dark:text-ink-dark/60">
             Belum ada berita yang dipublikasikan.
           </p>
         ) : (

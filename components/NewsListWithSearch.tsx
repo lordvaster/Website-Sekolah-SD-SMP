@@ -57,7 +57,7 @@ export default function NewsListWithSearch({ articles }: { articles: NewsArticle
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-12 text-center text-ink/60 dark:text-ink-dark/60">
+        <p className="mt-12 text-center text-ink/70 dark:text-ink-dark/60">
           Tidak ada berita yang cocok dengan pencarian anda.
         </p>
       ) : (

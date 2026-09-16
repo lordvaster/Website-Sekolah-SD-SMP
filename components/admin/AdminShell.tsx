@@ -51,13 +51,13 @@ export default function AdminShell({
             Panel Admin
           </span>
           <div className="flex items-center gap-4">
-            <span className="hidden text-sm text-ink/60 dark:text-ink-dark/60 sm:inline">
+            <span className="hidden text-sm text-ink/70 dark:text-ink-dark/60 sm:inline">
               {user.name} · <span className="capitalize">{user.role}</span>
             </span>
             <button
               type="button"
               onClick={onLogout}
-              className="flex items-center gap-1 text-sm font-semibold text-ink/60 hover:text-cta dark:text-ink-dark/60"
+              className="flex items-center gap-1 text-sm font-semibold text-ink/70 hover:text-cta dark:text-ink-dark/60"
             >
               <LogOut className="h-4 w-4" /> Keluar
             </button>

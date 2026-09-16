@@ -56,7 +56,7 @@ export default function ActivityLogView({
   };
 
   if (entries.length === 0) {
-    return <p className="text-center text-ink/60 dark:text-ink-dark/60">Belum ada aktivitas tercatat.</p>;
+    return <p className="text-center text-ink/70 dark:text-ink-dark/60">Belum ada aktivitas tercatat.</p>;
   }
 
   return (
@@ -64,7 +64,7 @@ export default function ActivityLogView({
       <div className="overflow-x-auto rounded-xl2 bg-white shadow-sm ring-1 ring-black/5 dark:bg-white/5 dark:ring-white/10">
         <table className="w-full min-w-[560px] text-left text-sm">
           <thead>
-            <tr className="border-b border-black/5 text-xs uppercase tracking-wide text-ink/50 dark:border-white/10 dark:text-ink-dark/50">
+            <tr className="border-b border-black/5 text-xs uppercase tracking-wide text-ink/70 dark:border-white/10 dark:text-ink-dark/50">
               <th className="px-5 py-3">Waktu</th>
               <th className="px-5 py-3">Pengguna</th>
               <th className="px-5 py-3">Aksi</th>
@@ -81,7 +81,7 @@ export default function ActivityLogView({
                 <td className="px-5 py-3 text-ink/80 dark:text-ink-dark/80">
                   {actionLabels[entry.action] ?? entry.action}
                 </td>
-                <td className="px-5 py-3 text-ink/60 dark:text-ink-dark/60">{entry.target ?? "-"}</td>
+                <td className="px-5 py-3 text-ink/70 dark:text-ink-dark/60">{entry.target ?? "-"}</td>
               </tr>
             ))}
           </tbody>

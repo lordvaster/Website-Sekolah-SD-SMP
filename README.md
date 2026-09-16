@@ -127,14 +127,15 @@ Beberapa bagian masih berupa data statis di kode (dianggap jarang berubah, belum
 
 Pengunjung bisa ganti bahasa tampilan lewat dropdown di navbar (Indonesia/English/日本語/中文), tersimpan di cookie (`locale`, 1 tahun) sehingga bertahan di kunjungan berikutnya. Implementasinya sengaja ringan (dictionary + cookie, bukan library seperti next-intl) karena TIDAK ada routing per-bahasa (`/en/...`) — cukup untuk kebutuhan situs ini.
 
-**Cakupan yang diterjemahkan:** navigasi, tombol, label & pesan validasi form (Kontak dan Pendaftaran), teks pembungkus halaman Kontak dan Kebijakan Privasi, dan salinan pemasaran statis di beranda (Hero, Keunggulan, CTA).
+**Cakupan yang diterjemahkan:** navigasi, tombol, label & pesan validasi form (Kontak dan Pendaftaran), teks pembungkus halaman Kontak dan Kebijakan Privasi, dan salinan pemasaran statis di beranda (Hero, Keunggulan, CTA, Cara Mendaftar, Countdown).
 
 **Yang TIDAK diterjemahkan (sengaja)** — selalu tampil dalam bahasa aslinya (apa pun bahasa UI yang dipilih pengunjung), karena ditulis bebas oleh admin dan tidak ada cara menerjemahkannya secara akurat dan otomatis:
-- Konten dari panel admin: Berita, Guru, Program, keterangan Galeri, isi Kebijakan Privasi.
+- Semua konten dari panel admin: Berita, Guru, Program, Prestasi, Video, Testimoni, FAQ, keterangan Galeri, isi Kebijakan Privasi.
 - Pengaturan situs: tagline, deskripsi sekolah, alamat, dll (menu Pengaturan).
-- `lib/data.ts`: testimoni, FAQ, ekstrakurikuler, statistik.
 
-Kalau ingin menambah teks baru ke daftar yang diterjemahkan: tambahkan key-nya di keempat objek bahasa (`id`, `en`, `ja`, `zh`) di [`lib/i18n/dictionaries.ts`](lib/i18n/dictionaries.ts) — TypeScript akan menandai error kalau ada bahasa yang lupa diisi (keempatnya wajib punya bentuk (shape) yang sama). Pakai `useTranslation()` (Client Component) atau `getDictionary()` (Server Component/halaman async) untuk mengaksesnya.
+Kalau ingin menambah teks baru ke daftar yang diterjemahkan: tambahkan key-nya di keempat objek bahasa (`id`, `en`, `ja`, `zh`) di [`lib/i18n/dictionaries.ts`](lib/i18n/dictionaries.ts) — TypeScript akan menandai error kalau ada bahasa yang lupa diisi (keempatnya wajib punya bentuk (shape) yang sama). Pakai `useTranslation()` dari [`lib/i18n/LocaleContext.tsx`](lib/i18n/LocaleContext.tsx) di Client Component untuk mengaksesnya.
+
+**Locale sengaja TIDAK dibaca dari cookie di server** (bukan lewat `cookies()` dari `next/headers`). Versi awal fitur ini melakukan itu, tapi ternyata memaksa Next.js merender ulang SEMUA halaman publik secara dinamis di setiap request (bukan statis/ISR seperti seharusnya) — ditemukan lewat audit Lighthouse (header respons jadi `Cache-Control: private, no-store`, dan meta description jadi terlambat muncul di `<head>`). Sekarang semua halaman dirender statis dalam bahasa default (Indonesia), lalu `LocaleProvider` membaca cookie di client lewat `useLayoutEffect` (berjalan sebelum browser menggambar frame pertama, meniru teknik `next-themes` untuk tema) dan mengoreksi ke bahasa yang benar. Konsekuensinya: pengunjung baru tidak melihat "kedipan" bahasa sama sekali (defaultnya memang Indonesia), tapi pengunjung yang SEBELUMNYA memilih bahasa lain berpotensi melihat kedipan sangat singkat sebelum terkoreksi — dianggap trade-off yang sepadan demi mengembalikan caching statis di semua halaman publik.
 
 ## Build & Deploy
 

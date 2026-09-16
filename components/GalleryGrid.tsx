@@ -73,7 +73,7 @@ export default function GalleryGrid({ items: galleryItems }: { items: GalleryIte
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-12 text-center text-ink/60 dark:text-ink-dark/60">
+        <p className="mt-12 text-center text-ink/70 dark:text-ink-dark/60">
           {galleryItems.length === 0
             ? "Belum ada foto di galeri."
             : "Tidak ada foto pada kategori ini."}

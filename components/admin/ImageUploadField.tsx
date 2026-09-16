@@ -91,7 +91,7 @@ export default function ImageUploadField({
             <button
               type="button"
               onClick={() => onChange(null)}
-              className="flex items-center gap-1 text-xs font-semibold text-ink/50 hover:text-cta dark:text-ink-dark/50"
+              className="flex items-center gap-1 text-xs font-semibold text-ink/70 hover:text-cta dark:text-ink-dark/50"
             >
               <X className="h-3.5 w-3.5" /> Hapus gambar (pakai placeholder)
             </button>
@@ -110,7 +110,7 @@ export default function ImageUploadField({
           {error}
         </p>
       )}
-      <p className="mt-1 text-xs text-ink/50 dark:text-ink-dark/50">
+      <p className="mt-1 text-xs text-ink/70 dark:text-ink-dark/50">
         JPG/PNG/WebP, maksimal 5MB. Jika tidak diisi, akan memakai gambar placeholder otomatis.
       </p>
     </div>

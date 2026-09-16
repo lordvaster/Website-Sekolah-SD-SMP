@@ -72,7 +72,7 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
         <h2 className="font-heading text-lg font-bold text-ink dark:text-ink-dark">
           Favicon & Icon Situs
         </h2>
-        <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+        <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
           Pilih salah satu icon berikut. Perubahan berlaku otomatis di seluruh
           halaman tanpa perlu deploy ulang.
         </p>
@@ -118,7 +118,7 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
           onChange={(e) => setSiteTagline(e.target.value)}
           className={`${inputClass} max-w-md`}
         />
-        <p className="mt-1 text-xs text-ink/50 dark:text-ink-dark/50">
+        <p className="mt-1 text-xs text-ink/70 dark:text-ink-dark/50">
           Muncul di judul tab browser, hasil pencarian Google, dan logo navbar/footer. Perubahan tampil dalam waktu maksimal 1 menit (bukan instan seperti favicon).
         </p>
       </div>
@@ -127,7 +127,7 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
         <h2 className="font-heading text-lg font-bold text-ink dark:text-ink-dark">
           Informasi Kontak & Sosial Media
         </h2>
-        <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+        <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
           Tampil di footer setiap halaman dan halaman Kontak. Perubahan tampil seketika.
         </p>
 
@@ -184,7 +184,7 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
                 placeholder="6281234567890"
                 className={inputClass}
               />
-              <p className="mt-1 text-xs text-ink/50 dark:text-ink-dark/50">
+              <p className="mt-1 text-xs text-ink/70 dark:text-ink-dark/50">
                 Angka saja, diawali kode negara, tanpa spasi/tanda &quot;+&quot;.
               </p>
             </div>
@@ -259,7 +259,7 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
               />
             </div>
           </div>
-          <p className="text-xs text-ink/50 dark:text-ink-dark/50">
+          <p className="text-xs text-ink/70 dark:text-ink-dark/50">
             Kosongkan salah satu media sosial untuk menyembunyikan ikonnya.
           </p>
 
@@ -274,7 +274,7 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
               onChange={(e) => setMapsEmbedSrc(e.target.value)}
               className={inputClass}
             />
-            <p className="mt-1 text-xs text-ink/50 dark:text-ink-dark/50">
+            <p className="mt-1 text-xs text-ink/70 dark:text-ink-dark/50">
               Dari Google Maps: cari lokasi → Bagikan → Sematkan peta → salin URL di dalam <code>src=&quot;...&quot;</code>.
             </p>
           </div>
@@ -285,7 +285,7 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
         <h2 className="font-heading text-lg font-bold text-ink dark:text-ink-dark">
           Countdown Pendaftaran
         </h2>
-        <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+        <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
           Jika diisi, hitung mundur menuju tanggal ini tampil di Beranda untuk mendorong calon
           pendaftar segera mendaftar. Kosongkan untuk menyembunyikan hitung mundur.
         </p>
@@ -307,7 +307,7 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
         <label htmlFor="privacyPolicyContent" className="font-heading text-lg font-bold text-ink dark:text-ink-dark">
           Kebijakan Privasi
         </label>
-        <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+        <p className="mt-1 text-sm text-ink/70 dark:text-ink-dark/60">
           Ditampilkan di halaman /kebijakan-privasi. Format teks sederhana: baris diawali{" "}
           <code>## </code> jadi judul bagian, baris diawali <code>- </code> jadi item daftar,
           baris kosong memisahkan paragraf. Tulis <code>{"{{email}}"}</code> atau{" "}
