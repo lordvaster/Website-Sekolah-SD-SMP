@@ -16,6 +16,16 @@ export const localeNames: Record<Locale, string> = {
   zh: "中文",
 };
 
+// Untuk tampilan tertutup dropdown pemilih bahasa - "Indonesia"/"English"
+// dalam bentuk penuh membuat navbar meluber di layar mobile sempit (390px)
+// begitu digabung dengan tombol tema & menu hamburger di sebelahnya.
+export const localeShortNames: Record<Locale, string> = {
+  id: "ID",
+  en: "EN",
+  ja: "日本語",
+  zh: "中文",
+};
+
 const id = {
   nav: {
     home: "Beranda",

@@ -32,6 +32,23 @@ test.describe("Situs publik", () => {
     ).toBeVisible();
   });
 
+  test("tidak ada horizontal scroll di layar sempit (390px)", async ({ page }) => {
+    // Regresi nyata yang pernah lolos: tombol "Daftar Sekarang" versi desktop
+    // (className "hidden sm:inline-flex") tetap tampil di layar sempit
+    // karena .btn-primary didefinisikan di luar @layer components (lihat
+    // app/globals.css) sehingga menang urutan sumber melawan utility
+    // "hidden" - navbar jadi meluber begitu ditambah kontrol lain (mis.
+    // pemilih bahasa).
+    await page.setViewportSize({ width: 390, height: 844 });
+    for (const path of ["/", "/tentang", "/program", "/galeri", "/berita", "/kontak"]) {
+      await page.goto(path);
+      const hasOverflow = await page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth
+      );
+      expect(hasOverflow, `${path} punya horizontal scroll di layar 390px`).toBe(false);
+    }
+  });
+
   test("form kontak menampilkan validasi saat dikosongkan", async ({ page }) => {
     await page.goto("/kontak");
     await page.getByRole("button", { name: "Kirim Pesan" }).click();
