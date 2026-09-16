@@ -40,7 +40,7 @@ Dikembangkan oleh **Zeday** — [https://join.co.id](https://join.co.id)
 - SEO: metadata per halaman, Open Graph, JSON-LD, `sitemap.xml`, `robots.txt`, revalidasi otomatis saat konten admin berubah.
 - Aksesibilitas: skip-to-content, label ARIA, kontras warna sesuai WCAG AA, navigasi keyboard.
 - Form kontak & pendaftaran siswa baru dengan validasi real-time (React Hook Form + Zod), email konfirmasi (opsional, via SMTP), dan pendaftaran tersimpan permanen di database (bisa dilihat/dikelola admin meski email gagal terkirim).
-- Galeri foto dengan layout masonry (tinggi kartu bervariasi), filter kategori & lightbox, video YouTube embed.
+- Galeri foto dengan layout masonry (tinggi kartu bervariasi), filter kategori & lightbox, video YouTube embed (profil sekolah, testimoni, virtual tour) yang dikelola dari admin.
 - PWA dasar: manifest + service worker untuk caching offline halaman utama.
 - Favicon/icon situs & tagline dapat diganti langsung dari panel admin.
 - Test end-to-end otomatis (Playwright) dan pipeline CI (GitHub Actions) yang menjalankan lint, build, dan test di setiap push/PR.
@@ -71,7 +71,7 @@ Buka [http://localhost:3000](http://localhost:3000). Database SQLite (`data/cms.
 
 ## Database & Penyimpanan File (Penting Sebelum Deploy)
 
-CMS (Berita, Galeri, Guru, Program, Prestasi, Testimoni, FAQ, Pendaftaran, akun & 2FA pengguna admin, riwayat aktivitas) disimpan di **file SQLite** (`data/cms.sqlite`, dibaca lewat `better-sqlite3`), foto yang diunggah admin disimpan sebagai file biasa di `public/uploads/`, dan pengaturan situs (favicon/tagline) di `data/settings.json`. Semuanya **wajib ikut dibackup** - bukan cuma `data/cms.sqlite` (lihat bagian "Backup Otomatis" di bawah, sudah berjalan sendiri lewat cron).
+CMS (Berita, Galeri, Guru, Program, Prestasi, Video, Testimoni, FAQ, Pendaftaran, akun & 2FA pengguna admin, riwayat aktivitas) disimpan di **file SQLite** (`data/cms.sqlite`, dibaca lewat `better-sqlite3`), foto yang diunggah admin disimpan sebagai file biasa di `public/uploads/`, dan pengaturan situs (favicon/tagline) di `data/settings.json`. Semuanya **wajib ikut dibackup** - bukan cuma `data/cms.sqlite` (lihat bagian "Backup Otomatis" di bawah, sudah berjalan sendiri lewat cron).
 
 Ini bekerja baik untuk **deploy di server Node.js sendiri (VPS)** yang disknya persisten antar-request — lihat bagian Build & Deploy di bawah.
 
@@ -97,6 +97,7 @@ Buka `/admin`. Setiap staf punya **akun individual** (username + password sendir
 | **Guru** | Tambah, edit, hapus profil tenaga pengajar beserta foto. | Semua |
 | **Program** | Kelola daftar jenjang/kelas (TK A - Kelas 6) beserta poin unggulan. | Semua |
 | **Prestasi** | Tambah, edit, hapus daftar prestasi siswa (judul, keterangan, tahun, foto sertifikat/piala opsional) yang tampil di halaman Tentang Sekolah. | Semua |
+| **Video** | Tambah, edit, hapus video YouTube (profil sekolah, testimoni, virtual tour) yang tampil di halaman Galeri - cukup tempel URL atau ID video. | Semua |
 | **Testimoni** | Tambah, edit, hapus testimoni orang tua/siswa yang tampil di carousel Beranda, beserta foto (opsional). | Semua |
 | **FAQ** | Kelola pertanyaan yang sering diajukan orang tua, tampil di halaman Kontak & Pendaftaran. | Semua |
 | **Pendaftaran** | Lihat semua pendaftaran siswa baru yang masuk lewat halaman Kontak, dan ubah statusnya (Baru/Dihubungi/Diterima/Ditolak). | Semua |

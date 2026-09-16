@@ -15,6 +15,7 @@ const links = [
   { href: "/admin/guru", label: "Guru" },
   { href: "/admin/program", label: "Program" },
   { href: "/admin/prestasi", label: "Prestasi" },
+  { href: "/admin/video", label: "Video" },
   { href: "/admin/testimoni", label: "Testimoni" },
   { href: "/admin/faq", label: "FAQ" },
   { href: "/admin/pendaftaran", label: "Pendaftaran" },

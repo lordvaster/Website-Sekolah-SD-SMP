@@ -10,6 +10,7 @@ import { createProgram } from "./repositories/programs";
 import { createTestimonial } from "./repositories/testimonials";
 import { createFaq } from "./repositories/faqs";
 import { createAchievement } from "./repositories/achievements";
+import { createVideo } from "./repositories/videos";
 import { countAdminUsers, createAdminUser } from "./repositories/admin-users";
 
 function count(table: string) {
@@ -221,6 +222,23 @@ function seedAchievements() {
   achievements.forEach((a) => createAchievement(a));
 }
 
+// ID video contoh di bawah adalah film pendek open-source Blender
+// Foundation (Big Buck Bunny, Sintel, Tears of Steel) - bebas digunakan,
+// netral, dan memang dipakai luas sebagai video placeholder. Ganti dengan
+// video asli sekolah lewat panel admin (menu Video) sebelum situs
+// dipakai publik.
+function seedVideos() {
+  if (count("videos") > 0) return;
+
+  const videos = [
+    { title: "Profil Sekolah SD Inovasi Ceria (Contoh)", youtubeId: "aqz-KE-bpKQ", category: "Profil Sekolah" as const },
+    { title: "Kata Orang Tua & Siswa (Contoh)", youtubeId: "eRsGyueVLvQ", category: "Testimoni" as const },
+    { title: "Virtual Tour Sekolah (Contoh)", youtubeId: "R6MlUcmOul8", category: "Virtual Tour" as const },
+  ];
+
+  videos.forEach((v) => createVideo(v));
+}
+
 // Akun admin pertama ("owner") dibuat sekali dari ADMIN_PASSWORD di .env,
 // supaya deployment yang sudah ada (dari sebelum fitur multi-akun ini)
 // tidak langsung terkunci begitu update di-deploy. Setelah ini, kelola
@@ -255,6 +273,7 @@ export async function ensureSeeded() {
   seedTestimonials();
   seedFaqs();
   seedAchievements();
+  seedVideos();
   // Di-await (bukan fire-and-forget) - lihat instrumentation.ts: register()
   // harus benar-benar selesai, termasuk bagian async ini, sebelum server
   // mulai menerima request, supaya tidak ada window tanpa akun admin sama

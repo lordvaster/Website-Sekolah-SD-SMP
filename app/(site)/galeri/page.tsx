@@ -4,6 +4,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import SectionHeading from "@/components/SectionHeading";
 import GalleryGrid from "@/components/GalleryGrid";
 import { listGalleryItems } from "@/lib/repositories/gallery";
+import { listVideos } from "@/lib/repositories/videos";
 
 export const metadata: Metadata = {
   title: "Galeri",
@@ -11,13 +12,9 @@ export const metadata: Metadata = {
     "Lihat momen keseruan aktivitas belajar, acara, dan kegiatan siswa SD Inovasi Ceria dalam galeri foto dan video.",
 };
 
-// Placeholder tunggal untuk contoh tampilan - tambahkan video YouTube resmi
-// sekolah di sini (id unik per video) sebelum situs dipakai publik. Section
-// ini belum bisa diedit lewat admin panel.
-const videos = [{ id: "aqz-KE-bpKQ", title: "Profil Sekolah SD Inovasi Ceria (contoh)" }];
-
 export default function GaleriPage() {
   const items = listGalleryItems();
+  const videos = listVideos();
 
   return (
     <>
@@ -36,30 +33,37 @@ export default function GaleriPage() {
         </div>
       </section>
 
-      <section className="bg-primary/5 py-14 dark:bg-primary/10 sm:py-20">
-        <div className="container-page">
-          <SectionHeading eyebrow="Video Highlights" title="Video Kegiatan Sekolah" />
-          <div className="mx-auto mt-10 grid max-w-xl gap-6 sm:grid-cols-2">
-            {videos.map((v) => (
-              <div key={v.title} className="card overflow-hidden">
-                <div className="aspect-video">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${v.id}`}
-                    title={v.title}
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="h-full w-full"
-                  />
+      {videos.length > 0 && (
+        <section className="bg-primary/5 py-14 dark:bg-primary/10 sm:py-20">
+          <div className="container-page">
+            <SectionHeading eyebrow="Video Highlights" title="Video Kegiatan Sekolah" />
+            <div className="mx-auto mt-10 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {videos.map((v) => (
+                <div key={v.id} className="card overflow-hidden">
+                  <div className="aspect-video">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${v.youtubeId}`}
+                      title={v.title}
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="h-full w-full"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <span className="inline-block rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary dark:text-primary-light">
+                      {v.category}
+                    </span>
+                    <p className="mt-1 font-heading font-bold text-ink dark:text-ink-dark">
+                      {v.title}
+                    </p>
+                  </div>
                 </div>
-                <p className="p-4 font-heading font-bold text-ink dark:text-ink-dark">
-                  {v.title}
-                </p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 }
