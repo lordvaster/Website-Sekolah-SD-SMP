@@ -57,9 +57,11 @@ Buka [http://localhost:3000](http://localhost:3000). Database SQLite (`data/cms.
 | `NEXT_PUBLIC_SITE_URL` | Domain produksi, contoh `https://sd.join.co.id` |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | Untuk mengaktifkan email konfirmasi form kontak/pendaftaran. Jika kosong, form tetap berfungsi (pendaftaran tetap tersimpan di database) namun email tidak terkirim (hanya dicatat di log server). |
 | `CONTACT_RECEIVER_EMAIL` | Email tujuan penerima pesan kontak & pendaftaran. |
+| `WHATSAPP_API_TOKEN`, `WHATSAPP_ADMIN_NUMBER` | Opsional. Notifikasi WhatsApp ke admin tiap ada pendaftaran baru lewat gateway [Fonnte](https://fonnte.com). Kosongkan untuk melewati (pendaftaran tetap tersimpan seperti biasa). |
 | `NEXT_PUBLIC_GA_ID` | ID Google Analytics (opsional). |
 | `NEXT_PUBLIC_MAPS_EMBED_SRC` | URL embed Google Maps lokasi sekolah. |
-| `ADMIN_PASSWORD` | Password untuk masuk ke `/admin` (**wajib diisi** sebelum deploy produksi — tanpa ini `/admin` tidak bisa diakses sama sekali). |
+| `ADMIN_PASSWORD` | **Wajib diisi** sebelum deploy produksi. Dipakai sekali untuk membuat akun admin pertama (lihat bagian "Panel Admin"), setelahnya jadi kunci penandatanganan sesi login. |
+| `BACKUP_RCLONE_REMOTE`, `BACKUP_RETENTION_DAYS` | Opsional. Backup harian otomatis ke luar server — lihat bagian "Backup Otomatis". |
 | `CMS_DB_PATH` | Opsional. Path kustom untuk file database SQLite; dipakai test E2E agar tidak mengotori `data/cms.sqlite` asli. Tidak perlu diisi untuk pemakaian normal. |
 
 ## Database & Penyimpanan File (Penting Sebelum Deploy)

@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import { registrationSchema } from "@/lib/validation";
 import { sendMail } from "@/lib/email";
+import { sendWhatsAppNotification } from "@/lib/whatsapp";
 import { rateLimitGuard } from "@/lib/rate-limit";
 import { siteConfig } from "@/lib/site-config";
 import { escapeHtml } from "@/lib/utils";
@@ -37,11 +38,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Notifikasi email bersifat best-effort di kedua sisi (sekolah & orang
-  // tua) - kegagalannya dicatat tapi tidak menggagalkan pendaftaran yang
-  // datanya sudah aman tersimpan di database. Keduanya dijalankan lewat
-  // after() (bukan di-await sebelum respons) supaya orang tua tidak
-  // menunggu round-trip SMTP tambahan hanya untuk melihat halaman sukses.
+  // Semua notifikasi (email ke sekolah & orang tua, WhatsApp ke sekolah)
+  // bersifat best-effort - kegagalannya dicatat tapi tidak menggagalkan
+  // pendaftaran yang datanya sudah aman tersimpan di database. Semuanya
+  // dijalankan lewat after() (bukan di-await sebelum respons) supaya orang
+  // tua tidak menunggu round-trip SMTP/API tambahan hanya untuk melihat
+  // halaman sukses.
   after(async () => {
     try {
       await sendMail({
@@ -79,6 +81,23 @@ export async function POST(request: NextRequest) {
       });
     } catch (error) {
       console.error("[api/pendaftaran] Gagal mengirim email konfirmasi ke orang tua:", error);
+    }
+  });
+
+  after(async () => {
+    try {
+      await sendWhatsAppNotification(
+        `*Pendaftaran Siswa Baru #${registrationId}*\n\n` +
+          `Nama Anak: ${childName}\n` +
+          `Usia: ${childAge} tahun\n` +
+          `Jenjang Dituju: ${program}\n` +
+          `Nama Orang Tua: ${parentName}\n` +
+          `Email: ${email}\n` +
+          `Telepon: ${phone}\n\n` +
+          `Lihat & tindak lanjuti di panel admin: /admin/pendaftaran`
+      );
+    } catch (error) {
+      console.error("[api/pendaftaran] Gagal mengirim notifikasi WhatsApp ke sekolah:", error);
     }
   });
 
