@@ -7,6 +7,8 @@ import { createNews } from "./repositories/news";
 import { createGalleryItem } from "./repositories/gallery";
 import { createTeacher } from "./repositories/teachers";
 import { createProgram } from "./repositories/programs";
+import { createTestimonial } from "./repositories/testimonials";
+import { createFaq } from "./repositories/faqs";
 import { countAdminUsers, createAdminUser } from "./repositories/admin-users";
 
 function count(table: string) {
@@ -161,6 +163,49 @@ function seedPrograms() {
   programs.forEach((p) => createProgram(p));
 }
 
+function seedTestimonials() {
+  if (count("testimonials") > 0) return;
+
+  const testimonials = [
+    {
+      name: "Ibu Ratna, Wali Murid Kelas 2",
+      role: "Orang Tua Siswa",
+      quote:
+        "Anak saya jadi jauh lebih percaya diri dan senang berangkat sekolah setiap hari. Guru-gurunya sangat perhatian.",
+      hue: 205,
+    },
+    {
+      name: "Bapak Yusuf, Wali Murid Kelas 5",
+      role: "Orang Tua Siswa",
+      quote:
+        "Komunikasi sekolah dengan orang tua sangat baik, laporan perkembangan anak selalu jelas dan tepat waktu.",
+      hue: 152,
+    },
+    {
+      name: "Kayla, Siswa Kelas 4",
+      role: "Siswa",
+      quote: "Aku suka sekali sama kelas seni dan ekstrakurikuler renang di sekolah!",
+      hue: 28,
+    },
+  ];
+
+  testimonials.forEach((t) => createTestimonial(t));
+}
+
+function seedFaqs() {
+  if (count("faqs") > 0) return;
+
+  const faqs = [
+    { question: "Berapa usia minimal untuk mendaftar di TK A?", answer: "Calon siswa TK A minimal berusia 4 tahun pada saat tahun ajaran dimulai." },
+    { question: "Apakah sekolah menyediakan layanan antar jemput?", answer: "Ya, sekolah bekerja sama dengan penyedia layanan antar jemput pihak ketiga untuk wilayah Palangkaraya dan sekitarnya." },
+    { question: "Bagaimana cara mendaftar sebagai siswa baru?", answer: "Pendaftaran dapat dilakukan online melalui halaman Kontak & Pendaftaran, atau datang langsung ke sekolah pada jam operasional." },
+    { question: "Apakah ada program ekstrakurikuler wajib?", answer: "Setiap siswa wajib memilih minimal satu ekstrakurikuler sesuai minat, mulai dari kelas 1." },
+    { question: "Berapa jumlah maksimal siswa per kelas?", answer: "Kami menjaga rasio ideal dengan maksimal 24 siswa per kelas agar guru dapat memberikan perhatian optimal." },
+  ];
+
+  faqs.forEach((f) => createFaq(f));
+}
+
 // Akun admin pertama ("owner") dibuat sekali dari ADMIN_PASSWORD di .env,
 // supaya deployment yang sudah ada (dari sebelum fitur multi-akun ini)
 // tidak langsung terkunci begitu update di-deploy. Setelah ini, kelola
@@ -192,6 +237,8 @@ export async function ensureSeeded() {
   seedGallery();
   seedTeachers();
   seedPrograms();
+  seedTestimonials();
+  seedFaqs();
   // Di-await (bukan fire-and-forget) - lihat instrumentation.ts: register()
   // harus benar-benar selesai, termasuk bagian async ini, sebelum server
   // mulai menerima request, supaya tidak ada window tanpa akun admin sama

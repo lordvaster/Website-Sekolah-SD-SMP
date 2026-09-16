@@ -6,9 +6,9 @@ import SectionHeading from "@/components/SectionHeading";
 import ContactForm from "@/components/ContactForm";
 import RegistrationForm from "@/components/RegistrationForm";
 import Accordion from "@/components/Accordion";
-import { faqs } from "@/lib/data";
 import { readSettings } from "@/lib/settings";
 import { listPrograms } from "@/lib/repositories/programs";
+import { listFaqs } from "@/lib/repositories/faqs";
 import { getDictionary } from "@/lib/i18n/get-locale";
 
 export const metadata: Metadata = {
@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 export default async function KontakPage() {
   const programs = listPrograms();
+  const faqs = listFaqs();
   const [settings, dict] = await Promise.all([readSettings(), getDictionary()]);
 
   return (
@@ -118,14 +119,16 @@ export default async function KontakPage() {
         </div>
       </section>
 
-      <section className="py-14 sm:py-20">
-        <div className="container-page max-w-3xl">
-          <SectionHeading eyebrow={dict.kontak.faqEyebrow} title={dict.kontak.faqTitle} />
-          <div className="mt-10">
-            <Accordion items={faqs} />
+      {faqs.length > 0 && (
+        <section className="py-14 sm:py-20">
+          <div className="container-page max-w-3xl">
+            <SectionHeading eyebrow={dict.kontak.faqEyebrow} title={dict.kontak.faqTitle} />
+            <div className="mt-10">
+              <Accordion items={faqs.map((f) => ({ q: f.question, a: f.answer }))} />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 }

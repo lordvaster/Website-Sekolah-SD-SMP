@@ -7,6 +7,7 @@ import LatestNews from "@/components/LatestNews";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import CTASection from "@/components/CTASection";
 import { readSettings } from "@/lib/settings";
+import { listTestimonials } from "@/lib/repositories/testimonials";
 
 export const metadata: Metadata = {
   title: "Beranda",
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const { schoolWhatsapp, siteTagline } = await readSettings();
+  const testimonials = listTestimonials();
 
   return (
     <>
@@ -23,7 +25,7 @@ export default async function HomePage() {
       <StatsSection />
       <FeatureCards />
       <LatestNews />
-      <TestimonialCarousel />
+      <TestimonialCarousel testimonials={testimonials} />
       <CTASection whatsapp={schoolWhatsapp} />
     </>
   );

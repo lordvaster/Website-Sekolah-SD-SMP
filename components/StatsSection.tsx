@@ -1,6 +1,7 @@
 // Author: Zeday | https://join.co.id
 import { stats } from "@/lib/data";
 import RevealOnScroll from "./RevealOnScroll";
+import AnimatedCounter from "./AnimatedCounter";
 
 export default function StatsSection() {
   return (
@@ -9,7 +10,7 @@ export default function StatsSection() {
         {stats.map((stat, i) => (
           <RevealOnScroll key={stat.label} delay={i * 0.08} className="text-center">
             <p className="font-heading text-3xl font-extrabold text-primary dark:text-primary-light sm:text-4xl">
-              {stat.value}+
+              <AnimatedCounter value={stat.value} />+
             </p>
             <p className="mt-1 text-sm font-semibold text-ink/70 dark:text-ink-dark/70">
               {stat.label}

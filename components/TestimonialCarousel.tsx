@@ -3,20 +3,23 @@
 
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { testimonials } from "@/lib/data";
-import PlaceholderPhoto from "./PlaceholderPhoto";
+import type { Testimonial } from "@/lib/repositories/testimonials";
+import MediaThumb from "./MediaThumb";
 import SectionHeading from "./SectionHeading";
 
-export default function TestimonialCarousel() {
+export default function TestimonialCarousel({ testimonials }: { testimonials: Testimonial[] }) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
+    if (testimonials.length === 0) return;
     const id = setInterval(
       () => setIndex((i) => (i + 1) % testimonials.length),
       6000
     );
     return () => clearInterval(id);
-  }, []);
+  }, [testimonials.length]);
+
+  if (testimonials.length === 0) return null;
 
   const t = testimonials[index];
 
@@ -30,7 +33,8 @@ export default function TestimonialCarousel() {
             <p className="text-lg font-medium leading-relaxed text-ink dark:text-ink-dark">
               &ldquo;{t.quote}&rdquo;
             </p>
-            <PlaceholderPhoto
+            <MediaThumb
+              imagePath={t.photoPath}
               hue={t.hue}
               label={t.name}
               variant="avatar"

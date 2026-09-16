@@ -11,7 +11,7 @@ const ALLOWED_TYPES: Record<string, string> = {
   "image/png": "png",
   "image/webp": "webp",
 };
-const ALLOWED_FOLDERS = new Set(["news", "gallery", "teachers"]);
+const ALLOWED_FOLDERS = new Set(["news", "gallery", "teachers", "testimonials"]);
 
 export async function POST(request: NextRequest) {
   const unauthorized = await requireAdmin(request);

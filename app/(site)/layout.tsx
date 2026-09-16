@@ -2,6 +2,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SkipToContent from "@/components/SkipToContent";
+import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import { siteConfig } from "@/lib/site-config";
 import { readSettings } from "@/lib/settings";
 import { getLocale } from "@/lib/i18n/get-locale";
@@ -15,7 +16,8 @@ export default async function SiteLayout({
 }) {
   const [settings, locale] = await Promise.all([readSettings(), getLocale()]);
   const dict = dictionaries[locale];
-  const { siteTagline, schoolDescription, schoolAddress, schoolPhone, schoolEmail } = settings;
+  const { siteTagline, schoolDescription, schoolAddress, schoolPhone, schoolEmail, schoolWhatsapp } =
+    settings;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -55,6 +57,7 @@ export default async function SiteLayout({
           socialYoutube: settings.socialYoutube,
         }}
       />
+      <FloatingWhatsApp whatsapp={schoolWhatsapp} />
     </LocaleProvider>
   );
 }

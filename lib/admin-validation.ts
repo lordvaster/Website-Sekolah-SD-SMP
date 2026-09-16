@@ -69,6 +69,18 @@ export const programAdminSchema = z.object({
   slug: z.string().trim().optional(),
 });
 
+export const testimonialAdminSchema = z.object({
+  name: z.string().trim().min(2, "Nama minimal 2 karakter").max(100),
+  role: z.string().trim().min(2, "Peran minimal 2 karakter").max(100),
+  quote: z.string().trim().min(10, "Kutipan minimal 10 karakter").max(500),
+  photoPath: z.string().trim().nullable().optional(),
+});
+
+export const faqAdminSchema = z.object({
+  question: z.string().trim().min(5, "Pertanyaan minimal 5 karakter").max(300),
+  answer: z.string().trim().min(5, "Jawaban minimal 5 karakter").max(1000),
+});
+
 export function randomHue() {
   return Math.floor(Math.random() * 360);
 }

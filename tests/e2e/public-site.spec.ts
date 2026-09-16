@@ -66,6 +66,17 @@ test.describe("Situs publik", () => {
     }
   });
 
+  test("tombol WhatsApp mengambang tampil dan mengarah ke wa.me", async ({ page }) => {
+    // CTASection di beranda juga punya link "Chat via WhatsApp" (teks biasa,
+    // tanpa aria-label) - getByLabel di sini menyasar khusus tombol
+    // mengambang (fixed bottom-right) yang memang diberi atribut aria-label,
+    // supaya tidak bentrok/strict-mode-violation dengan link CTASection itu.
+    await page.goto("/");
+    const button = page.getByLabel("Chat via WhatsApp");
+    await expect(button).toBeVisible();
+    await expect(button).toHaveAttribute("href", /^https:\/\/wa\.me\/\d+$/);
+  });
+
   test("form kontak menampilkan validasi saat dikosongkan", async ({ page }) => {
     await page.goto("/kontak");
     await page.getByRole("button", { name: "Kirim Pesan" }).click();
