@@ -64,7 +64,7 @@ Buka [http://localhost:3000](http://localhost:3000). Database SQLite (`data/cms.
 
 ## Database & Penyimpanan File (Penting Sebelum Deploy)
 
-CMS (Berita, Galeri, Guru, Program, Pendaftaran) disimpan di **file SQLite** (`data/cms.sqlite`, dibaca lewat `better-sqlite3`), foto yang diunggah admin disimpan sebagai file biasa di `public/uploads/`, dan pengaturan situs (`data/settings.json`) serta status 2FA admin (`data/2fa.json`) juga disimpan sebagai file di server. Semuanya **wajib ikut dibackup** - bukan cuma `data/cms.sqlite`.
+CMS (Berita, Galeri, Guru, Program, Pendaftaran, akun & 2FA pengguna admin, riwayat aktivitas) disimpan di **file SQLite** (`data/cms.sqlite`, dibaca lewat `better-sqlite3`), foto yang diunggah admin disimpan sebagai file biasa di `public/uploads/`, dan pengaturan situs (favicon/tagline) di `data/settings.json`. Semuanya **wajib ikut dibackup** - bukan cuma `data/cms.sqlite` (lihat bagian "Backup Otomatis" di bawah, sudah berjalan sendiri lewat cron).
 
 Ini bekerja baik untuk **deploy di server Node.js sendiri (VPS)** yang disknya persisten antar-request — lihat bagian Build & Deploy di bawah.
 
@@ -190,6 +190,42 @@ Script akan membuatkan `.env` baru dari `.env.example` (dengan `NEXT_PUBLIC_SITE
 
 Selama secrets belum diisi, workflow ini otomatis dilewati (tidak membuat job gagal). Setelah diisi, **setiap push ke `main` akan langsung ter-deploy ke server produksi** — pertimbangkan matang-matang sebelum mengaktifkan, atau gunakan branch protection/review sebelum merge ke `main` sebagai pengaman.
 
+### Backup Otomatis
+
+Seluruh data situs (berita, galeri, guru, program, pendaftaran, pengaturan, foto yang diunggah) hanya ada di **satu file** (`data/cms.sqlite`) dan **satu folder** (`public/uploads/`) di VPS ini. Tanpa backup, kegagalan disk/VPS berarti kehilangan semuanya secara permanen.
+
+`deploy/backup.sh` menangani ini: setiap hari jam 02:00 (dipasang otomatis lewat cron oleh `deploy/install.sh`), script ini membuat snapshot database yang konsisten (lewat SQLite Online Backup API di `scripts/backup-db.cjs`, bukan `cp`/`tar` mentah yang berisiko mengambil data setengah-jadi saat mode WAL sedang menulis), mengemasnya bersama `settings.json` dan `public/uploads/` jadi satu arsip `.tar.gz`, menyimpannya di `backups/` dengan rotasi otomatis (`BACKUP_RETENTION_DAYS`, default 14 hari), dan **mengunggahnya ke luar server** bila `BACKUP_RCLONE_REMOTE` di `.env` sudah diisi.
+
+**Backup lokal saja TIDAK CUKUP** — kalau VPS-nya hilang/rusak, backup yang tersimpan di VPS yang sama ikut hilang. Wajib setup penyimpanan di luar server, sekali di awal, lewat [rclone](https://rclone.org/) (mendukung Google Drive, S3, Backblaze B2, Dropbox, dan puluhan penyedia lain — pilih salah satu):
+
+```bash
+# 1. Instal rclone (sekali per VPS)
+curl https://rclone.org/install.sh | sudo bash
+
+# 2. Konfigurasi remote - INTERAKTIF, ikuti wizard-nya (login/API key
+#    milik anda sendiri, tidak bisa diotomatiskan lewat script)
+rclone config
+# beri nama remote-nya, misal "gdrive", pilih provider, ikuti instruksi
+
+# 3. Isi di .env, sesuaikan nama remote & folder tujuan:
+#    BACKUP_RCLONE_REMOTE=gdrive:sd-ceria-backups
+
+# 4. Uji coba manual sebelum mengandalkan jadwal otomatis:
+bash deploy/backup.sh
+```
+
+Untuk proteksi ekstra (isi database termasuk data pribadi calon siswa - nama, email, telepon), pertimbangkan membungkus remote dengan [crypt remote](https://rclone.org/crypt/) rclone supaya file terenkripsi sebelum meninggalkan VPS, bukan cuma mengandalkan keamanan akun cloud storage-nya.
+
+**Restore dari backup** (kembalikan file yang diekstrak, situs otomatis memakainya lagi setelah restart):
+
+```bash
+mkdir -p /tmp/restore && tar -xzf backups/backup-TANGGAL.tar.gz -C /tmp/restore
+cp /tmp/restore/cms.sqlite data/cms.sqlite
+cp /tmp/restore/settings.json data/settings.json      # bila ada
+cp -r /tmp/restore/public/uploads/. public/uploads/    # bila ada
+pm2 restart sd-inovasi-ceria
+```
+
 ### Catatan Keamanan Sebelum Go-Live
 
 - **Rate limiting** (`lib/rate-limit.ts`) mengenali klien lewat header `x-real-ip`/`x-forwarded-for`. Jika di-deploy di belakang Nginx/reverse proxy sendiri, pastikan proxy tersebut **menimpa** (bukan meneruskan apa adanya) header ini agar tidak mudah dilewati dengan memalsukan header dari klien.
@@ -202,7 +238,7 @@ Selama secrets belum diisi, workflow ini otomatis dilewati (tidak membuat job ga
 
 - **Update berita, galeri, guru, program**: semuanya lewat panel admin (`/admin`), tidak lagi lewat edit kode.
 - **Cek broken link & SEO** secara berkala dengan Google Search Console.
-- **Backup** folder `data/` (berisi `cms.sqlite` dan `settings.json`) serta `public/uploads/` sebelum melakukan perubahan besar di server — ini adalah satu-satunya sumber data CMS dan tidak ikut ter-commit ke git.
+- **Backup** sudah berjalan otomatis tiap hari (lihat bagian "Backup Otomatis" di atas) — pastikan `BACKUP_RCLONE_REMOTE` sudah diisi supaya benar-benar tersimpan di luar server, bukan cuma lokal di `backups/`.
 - **Perbarui dependency** secara berkala dengan `npm outdated` dan `npm update` untuk menjaga keamanan.
 - Untuk skala trafik besar, ganti rate-limiter sederhana di `lib/rate-limit.ts` dengan solusi terdistribusi (mis. Upstash Redis).
 

@@ -152,8 +152,16 @@ echo "==> Meminta sertifikat SSL (Let's Encrypt) untuk ${DOMAIN}..."
 echo "    (gagal di sini biasanya berarti DNS domain belum mengarah ke IP VPS ini)"
 certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos -m "$CERT_EMAIL" --redirect
 
+CRON_LINE="0 2 * * * cd $(pwd) && bash deploy/backup.sh >> logs/backup.log 2>&1"
+if ! crontab -l 2>/dev/null | grep -qF "deploy/backup.sh"; then
+  echo "==> Memasang jadwal backup harian (jam 02:00)..."
+  (crontab -l 2>/dev/null; echo "$CRON_LINE") | crontab -
+fi
+
 echo
 echo "==> Selesai. Situs seharusnya sudah bisa diakses di https://${DOMAIN}"
 echo "    Cek proses   : pm2 status"
 echo "    Login admin  : https://${DOMAIN}/admin"
 echo "    Ganti konten dummy (berita/galeri/guru/program/pengaturan) lewat panel admin sebelum go-live publik."
+echo "    Backup harian sudah terjadwal (data/, settings.json, public/uploads/) tapi BARU tersimpan LOKAL di VPS ini -"
+echo "    isi BACKUP_RCLONE_REMOTE di .env agar ikut terkirim ke luar server. Lihat README bagian \"Backup Otomatis\"."

@@ -61,3 +61,7 @@ public/uploads/
 
 # log PM2 di server produksi (lihat ecosystem.config.cjs)
 /logs/
+
+# arsip backup lokal (lihat deploy/backup.sh) - berisi data pribadi calon
+# siswa dari database, tidak boleh pernah ikut ter-commit
+/backups/
