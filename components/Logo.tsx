@@ -2,7 +2,18 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
 
-export default function Logo({ tagline }: { tagline?: string }) {
+export default function Logo({
+  tagline,
+  compact = false,
+}: {
+  tagline?: string;
+  // Sembunyikan tagline mulai breakpoint "lg" - dipakai khusus di Navbar,
+  // yang di titik itu juga menampilkan menu navigasi penuh + pemilih
+  // bahasa + tombol CTA dalam lebar konten yang sama (dibatasi
+  // container-page/max-w-6xl terlepas dari lebar layar). Footer tidak
+  // perlu ini karena tidak berbagi baris dengan elemen lain.
+  compact?: boolean;
+}) {
   return (
     <Link
       href="/"
@@ -30,7 +41,9 @@ export default function Logo({ tagline }: { tagline?: string }) {
       </svg>
       <span className="font-heading text-lg font-bold leading-tight text-primary dark:text-primary-light">
         {siteConfig.shortName}
-        <span className="block text-[11px] font-medium text-ink/60 dark:text-ink-dark/60">
+        <span
+          className={`block text-[11px] font-medium text-ink/60 dark:text-ink-dark/60 ${compact ? "lg:hidden" : ""}`}
+        >
           {tagline ?? siteConfig.tagline}
         </span>
       </span>

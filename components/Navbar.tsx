@@ -24,9 +24,9 @@ export default function Navbar({ tagline }: { tagline?: string }) {
         aria-label="Navigasi utama"
         className="container-page flex h-20 items-center justify-between"
       >
-        <Logo tagline={tagline} />
+        <Logo tagline={tagline} compact />
 
-        <ul className="hidden items-center gap-1 lg:flex">
+        <ul className="hidden items-center gap-0.5 lg:flex xl:gap-1">
           {links.map((link) => {
             const active =
               link.href === "/"
@@ -38,7 +38,7 @@ export default function Navbar({ tagline }: { tagline?: string }) {
                   href={link.href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "rounded-full px-4 py-2 text-[15px] font-semibold transition-colors",
+                    "whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-semibold transition-colors xl:px-4 xl:text-[15px]",
                     active
                       ? "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-light"
                       : "text-ink/80 hover:bg-primary/5 hover:text-primary dark:text-ink-dark/80 dark:hover:bg-white/10"
@@ -51,7 +51,7 @@ export default function Navbar({ tagline }: { tagline?: string }) {
           })}
         </ul>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 xl:gap-2">
           <LanguageSwitcher />
           <ThemeToggle darkModeLabel={dict.nav.darkMode} lightModeLabel={dict.nav.lightMode} />
           <Link href="/kontak" className="btn-primary hidden sm:inline-flex">

@@ -32,6 +32,23 @@ test.describe("Situs publik", () => {
     ).toBeVisible();
   });
 
+  test("navbar desktop tidak melipat ke 2 baris (link tidak wrap)", async ({ page }) => {
+    // Regresi nyata yang pernah lolos: menambah pemilih bahasa ke navbar
+    // membuat link seperti "Tentang Sekolah"/"Program & Kelas" ter-wrap ke
+    // baris kedua, karena lebar konten dibatasi container-page/max-w-6xl
+    // terlepas dari lebar layar - navbar 80px (h-20) jadi 2x lipat
+    // tingginya dan terlihat berantakan.
+    for (const width of [1024, 1152, 1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto("/");
+      const navHeight = await page
+        .locator("nav[aria-label='Navigasi utama']")
+        .first()
+        .evaluate((el) => el.getBoundingClientRect().height);
+      expect(navHeight, `navbar tinggi ${navHeight}px di lebar ${width}px (harus tetap 1 baris, ~80px)`).toBeLessThan(90);
+    }
+  });
+
   test("tidak ada horizontal scroll di layar sempit (390px)", async ({ page }) => {
     // Regresi nyata yang pernah lolos: tombol "Daftar Sekarang" versi desktop
     // (className "hidden sm:inline-flex") tetap tampil di layar sempit
