@@ -1,6 +1,7 @@
 // Author: Zeday | https://join.co.id
 import fs from "node:fs/promises";
 import path from "node:path";
+import { cache } from "react";
 import { defaultIcon, IconPresetKey, iconPresets } from "./icon-presets";
 import { siteConfig } from "./site-config";
 
@@ -108,7 +109,12 @@ const STRING_FIELDS_WITH_DEFAULT: Record<
   privacyPolicyContent: DEFAULT_PRIVACY_POLICY,
 };
 
-export async function readSettings(): Promise<SiteSettings> {
+// Versi tidak di-cache, dipakai writeSettings() sendiri untuk read-modify-
+// write - writeSettings menulis file lalu mengembalikan hasil merge di
+// memori tanpa membaca ulang, tapi kalau nanti ada kode yang membaca
+// setelah menulis dalam request yang sama, versi ini menjamin selalu
+// membaca isi file yang sungguhan, bukan nilai cache dari sebelum ditulis.
+async function readSettingsUncached(): Promise<SiteSettings> {
   try {
     const raw = await fs.readFile(settingsPath, "utf-8");
     const parsed = JSON.parse(raw);
@@ -137,6 +143,15 @@ export async function readSettings(): Promise<SiteSettings> {
   }
 }
 
+// Dibungkus React.cache() supaya beberapa Server Component yang butuh
+// settings dalam satu request yang sama (mis. app/layout.tsx untuk
+// metadata, app/(site)/layout.tsx untuk footer, dan page.tsx untuk konten
+// halaman) berbagi satu pembacaan file, bukan membaca data/settings.json
+// berulang kali per request. Cache ini otomatis direset di setiap request
+// baru (bukan cache lintas-request), jadi tidak berisiko menampilkan data
+// basi setelah admin menyimpan perubahan.
+export const readSettings = cache(readSettingsUncached);
+
 // Antrean sederhana in-process: setiap panggilan writeSettings dirangkai
 // setelah panggilan sebelumnya selesai, supaya dua permintaan simpan yang
 // datang hampir bersamaan (mis. dua tab admin) tidak saling menimpa lewat
@@ -146,7 +161,7 @@ let writeQueue: Promise<unknown> = Promise.resolve();
 
 export function writeSettings(next: Partial<Omit<SiteSettings, "updatedAt">>): Promise<SiteSettings> {
   const run = async () => {
-    const current = await readSettings();
+    const current = await readSettingsUncached();
     const merged: SiteSettings = {
       ...current,
       ...next,
