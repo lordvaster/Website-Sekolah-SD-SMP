@@ -21,7 +21,7 @@ test.describe("CRUD Video", () => {
     // lain proyek ini) - keduanya identik, cukup periksa salah satu.
     const iframe = page.locator(`iframe[title="${TITLE}"]`).first();
     await expect(iframe).toBeVisible();
-    await expect(iframe).toHaveAttribute("src", "https://www.youtube.com/embed/aqz-KE-bpKQ");
+    await expect(iframe).toHaveAttribute("src", "https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ");
 
     await page.goto("/admin/video");
     await page.locator(".card").filter({ hasText: TITLE }).getByLabel("Edit").click();

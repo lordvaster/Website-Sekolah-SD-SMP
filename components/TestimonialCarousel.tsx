@@ -58,16 +58,23 @@ export default function TestimonialCarousel({ testimonials }: { testimonials: Te
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <div className="flex gap-2">
+            <div className="flex gap-1">
               {testimonials.map((item, i) => (
+                // Dot visualnya kecil (h-2.5 w-2.5), tapi area sentuh
+                // tombolnya dilebarkan lewat padding supaya tetap memenuhi
+                // ukuran target sentuh minimum yang direkomendasikan (~24px).
                 <button
                   key={i}
                   aria-label={`Tampilkan testimoni ${i + 1}`}
                   onClick={() => setIndex(i)}
-                  className={`h-2.5 w-2.5 rounded-full ${
-                    i === index ? "bg-primary" : "bg-primary/25"
-                  }`}
-                />
+                  className="p-[7px]"
+                >
+                  <span
+                    className={`block h-2.5 w-2.5 rounded-full ${
+                      i === index ? "bg-primary" : "bg-primary/25"
+                    }`}
+                  />
+                </button>
               ))}
             </div>
             <button

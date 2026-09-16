@@ -62,16 +62,23 @@ export default function Hero({ tagline }: { tagline: string }) {
               />
             </motion.div>
           </AnimatePresence>
-          <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+          <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1">
             {slides.map((s, i) => (
+              // Dot visualnya kecil (h-2.5), tapi area sentuh tombolnya
+              // dilebarkan lewat padding (p-[7px]) supaya tetap memenuhi
+              // ukuran target sentuh minimum yang direkomendasikan (~24px).
               <button
                 key={s.label}
                 aria-label={`Tampilkan slide ${i + 1}`}
                 onClick={() => setIndex(i)}
-                className={`h-2.5 rounded-full transition-all ${
-                  i === index ? "w-6 bg-white" : "w-2.5 bg-white/60"
-                }`}
-              />
+                className="p-[7px]"
+              >
+                <span
+                  className={`block h-2.5 rounded-full transition-all ${
+                    i === index ? "w-6 bg-white" : "w-2.5 bg-white/60"
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </div>

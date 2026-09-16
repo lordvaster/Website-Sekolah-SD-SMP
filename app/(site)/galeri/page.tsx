@@ -42,7 +42,12 @@ export default function GaleriPage() {
                 <div key={v.id} className="card overflow-hidden">
                   <div className="aspect-video">
                     <iframe
-                      src={`https://www.youtube.com/embed/${v.youtubeId}`}
+                      // youtube-nocookie.com (mode privasi resmi YouTube) alih-alih
+                      // youtube.com/embed - menghindari cookie pelacak disetel
+                      // sebelum pengunjung benar-benar berinteraksi dengan video
+                      // (ditemukan lewat audit Lighthouse: "Issues" cookie pihak
+                      // ketiga di panel DevTools untuk tiap video di halaman ini).
+                      src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}`}
                       title={v.title}
                       loading="lazy"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
