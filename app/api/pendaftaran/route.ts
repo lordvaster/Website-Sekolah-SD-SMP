@@ -5,6 +5,7 @@ import { sendMail } from "@/lib/email";
 import { sendWhatsAppNotification } from "@/lib/whatsapp";
 import { rateLimitGuard } from "@/lib/rate-limit";
 import { siteConfig } from "@/lib/site-config";
+import { readSettings } from "@/lib/settings";
 import { escapeHtml } from "@/lib/utils";
 import { validationErrorResponse } from "@/lib/api-helpers";
 import { createRegistration } from "@/lib/repositories/registrations";
@@ -17,6 +18,7 @@ export async function POST(request: NextRequest) {
   const parsed = registrationSchema.safeParse(body);
   if (!parsed.success) return validationErrorResponse(parsed.error);
 
+  const { schoolEmail } = await readSettings();
   const { childName, childAge, program, parentName, email, phone } = parsed.data;
   const safeChildName = escapeHtml(childName);
   const safeProgram = escapeHtml(program);
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
   after(async () => {
     try {
       await sendMail({
-        to: process.env.CONTACT_RECEIVER_EMAIL || siteConfig.email,
+        to: process.env.CONTACT_RECEIVER_EMAIL || schoolEmail,
         subject: `Pendaftaran siswa baru: ${childName}`,
         replyTo: email,
         html: `

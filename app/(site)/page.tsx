@@ -6,6 +6,7 @@ import FeatureCards from "@/components/FeatureCards";
 import LatestNews from "@/components/LatestNews";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import CTASection from "@/components/CTASection";
+import { readSettings } from "@/lib/settings";
 
 export const metadata: Metadata = {
   title: "Beranda",
@@ -13,7 +14,9 @@ export const metadata: Metadata = {
     "Sekolah dasar ramah anak dengan kurikulum modern, guru berpengalaman, dan lingkungan belajar yang aman dan menyenangkan di Palangkaraya.",
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { schoolWhatsapp } = await readSettings();
+
   return (
     <>
       <Hero />
@@ -21,7 +24,7 @@ export default function HomePage() {
       <FeatureCards />
       <LatestNews />
       <TestimonialCarousel />
-      <CTASection />
+      <CTASection whatsapp={schoolWhatsapp} />
     </>
   );
 }

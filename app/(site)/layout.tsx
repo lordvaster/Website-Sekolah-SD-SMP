@@ -10,22 +10,23 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { siteTagline } = await readSettings();
+  const settings = await readSettings();
+  const { siteTagline, schoolDescription, schoolAddress, schoolPhone, schoolEmail } = settings;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "School",
     name: siteConfig.name,
-    description: siteConfig.description,
+    description: schoolDescription,
     url: siteConfig.url,
-    telephone: siteConfig.phone,
-    email: siteConfig.email,
+    telephone: schoolPhone,
+    email: schoolEmail,
     address: {
       "@type": "PostalAddress",
-      streetAddress: siteConfig.address,
+      streetAddress: schoolAddress,
       addressCountry: "ID",
     },
-    sameAs: Object.values(siteConfig.social),
+    sameAs: [settings.socialInstagram, settings.socialFacebook, settings.socialYoutube].filter(Boolean),
   };
 
   return (
@@ -37,7 +38,18 @@ export default async function SiteLayout({
       <SkipToContent />
       <Navbar tagline={siteTagline} />
       <main id="konten-utama">{children}</main>
-      <Footer tagline={siteTagline} />
+      <Footer
+        tagline={siteTagline}
+        info={{
+          schoolDescription,
+          schoolAddress,
+          schoolPhone,
+          schoolEmail,
+          socialInstagram: settings.socialInstagram,
+          socialFacebook: settings.socialFacebook,
+          socialYoutube: settings.socialYoutube,
+        }}
+      />
     </>
   );
 }

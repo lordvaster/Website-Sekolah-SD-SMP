@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
 
-export default function CTASection() {
+export default function CTASection({ whatsapp }: { whatsapp: string }) {
   return (
     <section className="py-16 sm:py-20">
       <div className="container-page">
@@ -22,7 +22,7 @@ export default function CTASection() {
               Daftar Sekarang
             </Link>
             <a
-              href={`https://wa.me/${siteConfig.whatsapp}`}
+              href={`https://wa.me/${whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn bg-white/10 text-white ring-1 ring-white/40 hover:bg-white/20"

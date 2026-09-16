@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { contactSchema } from "@/lib/validation";
 import { sendMail } from "@/lib/email";
 import { rateLimitGuard } from "@/lib/rate-limit";
-import { siteConfig } from "@/lib/site-config";
+import { readSettings } from "@/lib/settings";
 import { escapeHtml } from "@/lib/utils";
 import { emailNotConfiguredResponse, validationErrorResponse } from "@/lib/api-helpers";
 
@@ -18,8 +18,9 @@ export async function POST(request: NextRequest) {
   const { name, email, phone, message } = parsed.data;
 
   try {
+    const { schoolEmail } = await readSettings();
     const result = await sendMail({
-      to: process.env.CONTACT_RECEIVER_EMAIL || siteConfig.email,
+      to: process.env.CONTACT_RECEIVER_EMAIL || schoolEmail,
       subject: `Pesan baru dari ${name} melalui website`,
       replyTo: email,
       html: `

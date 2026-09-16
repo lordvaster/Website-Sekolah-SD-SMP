@@ -86,7 +86,7 @@ Buka `/admin`. Setiap staf punya **akun individual** (username + password sendir
 
 | Menu | Fungsi | Peran |
 | --- | --- | --- |
-| **Pengaturan** | Ganti favicon/icon situs & tagline, dan aktifkan **Verifikasi Dua Langkah (2FA)** untuk akun sendiri (kode 6 digit dari aplikasi authenticator, selain password). | Semua |
+| **Pengaturan** | Ganti favicon/icon, tagline, deskripsi/alamat/telepon/WhatsApp/email/jam operasional/media sosial sekolah (tampil di footer & halaman Kontak), isi **Kebijakan Privasi**, dan aktifkan **Verifikasi Dua Langkah (2FA)** untuk akun sendiri. | Semua |
 | **Berita** | Tulis, edit, hapus artikel berita/pengumuman lengkap dengan gambar sampul. | Semua |
 | **Galeri** | Unggah & hapus foto kegiatan, dikategorikan Kelas/Acara/Aktivitas. | Semua |
 | **Guru** | Tambah, edit, hapus profil tenaga pengajar beserta foto. | Semua |
@@ -112,7 +112,7 @@ Test end-to-end (Playwright) mencakup: alur login/akses admin, CRUD penuh Berita
 
 ## Mengganti Konten Non-CMS
 
-Beberapa bagian masih berupa data statis di kode (dianggap jarang berubah, belum diberi form admin): testimoni, daftar ekstrakurikuler, FAQ, dan statistik ringkas di beranda — semuanya ada di [`lib/data.ts`](lib/data.ts). Informasi umum sekolah (nama, alamat, kontak, sosial media) ada di [`lib/site-config.ts`](lib/site-config.ts). Edit file tersebut lalu deploy ulang untuk memperbarui.
+Beberapa bagian masih berupa data statis di kode (dianggap jarang berubah, belum diberi form admin): testimoni, daftar ekstrakurikuler, FAQ, dan statistik ringkas di beranda — semuanya ada di [`lib/data.ts`](lib/data.ts). Nama sekolah, URL situs, dan kredit developer ada di [`lib/site-config.ts`](lib/site-config.ts) — nilai di file ini juga jadi *default awal* untuk kolom di menu Pengaturan (deskripsi, alamat, telepon, WhatsApp, email, jam operasional, media sosial), yang setelah diisi lewat panel admin akan menimpa nilai di file ini tanpa perlu deploy ulang.
 
 ## Build & Deploy
 

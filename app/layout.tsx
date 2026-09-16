@@ -30,7 +30,7 @@ const nunito = Nunito({
 export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { siteTagline } = await readSettings();
+  const { siteTagline, schoolDescription } = await readSettings();
 
   return {
     metadataBase: new URL(siteConfig.url),
@@ -38,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
       default: `${siteConfig.name} — ${siteTagline}`,
       template: `%s — ${siteConfig.name}`,
     },
-    description: siteConfig.description,
+    description: schoolDescription,
     keywords: [
       "SD Inovasi Ceria",
       "sekolah dasar Palangkaraya",
@@ -55,12 +55,12 @@ export async function generateMetadata(): Promise<Metadata> {
       url: siteConfig.url,
       siteName: siteConfig.name,
       title: `${siteConfig.name} — ${siteTagline}`,
-      description: siteConfig.description,
+      description: schoolDescription,
     },
     twitter: {
       card: "summary_large_image",
       title: `${siteConfig.name} — ${siteTagline}`,
-      description: siteConfig.description,
+      description: schoolDescription,
     },
     robots: {
       index: true,
