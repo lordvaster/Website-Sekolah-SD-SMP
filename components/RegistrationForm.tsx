@@ -4,6 +4,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import Link from "next/link";
 import { registrationSchema, type RegistrationInput } from "@/lib/validation";
 import type { Program } from "@/lib/repositories/programs";
 import { useFormSubmit } from "@/lib/hooks/useFormSubmit";
@@ -152,6 +153,14 @@ export default function RegistrationForm({ programs }: { programs: Program[] }) 
           )}
         </div>
       </div>
+
+      <p className="text-xs text-ink/60 dark:text-ink-dark/60">
+        Dengan mendaftar, anda menyetujui{" "}
+        <Link href="/kebijakan-privasi" className="text-primary underline hover:no-underline dark:text-primary-light">
+          Kebijakan Privasi
+        </Link>{" "}
+        kami mengenai data yang anda berikan di sini.
+      </p>
 
       <button type="submit" disabled={isSubmitting} className="btn-primary w-full disabled:opacity-70">
         {isSubmitting && <Loader2 className="h-5 w-5 animate-spin" />}

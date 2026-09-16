@@ -18,6 +18,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route === "" ? 1 : 0.8,
   }));
 
+  const legalRoutes = ["/kebijakan-privasi"].map((route) => ({
+    url: `${siteConfig.url}${route}`,
+    lastModified: new Date(),
+    changeFrequency: "yearly" as const,
+    priority: 0.3,
+  }));
+
   const newsRoutes = listNews().map((article) => ({
     url: `${siteConfig.url}/berita/${article.slug}`,
     lastModified: new Date(article.date),
@@ -25,5 +32,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...newsRoutes];
+  return [...staticRoutes, ...legalRoutes, ...newsRoutes];
 }

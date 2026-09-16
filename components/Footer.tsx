@@ -88,7 +88,10 @@ export default function Footer({ tagline }: { tagline?: string }) {
       <div className="border-t border-black/5 py-6 dark:border-white/10">
         <div className="container-page flex flex-col items-center justify-between gap-2 text-xs text-ink/60 dark:text-ink-dark/60 sm:flex-row">
           <p>
-            © {new Date().getFullYear()} {siteConfig.name}. Semua hak dilindungi.
+            © {new Date().getFullYear()} {siteConfig.name}. Semua hak dilindungi. ·{" "}
+            <Link href="/kebijakan-privasi" className="hover:text-primary hover:underline dark:hover:text-primary-light">
+              Kebijakan Privasi
+            </Link>
           </p>
           {siteConfig.developer.showCredit && (
             <p>
