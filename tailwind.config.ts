@@ -26,9 +26,13 @@ const config: Config = {
           dark: "#2E9668",
           light: "#7FDCB0",
         },
+        // accent.dark digelapkan (#F2971A->#8A5A0A) - dipakai sebagai teks
+        // label eyebrow (mis. "Keunggulan Kami") di atas bg-accent/15,
+        // versi asli cuma kontras ~1.9:1 (butuh 4.5:1), gagal audit
+        // Lighthouse paling parah dari semua temuan color-contrast.
         accent: {
           DEFAULT: "#FFB84D",
-          dark: "#F2971A",
+          dark: "#8A5A0A",
           light: "#FFD08A",
         },
         cta: {
